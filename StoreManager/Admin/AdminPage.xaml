@@ -1,0 +1,48 @@
+﻿<Page x:Class="StoreManager.Admin.AdminPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:StoreManager.Admin"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="900"
+      Title="AdminPage">
+
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="ButtonExit" Grid.Row="0" Grid.Column="7" Style="{StaticResource ExitBtn}" Content="X" Click="ButtonExit_Click"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="7" Style="{StaticResource SignUpText}" Text="Оберіть опцію"/>
+        <Button x:Name="CreateCategoryButton" Grid.Row="1" Grid.Column="0" Content="Додати категорію" Style="{StaticResource AdminPageCreateBtn}" Click="CreateCategoryButton_Click"/>
+        <Button x:Name="CreateDescritpinButton" Grid.Row="1" Grid.Column="1" Content="Додати опис" Style="{StaticResource AdminPageCreateBtn}" Click="CreateDescritpinButton_Click"/>
+        <Button x:Name="CreateProductButton" Grid.Row="1" Grid.Column="2" Content="Додати продукт" Style="{StaticResource AdminPageCreateBtn}" Click="CreateProductButton_Click"/>
+        <Button x:Name="CreateSuppliersButton" Grid.Row="1" Grid.Column="3" Content="Додати постачальника" Style="{StaticResource AdminPageCreateBtn}" Click="CreateSuppliersButton_Click"/>
+        <Button x:Name="CreateShipmentsButton" Grid.Row="1" Grid.Column="4" Content="Додати/оновити відвантаження" Style="{StaticResource AdminPageCreateBtn}" Click="CreateShipmentsButton_Click"/>
+        <Button x:Name="CreateWarehousesButton" Grid.Row="1" Grid.Column="5" Content="Додати склад" Style="{StaticResource AdminPageCreateBtn}" Click="CreateWarehousesButton_Click"/>
+        <Button x:Name="CreateInventoryButton" Grid.Row="1" Grid.Column="6" Content="Додати інвентаризацію" Style="{StaticResource AdminPageCreateBtn}" Click="CreateInventoryButton_Click"/>
+
+        <Button x:Name="ViewCategoriesButton" Grid.Row="2" Grid.Column="0" Content="Переглянути категорії" Style="{StaticResource AdminPageViewBtn}" Click="ViewCategoriesButton_Click"/>
+        <Button x:Name="ViewDescritpinsButton" Grid.Row="2" Grid.Column="1" Content="Переглянути описи" Style="{StaticResource AdminPageViewBtn}" Click="ViewDescritpinsButton_Click"/>
+        <Button x:Name="ViewProductsButton" Grid.Row="2" Grid.Column="2" Content="Переглянути продукти" Style="{StaticResource AdminPageViewBtn}" Click="ViewProductsButton_Click"/>
+        <Button x:Name="ViewSuppliersButton" Grid.Row="2" Grid.Column="3" Content="Переглянути постачальників" Style="{StaticResource AdminPageViewBtn}" Click="ViewSuppliersButton_Click"/>
+        <Button x:Name="ViewShipmentsButton" Grid.Row="2" Grid.Column="4" Content="Переглянути відвантаження" Style="{StaticResource AdminPageViewBtn}" Click="ViewShipmentsButton_Click"/>
+        <Button x:Name="ViewWarehousesButton" Grid.Row="2" Grid.Column="5" Content="Переглянути склади" Style="{StaticResource AdminPageViewBtn}" Click="ViewWarehousesButton_Click"/>
+        <Button x:Name="ViewInventoryButton" Grid.Row="2" Grid.Column="6" Content="Переглянути інвенторизації" Style="{StaticResource AdminPageViewBtn}" Click="ViewInventoryButton_Click"/>
+        <Button x:Name="ViewOrdersButton" Grid.Row="3" Grid.Column="0" Content="Переглянути замовлення" Style="{StaticResource AdminPageViewBtn}" Click="ViewOrdersButton_Click"/>
+        <Button x:Name="ViewOrderItemsButton" Grid.Row="3" Grid.Column="1" Content="Переглянути товари-замовлення" Style="{StaticResource AdminPageViewBtn}" Click="ViewOrderItemsButton_Click"/>
+        <Button x:Name="ViewUsersItemsButton" Grid.Row="3" Grid.Column="2" Content="Переглянути користувачів" Style="{StaticResource AdminPageViewBtn}" Click="ViewUsersItemsButton_Click"/>
+    </Grid>
+</Page>

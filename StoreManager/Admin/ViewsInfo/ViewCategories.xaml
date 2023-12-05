@@ -1,13 +1,12 @@
-﻿<Window x:Class="StoreManager.MainWindow"
+﻿<Window x:Class="StoreManager.Admin.ViewsInfo.ViewCategories"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:StoreManager"
+        xmlns:local="clr-namespace:StoreManager.Admin.ViewsInfo"
         mc:Ignorable="d"
-        x:Name="StoreManagerWindow"
-        Title="Store Manager" Height="450" Width="800" Loaded="StoreManagerWindow_Loaded" Closing="StoreManagerWindow_Closing">
+        Title="ViewCategories" Height="450" Width="500" Loaded="Window_Loaded">
     <Grid Style="{StaticResource MainGrid}">
-        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+        <DataGrid x:Name="dataGrid" Style="{StaticResource DataGridViewStyle}"/>
     </Grid>
 </Window>

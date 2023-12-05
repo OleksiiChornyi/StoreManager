@@ -14,6 +14,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,8 +37,40 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.21.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.21.12.0\lib\net462\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.6.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=6.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.6.0.1\lib\net461\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -55,6 +89,176 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Abstract\Classes\AdminStoreInteraction.cs" />
+    <Compile Include="Abstract\Classes\ClientStoreInteraction.cs" />
+    <Compile Include="Abstract\Classes\StoreCartInteraction.cs" />
+    <Compile Include="Abstract\Interfaces\IStore.cs" />
+    <Compile Include="Abstract\Interfaces\IStoreForAdmin.cs" />
+    <Compile Include="Abstract\Interfaces\IStoreForClient.cs" />
+    <Compile Include="Abstract\Interfaces\IStoreForGuest.cs" />
+    <Compile Include="Admin\AdminPage.xaml.cs">
+      <DependentUpon>AdminPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Interactions\Create Category.xaml.cs">
+      <DependentUpon>Create Category.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Interactions\Create Description.xaml.cs">
+      <DependentUpon>Create Description.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Interactions\Create Inventory.xaml.cs">
+      <DependentUpon>Create Inventory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Interactions\Create product.xaml.cs">
+      <DependentUpon>Create product.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Interactions\Create Shipments.xaml.cs">
+      <DependentUpon>Create Shipments.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Interactions\Create Suppliers.xaml.cs">
+      <DependentUpon>Create Suppliers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Interactions\Create Warehouses.xaml.cs">
+      <DependentUpon>Create Warehouses.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\StoreManagerForAdmin.cs" />
+    <Compile Include="Admin\ViewsInfo\ViewCategories.xaml.cs">
+      <DependentUpon>ViewCategories.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ViewsInfo\ViewDescription.xaml.cs">
+      <DependentUpon>ViewDescription.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ViewsInfo\ViewInventory.xaml.cs">
+      <DependentUpon>ViewInventory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ViewsInfo\ViewOrderItems.xaml.cs">
+      <DependentUpon>ViewOrderItems.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ViewsInfo\ViewOrders.xaml.cs">
+      <DependentUpon>ViewOrders.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ViewsInfo\ViewProducts.xaml.cs">
+      <DependentUpon>ViewProducts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ViewsInfo\ViewShipments.xaml.cs">
+      <DependentUpon>ViewShipments.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ViewsInfo\ViewSuppliers.xaml.cs">
+      <DependentUpon>ViewSuppliers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ViewsInfo\ViewUsers.xaml.cs">
+      <DependentUpon>ViewUsers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ViewsInfo\ViewWarehouses.xaml.cs">
+      <DependentUpon>ViewWarehouses.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Client\Cart\MyCart.cs" />
+    <Compile Include="Client\Cart\MyCartPage.xaml.cs">
+      <DependentUpon>MyCartPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Client\ClientDescriptionView.xaml.cs">
+      <DependentUpon>ClientDescriptionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Client\ClientPage.xaml.cs">
+      <DependentUpon>ClientPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Client\StoreForClient.cs" />
+    <Compile Include="Guest\StoreForGuest.cs" />
+    <Compile Include="SignPages\MainSignPage.xaml.cs">
+      <DependentUpon>MainSignPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SignPages\SignInPage.xaml.cs">
+      <DependentUpon>SignInPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SignPages\SignUpAdminPage.xaml.cs">
+      <DependentUpon>SignUpAdminPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SignPages\SignUpPage.xaml.cs">
+      <DependentUpon>SignUpPage.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Admin\AdminPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\Interactions\Create Category.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\Interactions\Create Description.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\Interactions\Create Inventory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\Interactions\Create product.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\Interactions\Create Shipments.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\Interactions\Create Suppliers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\Interactions\Create Warehouses.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\ViewsInfo\ViewCategories.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\ViewsInfo\ViewDescription.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\ViewsInfo\ViewInventory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\ViewsInfo\ViewOrderItems.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\ViewsInfo\ViewOrders.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\ViewsInfo\ViewProducts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\ViewsInfo\ViewShipments.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\ViewsInfo\ViewSuppliers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\ViewsInfo\ViewUsers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\ViewsInfo\ViewWarehouses.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Client\Cart\MyCartPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Client\ClientDescriptionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Client\ClientPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -67,6 +271,22 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SignPages\MainSignPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SignPages\SignInPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SignPages\SignUpAdminPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SignPages\SignUpPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -86,6 +306,13 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Oracle.DataAccess.Common.Configuration.Section.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Oracle.ManagedDataAccess.Client.Configuration.Section.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -94,5 +321,13 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\System.Text.Json.6.0.1\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.1\build\System.Text.Json.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Text.Json.6.0.1\build\System.Text.Json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Text.Json.6.0.1\build\System.Text.Json.targets'))" />
+  </Target>
 </Project>
