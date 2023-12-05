@@ -80,6 +80,9 @@ namespace StoreManager.Client.Cart
         private void ConfiemRoder_Click(object sender, RoutedEventArgs e)
         {
             myCart.CreateOrder();
+            MessageBox.Show("Замовлення створено");
+            if (NavigationService.CanGoBack)
+                NavigationService.GoBack();
         }
     }
 

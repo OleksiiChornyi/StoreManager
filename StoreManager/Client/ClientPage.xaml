@@ -49,6 +49,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="1*"/>
                                 <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
                             </Grid.RowDefinitions>
                             <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{StaticResource TextBlockClientPage}"/>
                             <TextBlock Text="{Binding price}" Grid.Row="1" Style="{StaticResource TextBlockClientPage}"/>

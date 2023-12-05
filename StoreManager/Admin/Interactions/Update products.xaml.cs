@@ -79,9 +79,11 @@ namespace StoreManager.Admin.Interactions
             DataTable categoriesTable = admin.GetDataFromView("ProductsCategoriesView");
             foreach (DataRow row in categoriesTable.Rows)
             {
-                ComboBoxItem item = new ComboBoxItem();
-                item.Content = row[1];
-                item.ToolTip = row[0];
+                ComboBoxItem item = new ComboBoxItem
+                {
+                    Content = row[1],
+                    ToolTip = row[0]
+                };
                 ComboBoxSortCategories.Items.Add(item);
             }
         }

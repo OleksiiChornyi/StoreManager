@@ -163,7 +163,6 @@ namespace StoreManager.Client
                     else
                         imageItem.descriptionId = null;
                     imageItems.Add(imageItem);
-                    imageItems.Add(imageItem);
                     myChangeImageItems.Add(imageItem);
                     ((ObservableCollection<ImageItem>)ProductList.ItemsSource).Add(imageItem);
                 }
