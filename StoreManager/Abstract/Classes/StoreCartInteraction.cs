@@ -17,6 +17,7 @@ namespace StoreManager.Abstract.Classes
             public string categoryName { get; set; }
             public int quantity { get; set; }
         }
+        public bool isCreating = false;
         private List<OrderItem> _orderItems = new List<OrderItem>();
         public List<OrderItem> orderItems 
         {
@@ -28,6 +29,13 @@ namespace StoreManager.Abstract.Classes
         {
             this.client = client;
             this.orderNumber = client.GetNewRandomOrderNumber();
+        }
+
+        public void CreateNewCart()
+        {
+            this.orderNumber = client.GetNewRandomOrderNumber();
+            orderItems = new List<OrderItem>();
+            this.isCreating = false;
         }
 
         public void AddOrUpdateItem(int productId, string productName, string categoryName, int quantity)
@@ -76,6 +84,7 @@ namespace StoreManager.Abstract.Classes
         public void CreateOrder()
         {
             client.CreateOrder(orderNumber, orderItems);
+            isCreating = true;
         }
     }
 }
