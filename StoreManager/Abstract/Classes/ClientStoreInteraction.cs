@@ -61,10 +61,10 @@ namespace StoreManager.Abstract.Classes
         {
             using (OracleConnection connection = new OracleConnection(connectionString))
             {
+                connection.Open();
+
                 try
                 {
-                    connection.Open();
-
                     using (OracleCommand command = new OracleCommand("SignIn", connection))
                     {
                         command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -89,6 +89,8 @@ namespace StoreManager.Abstract.Classes
                 {
                     MessageBox.Show("Помилка: " + ex.Message);
                 }
+
+                connection.Close();
             }
         }
 
@@ -96,10 +98,10 @@ namespace StoreManager.Abstract.Classes
         {
             using (OracleConnection connection = new OracleConnection(connectionString))
             {
+                connection.Open();
+
                 try
                 {
-                    connection.Open();
-
                     using (OracleCommand command = new OracleCommand("SignUp", connection))
                     {
                         command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -118,6 +120,8 @@ namespace StoreManager.Abstract.Classes
                 {
                     MessageBox.Show("Помилка: " + ex.Message);
                 }
+
+                connection.Close();
             }
         }
 
@@ -137,30 +141,40 @@ namespace StoreManager.Abstract.Classes
             {
                 connection.Open();
 
-                using (OracleCommand command = new OracleCommand("BEGIN :result := CheckUserExistence(:p_UserName); END;", connection))
+                try
                 {
-                    command.Parameters.Add("result", OracleDbType.Boolean, System.Data.ParameterDirection.ReturnValue);
-                    command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = UserName;
+                    using (OracleCommand command = new OracleCommand("BEGIN :result := CheckUserExistence(:p_UserName); END;", connection))
+                    {
+                        command.Parameters.Add("result", OracleDbType.Boolean, System.Data.ParameterDirection.ReturnValue);
+                        command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = UserName;
 
-                    command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
 
-                    OracleBoolean oracleBooleanResult = (OracleBoolean)command.Parameters["result"].Value;
+                        OracleBoolean oracleBooleanResult = (OracleBoolean)command.Parameters["result"].Value;
 
-                    bool userExists = oracleBooleanResult.Equals(OracleBoolean.True);
+                        bool userExists = oracleBooleanResult.Equals(OracleBoolean.True);
 
-                    return userExists;
+                        return userExists;
+                    }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Помилка: " + ex.Message);
+                }
+
+                connection.Close();
             }
+            return true;
         }
 
         private int GetUserIdByUserName(string userName)
         {
-            try
+            using (OracleConnection connection = new OracleConnection(connectionString))
             {
-                using (OracleConnection connection = new OracleConnection(connectionString))
-                {
-                    connection.Open();
+                connection.Open();
 
+                try
+                {
                     using (OracleCommand command = new OracleCommand("SELECT GetUserIDByUsername(:p_UserName) FROM DUAL", connection))
                     {
                         command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = userName;
@@ -177,10 +191,12 @@ namespace StoreManager.Abstract.Classes
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Помилка: {ex.Message}");
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Помилка: " + ex.Message);
+                }
+
+                connection.Close();
             }
             return -1;
         }
@@ -193,12 +209,19 @@ namespace StoreManager.Abstract.Classes
             {
                 connection.Open();
 
-                using (OracleCommand command = new OracleCommand($"SELECT * FROM {viewName}", connection))
+                try
                 {
-                    using (OracleDataAdapter adapter = new OracleDataAdapter(command))
+                    using (OracleCommand command = new OracleCommand($"SELECT * FROM {viewName}", connection))
                     {
-                        adapter.Fill(resultTable);
+                        using (OracleDataAdapter adapter = new OracleDataAdapter(command))
+                        {
+                            adapter.Fill(resultTable);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Помилка: " + ex.Message);
                 }
 
                 connection.Close();
@@ -211,24 +234,33 @@ namespace StoreManager.Abstract.Classes
             using (OracleConnection connection = new OracleConnection(connectionString))
             {
                 connection.Open();
-                using (OracleCommand command = new OracleCommand("BEGIN :result := GetDescriptionName(:p_productID); END;", connection))
+
+                try
                 {
-                    command.Parameters.Add("result", OracleDbType.Varchar2, ParameterDirection.Output).Size = 100;
-                    command.Parameters.Add("p_productID", OracleDbType.Decimal).Value = productId;
-
-                    command.ExecuteNonQuery();
-
-                    string result = command.Parameters["result"].Value.ToString();
-
-                    if (!string.IsNullOrEmpty(result))
+                    using (OracleCommand command = new OracleCommand("BEGIN :result := GetDescriptionName(:p_productID); END;", connection))
                     {
-                        return result;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Помилка. Дані не знайдено!");
+                        command.Parameters.Add("result", OracleDbType.Varchar2, ParameterDirection.Output).Size = 100;
+                        command.Parameters.Add("p_productID", OracleDbType.Decimal).Value = productId;
+
+                        command.ExecuteNonQuery();
+
+                        string result = command.Parameters["result"].Value.ToString();
+
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            return result;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Помилка. Дані не знайдено!");
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Помилка: " + ex.Message);
+                }
+
                 connection.Close();
             }
 
@@ -241,26 +273,35 @@ namespace StoreManager.Abstract.Classes
             {
                 connection.Open();
 
-                using (OracleCommand command = new OracleCommand("BEGIN :result := GetDescritpionDataByID(:p_DescriptionID); END;", connection))
+                try
                 {
-                    command.Parameters.Add("result", OracleDbType.Blob, ParameterDirection.ReturnValue);
-                    command.Parameters.Add("p_DescriptionID", OracleDbType.Decimal).Value = descriptionId;
-
-                    command.ExecuteNonQuery();
-
-                    OracleBlob blob = (OracleBlob)command.Parameters["result"].Value;
-
-                    if (blob != null && blob.Length > 0)
+                    using (OracleCommand command = new OracleCommand("BEGIN :result := GetDescritpionDataByID(:p_DescriptionID); END;", connection))
                     {
-                        byte[] fileData = new byte[blob.Length];
-                        blob.Read(fileData, 0, Convert.ToInt32(blob.Length));
-                        return fileData;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Помилка. Дані не знайдено!");
+                        command.Parameters.Add("result", OracleDbType.Blob, ParameterDirection.ReturnValue);
+                        command.Parameters.Add("p_DescriptionID", OracleDbType.Decimal).Value = descriptionId;
+
+                        command.ExecuteNonQuery();
+
+                        OracleBlob blob = (OracleBlob)command.Parameters["result"].Value;
+
+                        if (blob != null && blob.Length > 0)
+                        {
+                            byte[] fileData = new byte[blob.Length];
+                            blob.Read(fileData, 0, Convert.ToInt32(blob.Length));
+                            return fileData;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Помилка. Дані не знайдено!");
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Помилка: " + ex.Message);
+                }
+
+                connection.Close();
             }
             return null;
         }
@@ -271,26 +312,35 @@ namespace StoreManager.Abstract.Classes
             {
                 connection.Open();
 
-                using (OracleCommand command = new OracleCommand("BEGIN :result := GetProductImageByID(:p_ProductID); END;", connection))
+                try
                 {
-                    command.Parameters.Add("result", OracleDbType.Blob, ParameterDirection.ReturnValue);
-                    command.Parameters.Add("p_ProductID", OracleDbType.Decimal).Value = productId;
-
-                    command.ExecuteNonQuery();
-
-                    OracleBlob blob = (OracleBlob)command.Parameters["result"].Value;
-
-                    if (blob != null && blob.Length > 0)
+                    using (OracleCommand command = new OracleCommand("BEGIN :result := GetProductImageByID(:p_ProductID); END;", connection))
                     {
-                        byte[] fileData = new byte[blob.Length];
-                        blob.Read(fileData, 0, Convert.ToInt32(blob.Length));
-                        return fileData;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Помилка. Дані не знайдено!");
+                        command.Parameters.Add("result", OracleDbType.Blob, ParameterDirection.ReturnValue);
+                        command.Parameters.Add("p_ProductID", OracleDbType.Decimal).Value = productId;
+
+                        command.ExecuteNonQuery();
+
+                        OracleBlob blob = (OracleBlob)command.Parameters["result"].Value;
+
+                        if (blob != null && blob.Length > 0)
+                        {
+                            byte[] fileData = new byte[blob.Length];
+                            blob.Read(fileData, 0, Convert.ToInt32(blob.Length));
+                            return fileData;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Помилка. Дані не знайдено!");
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Помилка: " + ex.Message);
+                }
+
+                connection.Close();
             }
             return null;
         }
@@ -311,21 +361,31 @@ namespace StoreManager.Abstract.Classes
             {
                 connection.Open();
 
-                using (OracleCommand command = new OracleCommand())
+                try
                 {
-                    command.Connection = connection;
-                    command.CommandText = "BEGIN :result := GetUniqueRandomOrderNumber; END;";
-                    command.CommandType = CommandType.Text;
+                    using (OracleCommand command = new OracleCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "BEGIN :result := GetUniqueRandomOrderNumber; END;";
+                        command.CommandType = CommandType.Text;
 
-                    command.Parameters.Add("result", OracleDbType.Decimal).Direction = ParameterDirection.ReturnValue;
+                        command.Parameters.Add("result", OracleDbType.Decimal).Direction = ParameterDirection.ReturnValue;
 
-                    command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
 
-                    int result = ((OracleDecimal)command.Parameters["result"].Value).ToInt32();
+                        int result = ((OracleDecimal)command.Parameters["result"].Value).ToInt32();
 
-                    return result;
+                        return result;
+                    }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Помилка: " + ex.Message);
+                }
+
+                connection.Close();
             }
+            return -1;
         }
 
         private async void CreateOrderItems(List<OrderItem> orderItems, OracleConnection connection)
@@ -347,16 +407,24 @@ namespace StoreManager.Abstract.Classes
         {
             OracleConnection connection = new OracleConnection(connectionString);
             connection.Open();
+            try
+            {
+                CreateOrderItems(orderItems, connection);
 
-            CreateOrderItems(orderItems, connection);
+                OracleCommand command = new OracleCommand("AddOrder", connection);
+                command.CommandType = CommandType.StoredProcedure;
 
-            OracleCommand command = new OracleCommand("AddOrder", connection);
-            command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add("p_OrderNumber", OracleDbType.Decimal, orderNumber, ParameterDirection.Input);
+                command.Parameters.Add("p_UserID", OracleDbType.Decimal, this.userId, ParameterDirection.Input);
 
-            command.Parameters.Add("p_OrderNumber", OracleDbType.Decimal, orderNumber, ParameterDirection.Input);
-            command.Parameters.Add("p_UserID", OracleDbType.Decimal, this.userId, ParameterDirection.Input);
+                command.ExecuteNonQuery();
 
-            command.ExecuteNonQuery();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Помилка: " + ex.Message);
+            }
 
             connection.Close();
         }
