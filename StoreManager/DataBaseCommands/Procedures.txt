@@ -1,0 +1,201 @@
+-- Процедура для створення нового користувача та повернення айді користувача
+CREATE OR REPLACE PROCEDURE SignUp(
+    p_UserName VARCHAR2,
+    p_PasswordHash VARCHAR2,
+    p_ContactInfo VARCHAR2,
+    p_UserRole VARCHAR2
+) IS
+    v_UserCount NUMBER;
+    v_UserID NUMBER;
+BEGIN
+    -- Перевіряємо, чи існує користувач з введеним ім'ям
+    SELECT COUNT(*) INTO v_UserCount
+    FROM Users
+    WHERE UserName = p_UserName;
+
+    IF v_UserCount = 0 THEN
+        -- Використовуємо секвенцію для отримання нового UserID
+        SELECT UsersSeq.NEXTVAL INTO v_UserID FROM DUAL;
+
+        -- Додаємо нового користувача в таблицю Users
+        INSERT INTO Users (UserID, UserName, PasswordHash, ContactInfo, UserRole)
+        VALUES (v_UserID, p_UserName, p_PasswordHash, p_ContactInfo, p_UserRole);
+    END IF;
+END;
+/
+
+-- Процедура для створення нової категорії
+CREATE OR REPLACE PROCEDURE AddCategory(
+    p_CategoryName VARCHAR2,
+    p_CategoryDescription VARCHAR2
+) IS
+    v_CategoryID NUMBER;
+BEGIN
+    -- Використовуємо секвенцію для отримання нового CategoryID
+    SELECT CategoriesSeq.NEXTVAL INTO v_CategoryID FROM DUAL;
+
+    -- Додаємо нову категорію в таблицю Categories
+    INSERT INTO Categories (CategoryID, CategoryName, CategoryDescription)
+    VALUES (v_CategoryID, p_CategoryName, p_CategoryDescription);
+END;
+/
+
+-- Процедура для створення нового опису
+create or replace PROCEDURE AddDescription(
+    p_FileName VARCHAR2,
+    p_FileType VARCHAR2,
+    p_FileExtension VARCHAR2,
+    p_FileData BLOB,
+    p_Info VARCHAR2
+) IS
+    v_DescriptionID NUMBER;
+BEGIN
+    -- Використовуємо секвенцію для отримання нового DescriptionID
+    SELECT DescriptionsSeq.NEXTVAL INTO v_DescriptionID FROM DUAL;
+
+    -- Додаємо новий запис в таблицю Descriptions
+    INSERT INTO Descriptions (DescriptionID, FileName, FileType, FileExtension, FileData, UploadDate, ModificationDate, Info)
+    VALUES (v_DescriptionID, p_FileName, p_FileType, p_FileExtension, p_FileData, SYSDATE, SYSDATE, p_Info);
+END;
+/
+
+-- Процедура для створення нового продукту
+create or replace PROCEDURE AddProduct(
+    p_ProductName VARCHAR2,
+    p_DescriptionID NUMBER,
+    p_ProductImage BLOB,
+    p_ProductImageFileName VARCHAR,
+    p_Cost NUMBER,
+    p_CategoryID NUMBER
+) IS
+    v_ProductID NUMBER;
+BEGIN
+    -- Використовуємо секвенцію для отримання нового ProductID
+    SELECT ProductsSeq.NEXTVAL INTO v_ProductID FROM DUAL;
+
+    -- Додаємо новий товар в таблицю Products
+    INSERT INTO Products (ProductID, SKU, ProductName, DescriptionID, ProductImage, ProductImageFileName, Cost, CategoryID)
+    VALUES (v_ProductID, '', p_ProductName, p_DescriptionID, p_ProductImage, p_ProductImageFileName, p_Cost, p_CategoryID);
+END;
+/
+
+-- Процедура для створення нової пари продукт-замовлення
+CREATE OR REPLACE PROCEDURE AddOrderItem(
+    p_OrderNumber NUMBER,
+    p_ProductID NUMBER,
+    p_Quantity NUMBER
+) IS
+    v_OrderItemID NUMBER;
+BEGIN
+    -- Використовуємо секвенцію для отримання нового OrderItemID
+    SELECT OrderItemsSeq.NEXTVAL INTO v_OrderItemID FROM DUAL;
+
+    -- Додаємо новий запис в таблицю OrderItems
+    INSERT INTO OrderItems (OrderItemID, OrderNumber, ProductID, Quantity)
+    VALUES (v_OrderItemID, p_OrderNumber, p_ProductID, p_Quantity);
+END;
+/
+
+
+-- Процедура для створення нового замовлення
+create or replace PROCEDURE AddOrder(
+    p_OrderNumber NUMBER,
+    p_UserID NUMBER
+) IS
+    v_OrderID NUMBER;
+BEGIN
+    -- Використовуємо секвенцію для отримання нового OrderID
+    SELECT OrdersSeq.NEXTVAL INTO v_OrderID FROM DUAL;
+
+    -- Додаємо новий запис в таблицю Orders
+    INSERT INTO Orders (OrderID, OrderNumber, OrderDate, OrderStatus, UserID)
+    VALUES (v_OrderID, p_OrderNumber, SYSDATE, 'Creating', p_UserID);
+END;
+/
+
+-- Процедура для створення нового постачальника
+CREATE OR REPLACE PROCEDURE AddSupplier(
+    p_CompanyName VARCHAR2,
+    p_ContactInfo VARCHAR2,
+    p_SupplierAddress VARCHAR2
+) IS
+    v_SupplierID NUMBER;
+BEGIN
+    -- Використовуємо секвенцію для отримання нового SupplierID
+    SELECT SuppliersSeq.NEXTVAL INTO v_SupplierID FROM DUAL;
+
+    -- Додаємо нового постачальника в таблицю Suppliers
+    INSERT INTO Suppliers (SupplierID, CompanyName, ContactInfo, SupplierAddress)
+    VALUES (v_SupplierID, p_CompanyName, p_ContactInfo, p_SupplierAddress);
+END;
+/
+
+-- Процедура для створення нового відвантаження
+create or replace PROCEDURE AddShipment(
+    p_ShipmentStatus VARCHAR2,
+    p_OrderID NUMBER
+) IS
+    v_ShipmentID NUMBER;
+    v_ShipmentNumber NUMBER;
+BEGIN
+    -- Використовуємо секвенцію для отримання нового ShipmentID
+    SELECT ShipmentsSeq.NEXTVAL INTO v_ShipmentID FROM DUAL;
+    
+    -- Використовуємо секвенцію для отримання нового ShipmentNumber
+    SELECT ShipmentsNumberSeq.NEXTVAL INTO v_ShipmentNumber FROM DUAL;
+
+    -- Додаємо новий запис в таблицю Shipments
+    INSERT INTO Shipments (ShipmentID, ShipmentNumber, ShipmentDate, ShipmentStatus, OrderID)
+    VALUES (v_ShipmentID, v_ShipmentNumber, SYSDATE, p_ShipmentStatus, p_OrderID);
+END;
+/
+
+-- Процедура для оновлення відвантаження
+CREATE OR REPLACE PROCEDURE UpdateShipmentStatus (
+    p_ShipmentID NUMBER,
+    p_ShipmentStatus VARCHAR2
+) IS
+BEGIN
+    -- Оновлюємо статус відвантаження за його ID
+    UPDATE Shipments
+    SET ShipmentStatus = p_ShipmentStatus
+    WHERE ShipmentID = p_ShipmentID;
+END;
+/
+
+
+-- Процедура для створення нового складу
+CREATE OR REPLACE PROCEDURE AddWarehouse(
+    p_WarehouseName VARCHAR2,    
+    p_Location VARCHAR2,
+    p_Capacity NUMBER,
+    p_Availability NUMBER
+) IS
+    v_WarehouseID NUMBER;
+BEGIN
+    -- Використовуємо секвенцію для отримання нового WarehouseID
+    SELECT WarehousesSeq.NEXTVAL INTO v_WarehouseID FROM DUAL;
+
+    -- Додаємо новий запис в таблицю Warehouses
+    INSERT INTO Warehouses (WarehouseID, WarehouseName, Location, Capacity, Availability)
+    VALUES (v_WarehouseID, p_WarehouseName, p_Location, p_Capacity, p_Availability);
+END;
+/
+
+
+-- Процедура для створення нової інвенторизації
+CREATE OR REPLACE PROCEDURE AddInventory(
+    p_ProductID NUMBER,
+    p_QuantityOnHand NUMBER,
+    p_WarehouseID NUMBER
+) IS
+    v_InventoryID NUMBER;
+BEGIN
+    -- Використовуємо секвенцію для отримання нового InventoryID
+    SELECT InventorySeq.NEXTVAL INTO v_InventoryID FROM DUAL;
+
+    -- Додаємо новий запис в таблицю Inventory
+    INSERT INTO Inventory (InventoryID, ProductID, QuantityOnHand, WarehouseID, InventoryDate )
+    VALUES (v_InventoryID, p_ProductID, p_QuantityOnHand, p_WarehouseID, SYSDATE);
+END;
+/

@@ -1,0 +1,182 @@
+-- Функція для входу як користувач
+CREATE OR REPLACE FUNCTION SignIn(
+    p_UserName VARCHAR2,
+    p_PasswordHash VARCHAR2
+) RETURN BOOLEAN IS
+    v_UserCount NUMBER;
+    v_ContactInfo VARCHAR2(100);
+    v_UserRole VARCHAR2(50);
+    v_OrderCount NUMBER;
+BEGIN
+    -- Перевіряємо, чи існує користувач з введеним ім'ям та хешем паролю
+    SELECT COUNT(*), ContactInfo, UserRole, OrderCount
+    INTO v_UserCount, v_ContactInfo, v_UserRole, v_OrderCount
+    FROM Users
+    WHERE UserName = p_UserName
+      AND PasswordHash = p_PasswordHash
+    GROUP BY ContactInfo, UserRole, OrderCount;
+
+    IF v_UserCount = 1 THEN
+        RETURN TRUE;
+    ELSE
+        RETURN FALSE;
+    END IF;
+END;
+/
+
+--Функція для отримання ролі користувача
+CREATE OR REPLACE FUNCTION GetUserRole(p_UserName VARCHAR2) RETURN VARCHAR2 IS
+    v_UserRole VARCHAR2(50);
+BEGIN
+    -- Ищем UserRole по заданному UserName
+    SELECT UserRole INTO v_UserRole
+    FROM Users
+    WHERE UserName = p_UserName;
+
+    -- Если найдено, возвращаем UserRole
+    RETURN v_UserRole;
+END GetUserRole;
+/
+
+--Функція отримання UserId по UserName
+CREATE OR REPLACE FUNCTION GetUserIDByUsername(
+    p_UserName VARCHAR2
+) RETURN NUMBER
+AS
+    v_UserID NUMBER;
+BEGIN
+    -- Шукаємо UserID за вказаним UserName
+    SELECT UserID INTO v_UserID
+    FROM Users
+    WHERE UserName = p_UserName;
+
+    -- Якщо знайдено, повертаємо UserID
+    RETURN v_UserID;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN NULL;
+    WHEN OTHERS THEN
+        RETURN NULL;
+END GetUserIDByUsername;
+/
+
+
+-- Функція перевірки чи існує користувач
+CREATE OR REPLACE FUNCTION CheckUserExistence(
+    p_UserName VARCHAR2
+) RETURN BOOLEAN IS
+    v_UserCount NUMBER;
+BEGIN
+    -- Перевіряємо, чи існує користувач з введеним ім'ям
+    SELECT COUNT(*)
+    INTO v_UserCount
+    FROM Users
+    WHERE UserName = p_UserName;
+
+    -- Якщо кількість користувачів більше 0, то користувач існує
+    RETURN v_UserCount > 0;
+END;
+/
+
+--Функція для перевірки чи існує відвантаження для замовлення
+-- Створюємо функцію HasShipment
+CREATE OR REPLACE FUNCTION HasShipment (p_OrderID NUMBER)
+RETURN NUMBER -- Змінюємо тип повернення на NUMBER
+IS
+  v_ShipmentID NUMBER; -- Змінна для зберігання ShipmentID
+BEGIN
+  -- Перевіряємо, чи існує відвантаження для даного замовлення
+  SELECT ShipmentID INTO v_ShipmentID -- Змінюємо колонку на ShipmentID
+  FROM Shipments
+  WHERE OrderID = p_OrderID;
+  -- Повертаємо ShipmentID
+  RETURN v_ShipmentID;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN -- Якщо відвантаження не існує
+    RETURN NULL; -- Повертаємо NULL
+END;
+
+
+-- Функція створення нового номеру замовлення
+CREATE OR REPLACE FUNCTION GetUniqueRandomOrderNumber RETURN NUMBER IS
+    v_RandomNumber NUMBER;
+    v_Count NUMBER;
+BEGIN
+    LOOP
+        -- Генеруємо випадкове число
+        v_RandomNumber := TRUNC(DBMS_RANDOM.VALUE * 1000000);
+
+        -- Перевіряємо, чи таке число вже існує в таблиці або інших місцях
+        SELECT COUNT(*)
+        INTO v_Count
+        FROM ORDERITEMS -- Замініть "YourTable" на назву вашої таблиці тут
+        WHERE ORDERNUMBER = v_RandomNumber; -- Замініть "YourColumn" на назву стовпця, де зберігається випадкове число
+
+        -- Якщо такого числа не знайдено, виходимо з циклу
+        EXIT WHEN v_Count = 0;
+    END LOOP;
+
+    -- Повертаємо унікальне випадкове число
+    RETURN v_RandomNumber;
+END;
+/
+
+--Функція для відтворення DescriptionData
+CREATE OR REPLACE FUNCTION GetDescritpionDataByID(p_DescriptionID NUMBER)
+RETURN BLOB
+AS
+    v_FileData BLOB;
+BEGIN
+    SELECT FileData
+    INTO v_FileData
+    FROM Descriptions
+    WHERE DescriptionID = p_DescriptionID;
+
+    RETURN v_FileData;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN NULL;
+END GetDescritpionDataByID;
+/
+
+--Функція для відтворення ProductImage
+CREATE OR REPLACE FUNCTION GetProductImageByID(p_ProductID NUMBER)
+RETURN BLOB
+AS
+    v_ProductImage BLOB;
+BEGIN
+    SELECT ProductImage
+    INTO v_ProductImage
+    FROM Products
+    WHERE ProductID = p_ProductID;
+
+    RETURN v_ProductImage;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN NULL;
+END GetProductImageByID;
+/
+
+--Функція для детального розгляду товарів:
+CREATE OR REPLACE FUNCTION GetProductDetails(p_ProductID NUMBER)
+RETURN SYS_REFCURSOR
+IS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+        SELECT
+            p.ProductName,
+            p.Cost,
+            p.DescriptionID,
+            p.ProductImage,
+            c.CategoryName,
+            c.CategoryDescription
+        FROM
+            Products p
+            JOIN Categories c ON p.CategoryID = c.CategoryID
+        WHERE
+            p.ProductID = p_ProductID;
+
+    RETURN v_cursor;
+END;
+/

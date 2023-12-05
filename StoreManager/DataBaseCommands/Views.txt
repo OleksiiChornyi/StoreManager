@@ -1,0 +1,192 @@
+--Погляд для отримання продуктів для клієнта
+CREATE OR REPLACE VIEW ProductCategoryIdView AS
+SELECT
+    p.ProductID,
+    p.ProductName,
+    p.ProductImage,
+    p.Cost,
+    c.CategoryID,
+    c.CategoryName,
+    c.CategoryDescription,
+    p.SalesCount,
+    p.DescriptionID
+FROM Products p
+JOIN Categories c ON p.CategoryID = c.CategoryID;
+
+
+--Погляд для категорій
+CREATE VIEW ProductsCategoriesView AS
+SELECT 
+    CategoryID,
+    CategoryName
+FROM
+    Categories;
+
+--Погляд для опису
+CREATE VIEW ProductsDescriptionsView AS
+SELECT
+    DescriptionID,
+    FileName
+FROM
+    Descriptions;
+
+--Погляд для замовлень
+CREATE VIEW ShipmentsOrdersView AS
+SELECT
+    OrderID,
+    OrderNumber
+FROM
+    Orders;
+
+--Погляд для продуктів для інвентаризації
+CREATE VIEW InventoryProductsView AS
+SELECT
+    ProductID,
+    ProductName
+FROM
+    Products;
+
+--Погляд для складів для інвентаризації
+CREATE VIEW InventoryWarehousesView AS
+SELECT
+    WarehouseID,
+    WarehouseName
+FROM
+    Warehouses;
+
+--Погляд для користувачів
+CREATE VIEW UsersView AS
+SELECT UserID, UserName, ContactInfo, UserRole, OrderCount
+FROM Users;
+/
+
+--Погляд для категорій
+CREATE VIEW CategoriesView AS
+SELECT *
+FROM Categories;
+/
+
+--Погляд для описів
+CREATE VIEW DescriptionsView AS
+SELECT
+    d.DescriptionID,
+    d.FileName,
+    d.FileType,
+    d.FileExtension,
+    d.UploadDate,
+    d.ModificationDate
+FROM Descriptions d;
+
+
+--Погляд для товарів
+CREATE VIEW ProductDetailsView AS
+SELECT
+    p.ProductID,
+    p.SKU,
+    p.ProductName,
+    p.Cost,
+    c.CategoryName,
+    p.SalesCount
+FROM Products p
+JOIN Categories c ON p.CategoryID = c.CategoryID;
+
+--Погляд для товарів замовлень
+CREATE VIEW AllOrderItemsData AS
+SELECT
+    oi.OrderItemID,
+    oi.OrderNumber,
+    oi.Quantity,
+    p.ProductID,
+    p.SKU,
+    p.ProductName,
+    p.Cost,
+    c.CategoryName,
+    u.UserID,
+    u.UserName,
+    o.OrderID,
+    o.OrderDate,
+    o.OrderStatus
+FROM OrderItems oi
+JOIN Products p ON oi.ProductID = p.ProductID
+JOIN Categories c ON p.CategoryID = c.CategoryID
+JOIN Orders o ON oi.OrderNumber = o.OrderNumber
+JOIN Users u ON o.UserID = u.UserID;
+
+
+--Погляд для замовлень
+CREATE VIEW OrdersView AS
+SELECT
+    o.OrderID,
+    o.OrderNumber,
+    o.OrderDate,
+    o.OrderStatus,
+    u.UserName,
+    u.ContactInfo,
+    SUM(oi.Quantity) AS TotalQuantity
+FROM
+    Orders o
+    JOIN Users u ON o.UserID = u.UserID
+    LEFT JOIN OrderItems oi ON o.OrderNumber = oi.OrderNumber
+GROUP BY
+o.OrderID,
+o.OrderNumber,
+o.OrderDate,
+o.OrderStatus,
+u.UserName,
+u.ContactInfo;
+
+
+--Погляд для постачальників
+CREATE VIEW SupplierDetails AS
+SELECT *
+FROM Suppliers;
+
+--Погляд для відвантажень
+CREATE VIEW ShipmentDetails AS
+SELECT
+    s.ShipmentID,
+    s.ShipmentNumber,
+    s.ShipmentDate,
+    s.ShipmentStatus,
+    o.OrderNumber,
+    o.OrderDate,
+    u.UserName AS CustomerName,
+    p.ProductID,
+    p.ProductName,
+    oi.Quantity
+FROM
+    Shipments s
+JOIN
+    Orders o ON s.OrderID = o.OrderID
+JOIN
+    Users u ON o.UserID = u.UserID
+JOIN
+    OrderItems oi ON o.OrderNumber = oi.OrderNumber
+JOIN
+    Products p ON oi.ProductID = p.ProductID;
+
+--Погляд для складів
+CREATE VIEW WarehousesView AS
+SELECT *
+FROM Warehouses;
+
+--Погляд для інвентаризації
+CREATE VIEW InventoryView AS
+SELECT
+    I.InventoryID,
+    I.ProductID,
+    P.SKU,
+    P.ProductName,
+    I.QuantityOnHand,
+    I.WarehouseID,
+    W.WarehouseName,
+    W.Location,
+    W.Capacity,
+    W.Availability,
+    I.InventoryDate
+FROM
+    Inventory I
+JOIN
+    Products P ON I.ProductID = P.ProductID
+JOIN
+    Warehouses W ON I.WarehouseID = W.WarehouseID;
