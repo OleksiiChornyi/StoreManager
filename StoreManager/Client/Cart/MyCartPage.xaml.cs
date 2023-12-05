@@ -24,7 +24,7 @@ namespace StoreManager.Client.Cart
     /// </summary>
     public partial class MyCartPage : Page
     {
-        StoreCartInteraction myCart;
+        readonly StoreCartInteraction myCart;
         public MyCartPage(StoreCartInteraction myCart)
         {
             InitializeComponent();
@@ -38,14 +38,12 @@ namespace StoreManager.Client.Cart
                 return;
             }
 
-            ContextMenu contextMenu = menuItem.Parent as ContextMenu;
-            if (contextMenu == null)
+            if (!(menuItem.Parent is ContextMenu contextMenu))
             {
                 return;
             }
 
-            DataGrid dataGrid = contextMenu.PlacementTarget as DataGrid;
-            if (dataGrid == null)
+            if (!(contextMenu.PlacementTarget is DataGrid dataGrid))
             {
                 return;
             }
@@ -91,8 +89,7 @@ namespace StoreManager.Client.Cart
         {
             if (value != null)
             {
-                int res = 0;
-                if (int.TryParse(value.ToString(), out res))
+                if (int.TryParse(value.ToString(), out int res))
                     return res > 0;
                 return false;
             }

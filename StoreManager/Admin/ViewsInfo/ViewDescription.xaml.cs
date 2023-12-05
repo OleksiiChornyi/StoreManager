@@ -21,7 +21,7 @@ namespace StoreManager.Admin.ViewsInfo
     /// </summary>
     public partial class ViewDescription : Window
     {
-        AdminStoreInteraction admin;
+        readonly AdminStoreInteraction admin;
         public ViewDescription(AdminStoreInteraction admin)
         {
             InitializeComponent();

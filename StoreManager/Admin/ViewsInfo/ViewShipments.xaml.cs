@@ -20,7 +20,7 @@ namespace StoreManager.Admin.ViewsInfo
     /// </summary>
     public partial class ViewShipments : Window
     {
-        AdminStoreInteraction admin;
+        readonly AdminStoreInteraction admin;
         public ViewShipments(AdminStoreInteraction admin)
         {
             InitializeComponent();

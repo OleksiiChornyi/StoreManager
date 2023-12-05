@@ -21,7 +21,7 @@ namespace StoreManager.Admin.Interactions
     /// </summary>
     public partial class Create_Warehouses : Window
     {
-        AdminStoreInteraction admin;
+        readonly AdminStoreInteraction admin;
         public Create_Warehouses(AdminStoreInteraction admin)
         {
             InitializeComponent();

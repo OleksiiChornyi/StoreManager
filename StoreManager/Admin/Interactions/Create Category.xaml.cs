@@ -21,7 +21,7 @@ namespace StoreManager.Admin.Interactions
     /// </summary>
     public partial class Create_Category : Window
     {
-        AdminStoreInteraction admin;
+        readonly AdminStoreInteraction admin;
         public Create_Category(AdminStoreInteraction admin)
         {
             InitializeComponent();

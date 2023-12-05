@@ -20,7 +20,7 @@ namespace StoreManager.Admin.ViewsInfo
     /// </summary>
     public partial class ViewCategories : Window
     {
-        AdminStoreInteraction admin;
+        readonly AdminStoreInteraction admin;
         public ViewCategories(AdminStoreInteraction admin)
         {
             InitializeComponent();

@@ -26,7 +26,7 @@ namespace StoreManager.Admin
     /// </summary>
     public partial class AdminPage : Page
     {
-        private AdminStoreInteraction account;
+        private readonly AdminStoreInteraction account;
         public AdminPage(string UserName, string password, string contactInfo = "")
         {
             InitializeComponent();
@@ -157,6 +157,12 @@ namespace StoreManager.Admin
         {
             ViewUsers viewUsersForm = new ViewUsers(account);
             viewUsersForm.Show();
+        }
+
+        private void UpdateProductsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Update_products updateProductsFrom = new Update_products(account);
+            updateProductsFrom.Show();
         }
     }
 }

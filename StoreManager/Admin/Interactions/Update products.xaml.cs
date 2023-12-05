@@ -1,7 +1,6 @@
 ﻿using StoreManager.Abstract.Classes;
-using StoreManager.Abstract.Interfaces;
+using StoreManager.Client;
 using StoreManager.Client.Cart;
-using StoreManager.Guest;
 using StoreManager.SignPages;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,12 +22,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace StoreManager.Client
+namespace StoreManager.Admin.Interactions
 {
     /// <summary>
-    /// Interaction logic for ClientPage.xaml
+    /// Interaction logic for Update_products.xaml
     /// </summary>
-    public partial class ClientPage : Page
+    public partial class Update_products : Window
     {
         private enum sortStyle { up, down, cencel }
         private bool _isSortedPrice = false;
@@ -65,73 +64,26 @@ namespace StoreManager.Client
         }
         private List<ImageItem> imageItems = new List<ImageItem>();
         private List<ImageItem> myChangeImageItems = new List<ImageItem>();
-        private readonly ClientStoreInteraction account;
-        private readonly StoreCartInteraction myCart;
-        public ClientPage(string UserName = "Guest", string password = "1111", string contactInfo = "", Role userRole = Role.guest)
+        AdminStoreInteraction admin;
+
+        public Update_products(AdminStoreInteraction admin)
         {
             InitializeComponent();
-            switch (userRole)
-            {
-                case Role.client:
-                    account = new StoreForClient(UserName, password, contactInfo, userRole);
-                    break;
-                case Role.guest:
-                    account = new StoreForGuest(UserName, password, contactInfo, userRole);
-                    break;
-                default:
-                    break;
-            }
-            if (account == null || !account.isOk)
-            {
-                if (account.isExist)
-                {
-                    MessageBox.Show("Користувач з таким ім'ям вже існує!");
-                }
-                else
-                {
-                    MessageBox.Show("Виникла якась помилка!\nСпробуйте ще раз");
-                }
-            }
-            else
-            {
-                ChangeProductList();
-                myCart = new MyCart(account);
-
-                DataTable categoriesTable = account.GetDataFromView("ProductsCategoriesView");
-                foreach (DataRow row in categoriesTable.Rows)
-                {
-                    ComboBoxItem item = new ComboBoxItem();
-                    item.Content = row[1];
-                    item.ToolTip = row[0];
-                    ComboBoxSortCategories.Items.Add(item);
-                }
-            }
+            this.admin = admin;
         }
 
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (account.myRole == Role.guest)
+            ChangeProductList();
+
+            DataTable categoriesTable = admin.GetDataFromView("ProductsCategoriesView");
+            foreach (DataRow row in categoriesTable.Rows)
             {
-                ButtonCart.IsEnabled = false;
-                ProductList.ContextMenu = null;
+                ComboBoxItem item = new ComboBoxItem();
+                item.Content = row[1];
+                item.ToolTip = row[0];
+                ComboBoxSortCategories.Items.Add(item);
             }
-            else
-            {
-                ButtonCart.IsEnabled = true;
-            }
-        }
-
-        public bool GetAutorization()
-        {
-            if (account == null)
-                return false;
-            return account.isOk;
-        }
-
-        private void ButtonExit_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService?.Navigate(new MainSignPage());
         }
 
         private async Task ChangeProductList()
@@ -140,7 +92,7 @@ namespace StoreManager.Client
             ComboBoxSortCategories.SelectedIndex = -1;
             ProductList.ItemsSource = new ObservableCollection<ImageItem>();
             imageItems = new List<ImageItem>();
-            DataTable productTable = await Task.Run(() => account.GetDataFromView("ProductCategoryIdView"));
+            DataTable productTable = await Task.Run(() => admin.GetDataFromView("ProductCategoryIdView"));
             foreach (DataRow row in productTable.Rows)
             {
                 if (row[0] != null)
@@ -163,7 +115,6 @@ namespace StoreManager.Client
                     else
                         imageItem.descriptionId = null;
                     imageItems.Add(imageItem);
-                    imageItems.Add(imageItem);
                     myChangeImageItems.Add(imageItem);
                     ((ObservableCollection<ImageItem>)ProductList.ItemsSource).Add(imageItem);
                 }
@@ -179,47 +130,14 @@ namespace StoreManager.Client
             }
         }
 
-        private void ProductList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ComboBoxSortCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (((System.Windows.Controls.Primitives.Selector)sender).SelectedValue == null)
+            ComboBoxItem selectedItem = (ComboBoxItem)ComboBoxSortCategories.SelectedItem;
+            if (selectedItem == null)
                 return;
-            if (!(sender is ListView listView)) return;
-            var selectedItem = listView.SelectedValue;
-            if (selectedItem == null) return;
-            Point mousePosition = e.GetPosition(listView);
-            var elementUnderMouse = listView.InputHitTest(mousePosition) as FrameworkElement;
-            if (elementUnderMouse.DataContext == null || elementUnderMouse.DataContext.GetType() != typeof(ImageItem))
-            {
-                return;
-            }
-            ClientDescriptionView clientDescriptionViewForm = new ClientDescriptionView(account, myCart, (ImageItem)((System.Windows.Controls.Primitives.Selector)sender).SelectedItem);
-            clientDescriptionViewForm.Show();
-        }
-
-        private void MenuItemAddshoppingCart_Click(object sender, RoutedEventArgs e)
-        {
-            if (account.myRole == Role.guest)
-                return;
-
-            if (ProductList.SelectedItem == null)
-                return;
-
-            var selectedItem = (ImageItem)ProductList.SelectedItem;
-
-            if (selectedItem != null)
-            {
-                myCart.AddOrUpdateItem(selectedItem.productId, selectedItem.Name, selectedItem.categoryName, 1);
-            }
-        }
-
-        private async void ButtonUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            await ChangeProductList();
-        }
-
-        private void ButtonCart_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService?.Navigate(new MyCartPage(myCart));
+            ComboBoxSortGetDescription.SelectedIndex = -1;
+            string selectedToolTipContent = selectedItem.ToolTip.ToString();
+            SelectCategoryId(int.Parse(selectedToolTipContent));
         }
 
         private void SortByDescription(sortStyle sortGetDescription = sortStyle.cencel)
@@ -237,6 +155,26 @@ namespace StoreManager.Client
                 default:
                     myChangeImageItems = imageItems;
                     ProductList.ItemsSource = new ObservableCollection<ImageItem>(myChangeImageItems);
+                    break;
+            }
+        }
+
+        private void ComboBoxSortGetDescription_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int selectedIndex = ComboBoxSortGetDescription.SelectedIndex;
+            if (selectedIndex == -1)
+                return;
+            ComboBoxSortCategories.SelectedIndex = -1;
+            switch (selectedIndex)
+            {
+                case 1:
+                    SortByDescription(sortStyle.up);
+                    break;
+                case 2:
+                    SortByDescription(sortStyle.down);
+                    break;
+                default:
+                    SortByDescription(sortStyle.cencel);
                     break;
             }
         }
@@ -269,33 +207,39 @@ namespace StoreManager.Client
             }
         }
 
-        private void ComboBoxSortCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ButtonUpdate_Click(object sender, RoutedEventArgs e)
         {
-            ComboBoxItem selectedItem = (ComboBoxItem)ComboBoxSortCategories.SelectedItem;
-            if (selectedItem == null)
-                return;
-            ComboBoxSortGetDescription.SelectedIndex = -1;
-            string selectedToolTipContent = selectedItem.ToolTip.ToString();
-            SelectCategoryId(int.Parse(selectedToolTipContent));
+            await ChangeProductList();
         }
 
-        private void ComboBoxSortGetDescription_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ProductList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            int selectedIndex = ComboBoxSortGetDescription.SelectedIndex;
-            if (selectedIndex == -1) 
+            if (((System.Windows.Controls.Primitives.Selector)sender).SelectedValue == null)
                 return;
-            ComboBoxSortCategories.SelectedIndex = -1;
-            switch (selectedIndex)
+            if (!(sender is ListView listView)) return;
+            var selectedItem = listView.SelectedValue;
+            if (selectedItem == null) return;
+            Point mousePosition = e.GetPosition(listView);
+            var elementUnderMouse = listView.InputHitTest(mousePosition) as FrameworkElement;
+            if (elementUnderMouse.DataContext == null || elementUnderMouse.DataContext.GetType() != typeof(ImageItem))
             {
-                case 1:
-                    SortByDescription(sortStyle.up);
-                    break;
-                case 2:
-                    SortByDescription(sortStyle.down);
-                    break;
-                default:
-                    SortByDescription(sortStyle.cencel);
-                    break;
+                return;
+            }
+            ChangeDataProduct changeDataProductForm = new ChangeDataProduct(admin, (ImageItem)((System.Windows.Controls.Primitives.Selector)sender).SelectedItem);
+            changeDataProductForm.ShowDialog();
+            await ChangeProductList();
+            /*ClientDescriptionView clientDescriptionViewForm = new ClientDescriptionView(account, myCart, (ImageItem)((System.Windows.Controls.Primitives.Selector)sender).SelectedItem);
+            clientDescriptionViewForm.Show();*/
+        }
+
+        private async void MenuItemDeleteItem_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = (ImageItem)ProductList.SelectedItem;
+
+            if (selectedItem != null)
+            {
+                if (admin.DeleteProduct(selectedItem.productId))
+                    await ChangeProductList();
             }
         }
     }

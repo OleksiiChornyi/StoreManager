@@ -199,3 +199,26 @@ BEGIN
     VALUES (v_InventoryID, p_ProductID, p_QuantityOnHand, p_WarehouseID, SYSDATE);
 END;
 /
+
+--Оновлення даних продукту
+CREATE OR REPLACE PROCEDURE UpdateProduct(
+    p_ProductID NUMBER,
+    p_ProductName VARCHAR2,
+    p_DescriptionID NUMBER,
+    p_ProductImage BLOB,
+    p_ProductImageFileName VARCHAR2,
+    p_Cost NUMBER,
+    p_CategoryID NUMBER
+) IS
+BEGIN
+    UPDATE Products
+    SET ProductName = p_ProductName,
+        DescriptionID = p_DescriptionID,
+        ProductImage = p_ProductImage,
+        ProductImageFileName = p_ProductImageFileName,
+        Cost = p_Cost,
+        CategoryID = p_CategoryID
+    WHERE ProductID = p_ProductID;
+END;
+/
+

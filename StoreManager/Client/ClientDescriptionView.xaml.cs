@@ -25,9 +25,9 @@ namespace StoreManager.Client
     /// </summary>
     public partial class ClientDescriptionView : Window
     {
-        ClientStoreInteraction client;
-        StoreCartInteraction myCart;
-        ImageItem data;
+        readonly ClientStoreInteraction client;
+        readonly StoreCartInteraction myCart;
+        readonly ImageItem data;
         public ClientDescriptionView(ClientStoreInteraction client, StoreCartInteraction myCart, ImageItem imageItem)
         {
             InitializeComponent();
@@ -88,6 +88,7 @@ namespace StoreManager.Client
         private void AddOrderItem_Click(object sender, RoutedEventArgs e)
         {
             myCart.AddOrUpdateItem(data.productId, data.Name, data.categoryName, 1);
+            MessageBox.Show("Товар додано");
         }
     }
 }

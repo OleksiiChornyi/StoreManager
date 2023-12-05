@@ -4,12 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -20,64 +21,42 @@ using System.Windows.Shapes;
 namespace StoreManager.Admin.Interactions
 {
     /// <summary>
-    /// Interaction logic for Create_product.xaml
+    /// Interaction logic for ChangeDataProduct.xaml
     /// </summary>
-    public partial class Create_product : Window
+    public partial class ChangeDataProduct : Window
     {
         readonly AdminStoreInteraction admin;
+        readonly ImageItem product;
         string filePath = string.Empty;
-
-        public Create_product(AdminStoreInteraction admin)
+        public ChangeDataProduct(AdminStoreInteraction admin, ImageItem imageItem)
         {
             InitializeComponent();
             this.admin = admin;
+            this.product = imageItem;
         }
-
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            ProductNameTextBlock.Text = product.Name;
             DataTable categoriesTable = admin.GetDataFromView("ProductsCategoriesView");
             foreach (DataRow row in categoriesTable.Rows)
             {
-                ComboBoxItem item = new ComboBoxItem();
-                item.Content = row[1];
-                item.ToolTip = row[0];
+                ComboBoxItem item = new ComboBoxItem
+                {
+                    Content = row[1],
+                    ToolTip = row[0]
+                };
                 comboBoxCategories.Items.Add(item);
             }
             DataTable descriptionsTable = admin.GetDataFromView("ProductsDescriptionsView");
             foreach (DataRow row in descriptionsTable.Rows)
             {
-                ComboBoxItem item = new ComboBoxItem();
-                item.Content = row[1];
-                item.ToolTip = row[0];
+                ComboBoxItem item = new ComboBoxItem
+                {
+                    Content = row[1],
+                    ToolTip = row[0]
+                };
                 comboBoxDescriptions.Items.Add(item);
-            }
-        }
-
-        private void CreateProductButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(filePath))
-            {
-                MessageBox.Show("Необхідно також обрати зображення продукту");
-                return;
-            }
-            var selected = comboBoxCategories.SelectedItem as ComboBoxItem;
-            if (selected != null)
-            {
-                int categoryId = int.Parse(selected.ToolTip.ToString());
-
-                selected = comboBoxDescriptions.SelectedItem as ComboBoxItem;
-                if (selected != null)
-                {
-                    int descriptionId = int.Parse(selected.ToolTip.ToString());
-                    admin.CreateProduct(ProductNameTextBox.Text, int.Parse(ProductCostTextBox.Text), categoryId, filePath, descriptionId);
-                }
-                else
-                {
-                    admin.CreateProduct(ProductNameTextBox.Text, int.Parse(ProductCostTextBox.Text), categoryId, filePath, null);
-                }
-                MessageBox.Show("Продукт створено");
-                this.Close();
             }
         }
 
@@ -140,19 +119,47 @@ namespace StoreManager.Admin.Interactions
                 CreateProductImageButton.Content = System.IO.Path.GetFileName(filePath);
             }
         }
+
+        private void UpdateProductButton_Click(object sender, RoutedEventArgs e)
+        {
+            string productName = product.Name;
+            if (!string.IsNullOrEmpty(ProductNameTextBox.Text))
+                productName = ProductNameTextBox.Text;
+            int cost = product.price;
+            if (!string.IsNullOrEmpty(ProductCostTextBox.Text))
+                cost = int.Parse(ProductCostTextBox.Text);
+            int categoryId = product.categoryId;
+            if (comboBoxCategories.SelectedItem is ComboBoxItem selectedCategory)
+                categoryId = int.Parse(selectedCategory.ToolTip.ToString());
+
+            byte[] fileData = product.ImageBytes;
+            string fileName = product.fileNameImage;
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                fileData = File.ReadAllBytes(filePath);
+                fileName = System.IO.Path.GetFileName(filePath);
+            }
+            int? descriptionId = product.descriptionId;
+            if (comboBoxCategories.SelectedItem is ComboBoxItem selectedDescription)
+                descriptionId = int.Parse(selectedDescription.ToolTip.ToString());
+
+            if (admin.UpdateProduct(product.productId, productName, cost, categoryId, fileData, fileName, descriptionId))
+            {
+                MessageBox.Show("Продукт оновлено");
+            }
+            this.Close();
+        }
     }
-    public class CreateProductButtonIsEnebledConverter : IMultiValueConverter
+    public class UpdateProductButtonIsEnebledConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             foreach (var item in values)
             {
-                if (item is string val && string.IsNullOrEmpty(val.Replace(" ", "")))
-                    return false;
-                if (item == null)
-                    return false;
+                if (item is string val && !string.IsNullOrEmpty(val.Replace(" ", "")))
+                    return true;
             }
-            return true;
+            return false;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

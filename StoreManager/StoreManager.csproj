@@ -99,6 +99,9 @@
     <Compile Include="Admin\AdminPage.xaml.cs">
       <DependentUpon>AdminPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Admin\Interactions\ChangeDataProduct.xaml.cs">
+      <DependentUpon>ChangeDataProduct.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Admin\Interactions\Create Category.xaml.cs">
       <DependentUpon>Create Category.xaml</DependentUpon>
     </Compile>
@@ -119,6 +122,9 @@
     </Compile>
     <Compile Include="Admin\Interactions\Create Warehouses.xaml.cs">
       <DependentUpon>Create Warehouses.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Interactions\Update products.xaml.cs">
+      <DependentUpon>Update products.xaml</DependentUpon>
     </Compile>
     <Compile Include="Admin\StoreManagerForAdmin.cs" />
     <Compile Include="Admin\ViewsInfo\ViewCategories.xaml.cs">
@@ -179,6 +185,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Admin\Interactions\ChangeDataProduct.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Admin\Interactions\Create Category.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -204,6 +214,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Admin\Interactions\Create Warehouses.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Admin\Interactions\Update products.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -22,7 +22,7 @@ namespace StoreManager.Admin.ViewsInfo
     /// </summary>
     public partial class ViewUsers : Window
     {
-        AdminStoreInteraction admin;
+        readonly AdminStoreInteraction admin;
         public ViewUsers(AdminStoreInteraction admin)
         {
             InitializeComponent();

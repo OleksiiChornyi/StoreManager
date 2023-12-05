@@ -3,6 +3,7 @@ CREATE OR REPLACE VIEW ProductCategoryIdView AS
 SELECT
     p.ProductID,
     p.ProductName,
+    p.ProductImageFileName,
     p.ProductImage,
     p.Cost,
     c.CategoryID,

@@ -180,3 +180,21 @@ BEGIN
     RETURN v_cursor;
 END;
 /
+
+--Видалити продукт
+CREATE OR REPLACE FUNCTION DeleteProduct(p_productID NUMBER)
+RETURN BOOLEAN
+IS
+  v_success BOOLEAN := FALSE;
+BEGIN
+  DELETE FROM Products
+  WHERE ProductID = p_productID;
+
+  v_success := TRUE;
+
+  RETURN v_success;
+EXCEPTION
+  WHEN OTHERS THEN
+    RETURN FALSE;
+END;
+/

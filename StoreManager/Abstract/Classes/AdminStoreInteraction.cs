@@ -148,6 +148,68 @@ namespace StoreManager.Abstract.Classes
             }
         }
 
+        public bool UpdateProduct(int productID, string productName, int cost, int CategoryId, byte[] fileData, string fileName, int? descriptionID)
+        {
+            try
+            {
+                using (OracleConnection connection = new OracleConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (OracleCommand command = new OracleCommand("UpdateProduct", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.Add("p_ProductID", OracleDbType.Int64).Value = productID;
+                        command.Parameters.Add("p_ProductName", OracleDbType.Varchar2).Value = productName;
+                        command.Parameters.Add("p_DescriptionID", OracleDbType.Int64).Value = descriptionID;
+                        command.Parameters.Add("p_ProductImage", OracleDbType.Blob).Value = fileData;
+                        command.Parameters.Add("p_ProductImageFileName", OracleDbType.Varchar2).Value = fileName;
+                        command.Parameters.Add("p_Cost", OracleDbType.Int64).Value = cost;
+                        command.Parameters.Add("p_CategoryID", OracleDbType.Int64).Value = CategoryId;
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+                return true;
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Помилка: ", ex.Message);
+            }
+            return false;
+        }
+
+        public bool DeleteProduct(int productId)
+        {
+            bool result = false;
+
+            using (OracleConnection connection = new OracleConnection(connectionString))
+            {
+                connection.Open();
+                using (OracleCommand command = new OracleCommand("BEGIN :result := DeleteProduct(:p_productID); END;", connection))
+                {
+                    command.Parameters.Add("result", OracleDbType.Boolean, ParameterDirection.Output).Size = 100;
+                    command.Parameters.Add("p_productID", OracleDbType.Decimal).Value = productId;
+
+                    command.ExecuteNonQuery();
+
+                    result = ((OracleBoolean)command.Parameters["result"].Value).IsTrue;
+
+                    if (result)
+                    {
+                        MessageBox.Show("Предмет видалено");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Помилка у вдаленні предмета");
+                    }
+                }
+                connection.Close();
+            }
+            return result;
+        }
+
         public void CreateCategory(string categoryName, string CategoryDescription)
         {
             using (OracleConnection connection = new OracleConnection(connectionString))

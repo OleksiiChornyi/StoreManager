@@ -22,7 +22,7 @@ namespace StoreManager.Admin.Interactions
     /// </summary>
     public partial class Create_Inventory : Window
     {
-        AdminStoreInteraction admin;
+        readonly AdminStoreInteraction admin;
         public Create_Inventory(AdminStoreInteraction admin)
         {
             InitializeComponent();

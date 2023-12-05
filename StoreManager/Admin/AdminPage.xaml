@@ -44,5 +44,7 @@
         <Button x:Name="ViewOrdersButton" Grid.Row="3" Grid.Column="0" Content="Переглянути замовлення" Style="{StaticResource AdminPageViewBtn}" Click="ViewOrdersButton_Click"/>
         <Button x:Name="ViewOrderItemsButton" Grid.Row="3" Grid.Column="1" Content="Переглянути товари-замовлення" Style="{StaticResource AdminPageViewBtn}" Click="ViewOrderItemsButton_Click"/>
         <Button x:Name="ViewUsersItemsButton" Grid.Row="3" Grid.Column="2" Content="Переглянути користувачів" Style="{StaticResource AdminPageViewBtn}" Click="ViewUsersItemsButton_Click"/>
+
+        <Button x:Name="UpdateProductsButton" Grid.Row="3" Grid.Column="3" Content="Оновити дані продуктів" Style="{StaticResource AdminPageUpdateBtn}" Click="UpdateProductsButton_Click"/>
     </Grid>
 </Page>

@@ -21,7 +21,7 @@ namespace StoreManager.Admin.ViewsInfo
     /// </summary>
     public partial class ViewProducts : Window
     {
-        AdminStoreInteraction admin;
+        readonly AdminStoreInteraction admin;
         public ViewProducts(AdminStoreInteraction admin)
         {
             InitializeComponent();

@@ -22,7 +22,7 @@ namespace StoreManager.Admin.Interactions
     /// </summary>
     public partial class Create_Shipments : Window
     {
-        AdminStoreInteraction admin;
+        readonly AdminStoreInteraction admin;
         public Create_Shipments(AdminStoreInteraction admin)
         {
             InitializeComponent();
@@ -35,17 +35,18 @@ namespace StoreManager.Admin.Interactions
             DataTable ordersTable = admin.GetDataFromView("ShipmentsOrdersView ");
             foreach (DataRow row in ordersTable.Rows)
             {
-                ComboBoxItem item = new ComboBoxItem();
-                item.Content = row[1];
-                item.ToolTip = row[0];
+                ComboBoxItem item = new ComboBoxItem
+                {
+                    Content = row[1],
+                    ToolTip = row[0]
+                };
                 comboBoxOrders.Items.Add(item);
             }
         }
 
         private void CreateShipmentsButton_Click(object sender, RoutedEventArgs e)
         {
-            var selected = comboBoxOrders.SelectedItem as ComboBoxItem;
-            if (selected != null)
+            if (comboBoxOrders.SelectedItem is ComboBoxItem selected)
             {
                 int OrderId = int.Parse(selected.ToolTip.ToString());
 
