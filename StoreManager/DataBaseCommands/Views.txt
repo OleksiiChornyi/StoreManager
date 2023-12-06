@@ -191,3 +191,25 @@ JOIN
     Products P ON I.ProductID = P.ProductID
 JOIN
     Warehouses W ON I.WarehouseID = W.WarehouseID;
+
+--Погляд для платежів
+CREATE VIEW PaymentsView AS
+SELECT
+    p.PaymentID,
+    p.UserId,
+    u.UserName,
+    o.OrderNumber,
+    o.OrderDate,
+    p.CashID,
+    p.BankCardID,
+    bc.BankNumber
+FROM
+    Payments p
+JOIN
+    Users u ON p.UserId = u.UserID
+JOIN
+    Orders o ON p.OrderNumber = o.OrderNumber
+LEFT JOIN
+    Cash c ON p.CashID = c.CashID
+LEFT JOIN
+    BankCard bc ON p.BankCardID = bc.BankCardID;

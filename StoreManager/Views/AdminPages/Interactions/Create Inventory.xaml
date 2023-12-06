@@ -1,0 +1,43 @@
+﻿<Window x:Class="StoreManager.Views.AdminPages.Interactions.Create_Inventory"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StoreManager.Views.AdminPages.Interactions"
+        xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters"
+        mc:Ignorable="d"
+        Title="Create Inventory" Height="450" Width="800" Loaded="Window_Loaded">
+    <Window.Resources>
+        <conv:CheckTextAndComboBoxConverter x:Key="CreateInventoryButtonIsEnebledConverter"/>
+    </Window.Resources>
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Style="{StaticResource MainTextBlockAdminPage}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Enter the inventory data"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" Grid.Row="1" Grid.Column="0" Text="Select a product name"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" Grid.Row="2" Grid.Column="0" Text="Choose a warehouse"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" Grid.Row="3" Grid.Column="0" Text="Keep track of the amount of product in stock"/>
+        <ComboBox x:Name="comboBoxProductName" Grid.Row="1" Grid.Column="1" Style="{StaticResource ProductComboBoxStyle}"/>
+        <ComboBox x:Name="comboBoxWarehousesName" Grid.Row="2" Grid.Column="1" Style="{StaticResource ProductComboBoxStyle}"/>
+        <TextBox x:Name="QuantityOnHandTextBox" Grid.Row="3" Grid.Column="1" Style="{StaticResource SomeCreateTexBox}" PreviewTextInput="QuantityOnHandTextBox_PreviewTextInput"/>
+        <Button x:Name="CreateInventoryButton" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignUpBtn}" Content="Add inventory" Click="CreateInventoryButton_Click">
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource CreateInventoryButtonIsEnebledConverter}">
+                    <Binding ElementName="comboBoxProductName" Path="SelectedItem"/>
+                    <Binding ElementName="comboBoxWarehousesName" Path="SelectedItem"/>
+                    <Binding ElementName="QuantityOnHandTextBox" Path="Text"/>
+                </MultiBinding>
+            </Button.IsEnabled>
+        </Button>
+    </Grid>
+</Window>

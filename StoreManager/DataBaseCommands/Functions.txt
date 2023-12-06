@@ -157,29 +157,45 @@ EXCEPTION
 END GetProductImageByID;
 /
 
---Функція для детального розгляду товарів:
-CREATE OR REPLACE FUNCTION GetProductDetails(p_ProductID NUMBER)
+--Функція для назви файлу та зображення товару:
+create or replace FUNCTION GetProductImage(p_ProductID NUMBER)
 RETURN SYS_REFCURSOR
 IS
     v_cursor SYS_REFCURSOR;
 BEGIN
     OPEN v_cursor FOR
         SELECT
-            p.ProductName,
-            p.Cost,
-            p.DescriptionID,
             p.ProductImage,
-            c.CategoryName,
-            c.CategoryDescription
+            p.ProductImageFileName
         FROM
             Products p
-            JOIN Categories c ON p.CategoryID = c.CategoryID
         WHERE
             p.ProductID = p_ProductID;
 
     RETURN v_cursor;
 END;
 /
+
+--Функція для назви файлу та даних цього файлу:
+CREATE OR REPLACE FUNCTION GetDescriptionData(
+    p_DescriptionID NUMBER
+) RETURN SYS_REFCURSOR
+IS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+        SELECT
+            d.FileData,
+            d.FileName
+        FROM
+            Descriptions d
+        WHERE
+            d.DescriptionID = p_DescriptionID;
+
+    RETURN v_cursor;
+END;
+/
+
 
 --Видалити продукт
 CREATE OR REPLACE FUNCTION DeleteProduct(p_productID NUMBER)
@@ -198,3 +214,37 @@ EXCEPTION
     RETURN FALSE;
 END;
 /
+
+--Отримати наступний айді готівки
+CREATE OR REPLACE FUNCTION GetNextCashID RETURN NUMBER IS
+    v_CashID NUMBER;
+BEGIN
+    -- Используем секвенцию для получения нового CashID
+    SELECT CashSeq.NEXTVAL INTO v_CashID FROM DUAL;
+    RETURN v_CashID;
+END GetNextCashID;
+
+--Отримати наступний айді банківскьої карти
+CREATE OR REPLACE FUNCTION GetNextBackCardID RETURN NUMBER IS
+    v_BankCardID NUMBER;
+BEGIN
+    -- Используем секвенцию для получения нового BankCardID
+    SELECT BankCardSeq.NEXTVAL INTO v_BankCardID FROM DUAL;
+    RETURN v_BankCardID;
+END GetNextBackCardID;
+
+--Отримати назву опису по айді
+create or replace FUNCTION GetDescriptionName(d_descriptionID NUMBER)
+RETURN VARCHAR2
+IS
+  v_descriptionFileName VARCHAR2(50);
+BEGIN
+  SELECT FileName INTO v_descriptionFileName
+  FROM Descriptions
+  WHERE DescriptionID = d_descriptionID;
+
+  RETURN v_descriptionFileName;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RETURN NULL;
+END;

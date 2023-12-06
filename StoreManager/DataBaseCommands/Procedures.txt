@@ -27,7 +27,8 @@ END;
 -- Процедура для створення нової категорії
 CREATE OR REPLACE PROCEDURE AddCategory(
     p_CategoryName VARCHAR2,
-    p_CategoryDescription VARCHAR2
+    p_CategoryDescription VARCHAR2,
+    p_ParentCategoryID NUMBER
 ) IS
     v_CategoryID NUMBER;
 BEGIN
@@ -35,8 +36,8 @@ BEGIN
     SELECT CategoriesSeq.NEXTVAL INTO v_CategoryID FROM DUAL;
 
     -- Додаємо нову категорію в таблицю Categories
-    INSERT INTO Categories (CategoryID, CategoryName, CategoryDescription)
-    VALUES (v_CategoryID, p_CategoryName, p_CategoryDescription);
+    INSERT INTO Categories (CategoryID, CategoryName, CategoryDescription, ParentCategoryID )
+    VALUES (v_CategoryID, p_CategoryName, p_CategoryDescription, p_ParentCategoryID);
 END;
 /
 
@@ -110,6 +111,49 @@ BEGIN
     -- Додаємо новий запис в таблицю Orders
     INSERT INTO Orders (OrderID, OrderNumber, OrderDate, OrderStatus, UserID)
     VALUES (v_OrderID, p_OrderNumber, SYSDATE, 'Creating', p_UserID);
+END;
+/
+
+-- Процедура для створення нової готівки
+create or replace PROCEDURE AddCash(
+    p_OrderNumber NUMBER,
+    p_CashID NUMBER
+) IS
+BEGIN
+    INSERT INTO Cash (CASHID, OrderNumber)
+    VALUES (p_CashID, p_OrderNumber);
+END;
+/
+
+-- Процедура для створення нової банківскьої карти
+create or replace PROCEDURE AddBankCard(
+    p_OrderNumber NUMBER,
+    p_CardNumber VARCHAR2,
+    p_BankCardID NUMBER
+) IS
+BEGIN
+    -- Додаємо новий запис в таблицю BankCard
+    INSERT INTO BankCard (BankCardID, BankNumber, OrderNumber)
+    VALUES (p_BankCardID, p_CardNumber, p_OrderNumber);
+END;
+/
+
+-- Процедура для створення нової оплати
+create or replace PROCEDURE AddPayment(
+    p_UserId NUMBER,
+    p_OrderNumber NUMBER,
+    p_TotalPrice NUMBER,
+    p_CashID NUMBER,
+    p_BankCardID NUMBER
+) IS
+    v_PaymentID NUMBER;
+BEGIN
+    -- Використовуємо секвенцію для отримання нового PaymentID
+    SELECT PaymentSeq.NEXTVAL INTO v_PaymentID FROM DUAL;
+
+    -- Додаємо новий запис в таблицю Payments
+    INSERT INTO Payments (PaymentID, UserId, OrderNumber, TotalPrice, CashID, BankCardID)
+    VALUES (v_PaymentID, p_UserId, p_OrderNumber, p_TotalPrice, p_CashID, p_BankCardID);
 END;
 /
 

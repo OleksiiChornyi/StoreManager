@@ -1,0 +1,42 @@
+﻿<Window x:Class="StoreManager.Views.AdminPages.Interactions.Create_Shipments"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StoreManager.Views.AdminPages.Interactions"
+        xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters"
+        mc:Ignorable="d"
+        Title="Create Shipments" Height="450" Width="800" Loaded="Window_Loaded">
+    <Window.Resources>
+        <conv:CheckTextAndComboBoxConverter x:Key="CreateShipmentsButtonIsEnebledConverter"/>
+    </Window.Resources>
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Style="{StaticResource MainTextBlockAdminPage}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Select the shipment data"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" Grid.Row="1" Grid.Column="0" Text="Select the order number"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" Grid.Row="2" Grid.Column="0" Text="Select the shipment status"/>
+        <ComboBox x:Name="comboBoxOrders" Grid.Row="1" Grid.Column="1" Style="{StaticResource ProductComboBoxStyle}"/>
+        <ComboBox x:Name="comboBoxStatus" Grid.Row="2" Grid.Column="1" Style="{StaticResource ProductComboBoxStyle}">
+            <ComboBoxItem Content="The order is leaving"></ComboBoxItem>
+            <ComboBoxItem Content="Order on the way"></ComboBoxItem>
+            <ComboBoxItem Content="The order has arrived"></ComboBoxItem>
+        </ComboBox>
+        <Button x:Name="CreateShipmentsButton" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignUpBtn}" Content="Create a shipment" Click="CreateShipmentsButton_Click">
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource CreateShipmentsButtonIsEnebledConverter}">
+                    <Binding ElementName="comboBoxOrders" Path="SelectedItem"/>
+                    <Binding ElementName="comboBoxStatus" Path="SelectedItem"/>
+                </MultiBinding>
+            </Button.IsEnabled>
+        </Button>
+    </Grid>
+</Window>
