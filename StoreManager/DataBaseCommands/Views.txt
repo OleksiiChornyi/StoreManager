@@ -213,3 +213,9 @@ LEFT JOIN
     Cash c ON p.CashID = c.CashID
 LEFT JOIN
     BankCard bc ON p.BankCardID = bc.BankCardID;
+
+--Погляд для айдиту
+CREATE VIEW AuditLogsDetails AS
+SELECT *
+FROM AuditLogs;
+/

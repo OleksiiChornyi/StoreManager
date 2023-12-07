@@ -175,5 +175,11 @@ namespace StoreManager.Views.AdminPages
             EmulateGuest emulateGuest = new EmulateGuest();
             emulateGuest.Show();
         }
+
+        private void ViewAuditLogsButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewAuditLogs viewAuditLogs = new ViewAuditLogs(account);
+            viewAuditLogs.Show();
+        }
     }
 }

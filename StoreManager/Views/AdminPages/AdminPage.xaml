@@ -45,9 +45,10 @@
         <Button x:Name="ViewOrderItemsButton" Grid.Row="3" Grid.Column="1" Content="View products on orders" Style="{StaticResource AdminPageViewBtn}" Click="ViewOrderItemsButton_Click"/>
         <Button x:Name="ViewUsersItemsButton" Grid.Row="3" Grid.Column="2" Content="View users" Style="{StaticResource AdminPageViewBtn}" Click="ViewUsersItemsButton_Click"/>
         <Button x:Name="ViewPaymentsButton" Grid.Row="3" Grid.Column="3" Content="View payments" Style="{StaticResource AdminPageViewBtn}" Click="ViewPaymentsButton_Click"/>
+        <Button x:Name="ViewAuditLogsButton" Grid.Row="3" Grid.Column="4" Content="View audit logs" Style="{StaticResource AdminPageViewBtn}" Click="ViewAuditLogsButton_Click"/>
         
-        <Button x:Name="UpdateProductsButton" Grid.Row="3" Grid.Column="4" Content="Update product data" Style="{StaticResource AdminPageUpdateBtn}" Click="UpdateProductsButton_Click"/>
+        <Button x:Name="UpdateProductsButton" Grid.Row="3" Grid.Column="5" Content="Update product data" Style="{StaticResource AdminPageUpdateBtn}" Click="UpdateProductsButton_Click"/>
 
-        <Button x:Name="EmulateGuest" Grid.Row="3" Grid.Column="5" Content="Emulate the guest" Style="{StaticResource AdminPageGuestBtn}" Click="EmulateGuest_Click"/>
+        <Button x:Name="EmulateGuest" Grid.Row="3" Grid.Column="6" Content="Emulate the guest" Style="{StaticResource AdminPageGuestBtn}" Click="EmulateGuest_Click"/>
     </Grid>
 </Page>

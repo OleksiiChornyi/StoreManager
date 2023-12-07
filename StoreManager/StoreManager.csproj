@@ -140,6 +140,9 @@
     <Compile Include="Views\AdminPages\Interactions\Update Products.xaml.cs">
       <DependentUpon>Update Products.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AdminPages\ViewsInfo\ViewAuditLogs.xaml.cs">
+      <DependentUpon>ViewAuditLogs.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AdminPages\ViewsInfo\ViewCategories.xaml.cs">
       <DependentUpon>ViewCategories.xaml</DependentUpon>
     </Compile>
@@ -238,6 +241,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AdminPages\Interactions\Update Products.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AdminPages\ViewsInfo\ViewAuditLogs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
