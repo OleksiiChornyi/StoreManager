@@ -75,8 +75,8 @@ BEGIN
     SELECT ProductsSeq.NEXTVAL INTO v_ProductID FROM DUAL;
 
     -- Додаємо новий товар в таблицю Products
-    INSERT INTO Products (ProductID, SKU, ProductName, DescriptionID, ProductImage, ProductImageFileName, Cost, CategoryID)
-    VALUES (v_ProductID, '', p_ProductName, p_DescriptionID, p_ProductImage, p_ProductImageFileName, p_Cost, p_CategoryID);
+    INSERT INTO Products (ProductID, SKU, ProductName, DescriptionID, ProductImage, ProductImageFileName, Cost, CategoryID, SalesCount)
+    VALUES (v_ProductID, '', p_ProductName, p_DescriptionID, p_ProductImage, p_ProductImageFileName, p_Cost, p_CategoryID, 0);
 END;
 /
 
