@@ -1,3 +1,50 @@
+CREATE OR REPLACE VIEW ProductCategoryDescriptionsView AS
+SELECT
+    P.ProductID,
+    P.SKU,
+    P.ProductName,
+    P.Cost,
+    P.SalesCount,
+    C.CategoryID,
+    C.CategoryName,
+    C.CategoryDescription,
+    D.DescriptionID,
+    D.FileName AS FileDescriptionName,
+    D.FileType AS FileDescriptionFileType,
+    D.FileExtension AS FileDescriptionFileExtension,
+    D.FileData,
+    D.UploadDate AS FileDescriptionUploadDate,
+    D.ModificationDate AS FileDescriptionModificationDate,
+    D.Info,
+    BC.ContentID,
+    BC.FileName AS FileBinaryContentName,
+    BC.FileType AS FileBinaryContentFileType,
+    BC.FileExtension AS FileBinaryContentFileExtension,
+    BC.UploadDate AS FileBinaryContentUploadDate,
+    BC.ModificationDate AS FileBinaryContentModificationDate,
+    BC.Content
+FROM
+Products P
+JOIN
+Categories C ON P.CategoryID = C.CategoryID
+JOIN
+Descriptions D ON P.DescriptionID = D.DescriptionID
+JOIN
+BinaryContent BC ON BC.ContentID = p.ContentID;
+
+CREATE OR REPLACE VIEW CategoryHierarchyView AS
+    SELECT 
+    CategoryID, 
+    ParentCategoryID,
+    CategoryName, 
+    CategoryDescription, 
+    CONNECT_BY_ROOT CategoryID AS RootCategoryID,
+    LEVEL AS CategoryLevel
+FROM Categories
+START WITH ParentCategoryID IS NULL
+CONNECT BY PRIOR CategoryID = ParentCategoryID;
+
+
 --Погляд для отримання продуктів для клієнта
 CREATE OR REPLACE VIEW ProductCategoryIdView AS
 SELECT
