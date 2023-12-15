@@ -1,12 +1,30 @@
+CREATE OR REPLACE PROCEDURE CreateBinaryContent(
+    p_ContentID OUT NUMBER,
+    p_FileName VARCHAR2,
+    p_FileType VARCHAR2,
+    p_FileExtension VARCHAR2,
+    p_Content BLOB
+) IS
+    v_ContentCount NUMBER;
+BEGIN
+    SELECT BinaryContentSeq.NEXTVAL INTO p_ContentID FROM DUAL;
+    INSERT INTO BinaryContent (ContentID, FileName, FileType, FileExtension, UploadDate, ModificationDate, Content)
+    VALUES (p_ContentID, p_FileName, p_FileType, p_FileExtension, SYSTIMESTAMP, SYSTIMESTAMP, p_Content);
+END;
+/
+
 -- Процедура для створення нового користувача та повернення айді користувача
 CREATE OR REPLACE PROCEDURE SignUp(
+    p_UserID OUT NUMBER,
     p_UserName VARCHAR2,
     p_PasswordHash VARCHAR2,
-    p_ContactInfo VARCHAR2,
-    p_UserRole VARCHAR2
+    p_Email VARCHAR2,
+    p_ContentID NUMBER,
+    p_UserRole VARCHAR2,
+    p_BirthDate DATE,
+    p_PhoneNumber VARCHAR2
 ) IS
     v_UserCount NUMBER;
-    v_UserID NUMBER;
 BEGIN
     -- Перевіряємо, чи існує користувач з введеним ім'ям
     SELECT COUNT(*) INTO v_UserCount
@@ -15,14 +33,47 @@ BEGIN
 
     IF v_UserCount = 0 THEN
         -- Використовуємо секвенцію для отримання нового UserID
-        SELECT UsersSeq.NEXTVAL INTO v_UserID FROM DUAL;
+        SELECT UsersSeq.NEXTVAL INTO p_UserID FROM DUAL;
 
         -- Додаємо нового користувача в таблицю Users
-        INSERT INTO Users (UserID, UserName, PasswordHash, ContactInfo, UserRole)
-        VALUES (v_UserID, p_UserName, p_PasswordHash, p_ContactInfo, p_UserRole);
+        INSERT INTO Users (UserID, UserName, PasswordHash, Email, ContentID,  UserRole, BirthDate, PhoneNumber, CreatingDate)
+        VALUES (p_UserID, p_UserName, p_PasswordHash, p_Email, p_ContentID, p_UserRole, p_BirthDate, p_PhoneNumber, SYSTIMESTAMP);
     END IF;
 END;
 /
+
+create or replace PROCEDURE SignIn(
+    p_UserName IN VARCHAR2,
+    p_PasswordHash IN VARCHAR2,
+    p_UserData OUT SYS_REFCURSOR,
+    p_ContentData OUT SYS_REFCURSOR
+) IS
+    v_UserID NUMBER;
+BEGIN
+    SELECT UserID INTO v_UserID
+    FROM Users
+    WHERE UserName = p_UserName AND PasswordHash = p_PasswordHash;
+
+    IF v_UserID IS NOT NULL THEN
+        OPEN p_UserData FOR
+            SELECT * FROM Users WHERE UserID = v_UserID;
+
+        DECLARE
+            v_ContentID NUMBER;
+        BEGIN
+            SELECT ContentID INTO v_ContentID
+            FROM Users
+            WHERE UserID = v_UserID;
+
+            IF v_ContentID IS NOT NULL THEN
+                OPEN p_ContentData FOR
+                    SELECT * FROM BinaryContent WHERE ContentID = v_ContentID;
+            END IF;
+        END;
+    END IF;
+END;
+
+
 
 -- Процедура для створення нової категорії
 CREATE OR REPLACE PROCEDURE AddCategory(

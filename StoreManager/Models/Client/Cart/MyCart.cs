@@ -9,6 +9,6 @@ namespace StoreManager.Models.Client.Cart
 {
     internal class MyCart : StoreCartInteraction
     {
-        public MyCart(ClientStoreInteraction client) : base(client) { }
+        public MyCart(UserStoreInteraction client) : base(client) { }
     }
 }

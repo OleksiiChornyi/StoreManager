@@ -1,4 +1,6 @@
-﻿using StoreManager.Models.Abstract.Classes;
+﻿using StoreManager.DB_classes;
+using StoreManager.Models.Abstract.Classes;
+using StoreManager.Models.Abstract.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,6 @@ namespace StoreManager.Models.Admin
 {
     internal class StoreManagerForAdmin : AdminStoreInteraction
     {
-        public StoreManagerForAdmin(string userName, string password, string contactInfo) : base(userName, password, contactInfo) { }
+        public StoreManagerForAdmin(User user) : base(user, true) { }
     }
 }

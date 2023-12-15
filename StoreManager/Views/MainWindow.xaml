@@ -4,11 +4,46 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StoreManager"
+        xmlns:viewSign="clr-namespace:StoreManager.Views.Sign"
+        xmlns:viewMain="clr-namespace:StoreManager.Views.StoreInteraction"
+        xmlns:viewClient="clr-namespace:StoreManager.Views.Client"
+        xmlns:viewAdmin="clr-namespace:StoreManager.Views.Admin"
+        xmlns:viewModel="clr-namespace:StoreManager.ViewModels"
+        xmlns:viewModelMain="clr-namespace:StoreManager.ViewModels.StoreInteraction"
+        xmlns:viewModelSign="clr-namespace:StoreManager.ViewModels.Sign"
+        xmlns:viewModelClient="clr-namespace:StoreManager.ViewModels.Client"
+        xmlns:viewModelAdmin="clr-namespace:StoreManager.ViewModels.Admin"
         mc:Ignorable="d"
         x:Name="StoreManagerWindow"
-        Title="Store Manager" Height="450" Width="800" Loaded="StoreManagerWindow_Loaded">
+        Title="Store Manager" Height="450" Width="800">
 
-    <Grid Style="{StaticResource MainGrid}">
-        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
-    </Grid>
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type TypeName=viewModelMain:MainStoreInterationViewModel}">
+            <viewMain:MainStoreInteractionView/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type TypeName=viewModelSign:MainSignViewModel}">
+            <viewSign:MainSignView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type TypeName=viewModelSign:SignInViewModel}">
+            <viewSign:SignInView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type TypeName=viewModelSign:SignUpViewModel}">
+            <viewSign:SignUpView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type TypeName=viewModelClient:ClientViewModel}">
+            <viewClient:CLientView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:AdminViewModel}">
+            <viewAdmin:AdminView/>
+        </DataTemplate>
+        
+    </Window.Resources>
+
+    <ContentControl Content="{Binding Navigation.CurrentView}"/>
+    
 </Window>

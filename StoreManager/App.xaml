@@ -1,57 +1,90 @@
 ﻿<Application x:Class="StoreManager.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:StoreManager"
-             StartupUri="Views/MainWindow.xaml">
+             xmlns:local="clr-namespace:StoreManager">
     <Application.Resources>
+
         <Style x:Key="MainGrid" TargetType="Grid">
-            <Setter Property="Background" Value="AliceBlue"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+            <Setter Property="Margin" Value="5"/>
         </Style>
         <Style x:Key="ButonBackStyle" TargetType="Button">
             <Setter Property="FontSize" Value="30"/>
-            <Setter Property="Background" Value="AliceBlue"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
-        
+
         <!--Styles for main sign page-->
         <Style x:Key="MainSignText" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="43"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
         </Style>
         <Style x:Key="MainSignBtn" TargetType="Button">
-            <Setter Property="Background" Value="AliceBlue"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="25"/>
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
         <!--Styles for sign up page-->
         <Style x:Key="SignUpText" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="35"/>
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
         </Style>
         <Style x:Key="SignUpTexBox" TargetType="TextBox">
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="35"/>
             <Setter Property="MaxLength" Value="20"/>
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style x:Key="SignUpPasswordBox" TargetType="PasswordBox">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="FontSize" Value="35"/>
+            <Setter Property="MaxLength" Value="20"/>
+            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style x:Key="SignUpContactInfoTexBox" TargetType="TextBox">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="FontSize" Value="35"/>
+            <Setter Property="MaxLength" Value="20"/>
+            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style x:Key="SignUpBtn" TargetType="Button">
-            <Setter Property="Background" Value="Green"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="#FFA8D39C"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="25"/>
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
 
@@ -63,76 +96,90 @@
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="Height" Value="Auto"/>
             <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style x:Key="TextBlockClientPage" TargetType="TextBlock">
-            <Setter Property="Margin" Value="5,0,0,0"/>
+            <Setter Property="Margin" Value="5"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style x:Key="ButtonCartStyle" TargetType="Button">
+            <Setter Property="Content" Value="🛒"/>
             <Setter Property="Background" Value="Gray"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="25"/>
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="Height" Value="50"/>
             <Setter Property="Width" Value="50"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style x:Key="ButtonUpdateStyle" TargetType="Button">
+            <Setter Property="Content" Value="↻"/>
             <Setter Property="Background" Value="LightBlue"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="35"/>
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="Height" Value="50"/>
             <Setter Property="Width" Value="50"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
         <!--Styles for Client Description window -->
         <Style x:Key="ClientDescriptionText" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="30"/>
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
         </Style>
 
 
         <!--Styles for Admin page-->
         <Style x:Key="MainTextBlockAdminPage" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="35"/>
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="5"/>
         </Style>
         <Style x:Key="TextBlockAdminPage" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="35"/>
-            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="5"/>
         </Style>
         <Style x:Key="ExitBtn" TargetType="Button">
-            <Setter Property="Background" Value="Red"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Content" Value="✖"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="25"/>
-            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="Height" Value="50"/>
             <Setter Property="Width" Value="50"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style x:Key="AdminPageCreateBtn" TargetType="Button">
-            <Setter Property="Background" Value="CornflowerBlue"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="Template">
@@ -144,12 +191,14 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style x:Key="AdminPageViewBtn" TargetType="Button">
-            <Setter Property="Background" Value="CadetBlue"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="Template">
@@ -161,12 +210,14 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style x:Key="AdminPageUpdateBtn" TargetType="Button">
-            <Setter Property="Background" Value="LightCoral"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="Template">
@@ -178,12 +229,14 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style x:Key="AdminPageGuestBtn" TargetType="Button">
-            <Setter Property="Background" Value="LightSalmon"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="Template">
@@ -195,20 +248,26 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style x:Key="ProductComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="Background" Value="AliceBlue"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
             <Setter Property="FontSize" Value="25"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style x:Key="SomeCreateTexBox" TargetType="TextBox">
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="FontSize" Value="35"/>
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
         <!--Styles for View Admin page-->
@@ -217,6 +276,9 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="AutoGenerateColumns" Value="True"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
     </Application.Resources>
 </Application>
+

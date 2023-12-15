@@ -1,5 +1,7 @@
-﻿using StoreManager.Models.Abstract.Classes;
+﻿using StoreManager.DB_classes;
+using StoreManager.Models.Abstract.Classes;
 using StoreManager.Models.Abstract.Interfaces;
+using StoreManager.Models.SQL_static;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +10,11 @@ using System.Threading.Tasks;
 
 namespace StoreManager.Models.Guest
 {
-    internal class StoreForGuest : ClientStoreInteraction, IStoreForGuest
+    internal class StoreForGuest : UserStoreInteraction, IStoreForGuest
     {
-        public StoreForGuest(string UserName, string password, string contactInfo, Role userRole) : base(UserName, password, contactInfo, userRole)
+        public StoreForGuest() : base(
+            User.CreateGuest(), 
+            true)
         { }
     }
 }

@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="StoreManager.Views.Help.DropView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StoreManager.Views.Help"
+             xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <conv:PercentToPaddingConverter x:Key="PercentToPaddingConverter" />
+    </UserControl.Resources>
+
+    <Border x:Name="dropBorder" 
+            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=ActualHeight}" 
+            Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=ActualWidth}" 
+            VerticalAlignment="Center" HorizontalAlignment="Center" AllowDrop="True" Drop="dropBorder_Drop">
+        <TextBlock Text="{Binding DropBorderText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                   Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight}" 
+                   Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualWidth}" 
+                   Padding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight, Converter={StaticResource PercentToPaddingConverter}, ConverterParameter=50}" 
+                   TextAlignment="Center"/>
+    </Border>
+
+</UserControl>

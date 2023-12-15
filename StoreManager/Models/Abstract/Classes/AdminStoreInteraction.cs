@@ -1,7 +1,7 @@
 ﻿using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
+using StoreManager.DB_classes;
 using StoreManager.Models.Abstract.Interfaces;
-using StoreManager.ViewModels.Data;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,153 +17,10 @@ using System.Windows.Controls;
 
 namespace StoreManager.Models.Abstract.Classes
 {
-    public abstract class AdminStoreInteraction : IStore
+    public abstract class AdminStoreInteraction : AllUsersInteractions
     {
-        private string _connectionString = ConfigurationManager.ConnectionStrings["conString"].ConnectionString;
-        private string connectionString
-        {
-            get { return _connectionString; }
-            set { _connectionString = ConfigurationManager.ConnectionStrings["conString"].ConnectionString; }
-        }
-
-        public Role myRole { get; set; }
-        public bool isOk { get; set; }
-        public bool isExist { get; set; }
-
-        protected AdminStoreInteraction(string userName, string password, string contactInfo)
-        {
-            myRole = Role.admin;
-            isExist = CheckUserExistence(userName);
-            if (contactInfo.Equals(string.Empty))
-            {
-                //Try Sign In
-                if (isExist)
-                {
-                    string passwordHash = HashPassword(password);
-                    SignInFunction(userName, passwordHash);
-                }
-            }
-            else
-            {
-                //Try SignUp
-                if (!isExist)
-                {
-                    string passwordHash = HashPassword(password);
-                    CallSignUpProcedure(userName, passwordHash, myRole.ToString(), contactInfo);
-                }
-            }
-        }
-
-        void SignInFunction(string userName, string passwordHash)
-        {
-            using (OracleConnection connection = new OracleConnection(connectionString))
-            {
-                connection.Open();
-
-                try
-                {
-                    using (OracleCommand command = new OracleCommand("SignIn", connection))
-                    {
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                        command.Parameters.Add("result", OracleDbType.Boolean, System.Data.ParameterDirection.ReturnValue);
-                        command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = userName;
-                        command.Parameters.Add("p_PasswordHash", OracleDbType.Varchar2).Value = passwordHash;
-
-                        command.ExecuteNonQuery();
-
-                        OracleBoolean oracleBooleanResult = (OracleBoolean)command.Parameters["result"].Value;
-
-                        bool signInResult = oracleBooleanResult.Equals(OracleBoolean.True);
-
-                        if (signInResult)
-                        {
-                            isOk = true;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                }
-
-                connection.Close();
-            }
-        }
-
-        void CallSignUpProcedure(string userName, string passwordHash, string userRole, string contactInfo)
-        {
-            using (OracleConnection connection = new OracleConnection(connectionString))
-            {
-                connection.Open();
-
-                try
-                {
-                    using (OracleCommand command = new OracleCommand("SignUp", connection))
-                    {
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                        command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = userName;
-                        command.Parameters.Add("p_PasswordHash", OracleDbType.Varchar2).Value = passwordHash;
-                        command.Parameters.Add("p_ContactInfo", OracleDbType.Varchar2).Value = contactInfo;
-                        command.Parameters.Add("p_UserRole", OracleDbType.Varchar2).Value = userRole;
-
-                        command.ExecuteNonQuery();
-                    }
-                    isOk = true;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                }
-
-                connection.Close();
-            }
-        }
-
-        static string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
-                byte[] hashBytes = sha256.ComputeHash(passwordBytes);
-                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-            }
-        }
-
-        private bool CheckUserExistence(string UserName)
-        {
-            using (OracleConnection connection = new OracleConnection(connectionString))
-            {
-
-                connection.Open();
-
-                try
-                {
-                    using (OracleCommand command = new OracleCommand("BEGIN :result := CheckUserExistence(:p_UserName); END;", connection))
-                    {
-                        command.Parameters.Add("result", OracleDbType.Boolean, System.Data.ParameterDirection.ReturnValue);
-                        command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = UserName;
-
-                        command.ExecuteNonQuery();
-
-                        OracleBoolean oracleBooleanResult = (OracleBoolean)command.Parameters["result"].Value;
-
-                        bool userExists = oracleBooleanResult.Equals(OracleBoolean.True);
-
-                        return userExists;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                }
-
-                connection.Close();
-            }
-
-            return true;
-        }
+        protected AdminStoreInteraction(User user, bool isSignIn) : base(user, isSignIn)
+        { }
 
         public bool UpdateProduct(int productID, string productName, int cost, int CategoryId, byte[] fileData, string fileName, int? descriptionID)
         {
@@ -295,140 +152,6 @@ namespace StoreManager.Models.Abstract.Classes
             }
 
             connection.Close();
-        }
-
-        public (string, byte[]) GetProductImage(int productID)
-        {
-            string fileName = string.Empty;
-            byte[] fileData = null;
-            using (OracleConnection connection = new OracleConnection(connectionString))
-            {
-                connection.Open();
-                try
-                {
-                    using (OracleCommand command = new OracleCommand("BEGIN :result := GetProductImage(:p_ProductID); END;", connection))
-                    {
-                        command.Parameters.Add("result", OracleDbType.RefCursor, ParameterDirection.ReturnValue);
-                        command.Parameters.Add("p_ProductID", OracleDbType.Int64).Value = productID;
-
-                        command.ExecuteNonQuery();
-
-                        using (OracleDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                fileName = reader["ProductImageFileName"].ToString();
-                                OracleBlob blob = reader.GetOracleBlob(0);
-
-                                fileData = new byte[blob.Length];
-                                blob.Read(fileData, 0, Convert.ToInt32(blob.Length));
-                            }
-                        }
-
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                }
-            }
-            return (fileName, fileData);
-        }
-
-        public (string, byte[]) GetDescriptionData(int descriptionID)
-        {
-            string fileName = string.Empty;
-            byte[] fileData = null;
-            using (OracleConnection connection = new OracleConnection(connectionString))
-            {
-                connection.Open();
-                try
-                {
-                    using (OracleCommand command = new OracleCommand("BEGIN :result := GetDescriptionData(:p_DescriptionID); END;", connection))
-                    {
-                        command.Parameters.Add("result", OracleDbType.RefCursor, ParameterDirection.ReturnValue);
-                        command.Parameters.Add("p_DescriptionID", OracleDbType.Int64).Value = descriptionID;
-
-                        command.ExecuteNonQuery();
-
-                        using (OracleDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                fileName = reader["FileName"].ToString();
-                                OracleBlob blob = reader.GetOracleBlob(0);
-
-                                fileData = new byte[blob.Length];
-                                blob.Read(fileData, 0, Convert.ToInt32(blob.Length));
-                            }
-                        }
-
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                }
-            }
-            return (fileName, fileData);
-        }
-
-        public DataTable GetDataFromView(string viewName)
-        {
-            DataTable resultTable = new DataTable();
-
-            using (OracleConnection connection = new OracleConnection(connectionString))
-            {
-                connection.Open();
-                try
-                {
-                    using (OracleCommand command = new OracleCommand($"SELECT * FROM {viewName}", connection))
-                    {
-                        using (OracleDataAdapter adapter = new OracleDataAdapter(command))
-                        {
-                            adapter.Fill(resultTable);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                }
-
-                connection.Close();
-            }
-            return resultTable;
-        }
-        public List<CategoryItem> CreateCategoryHierarchy()
-        {
-            List<CategoryItem> result = new List<CategoryItem>();
-
-            using (OracleConnection connection = new OracleConnection(connectionString))
-            {
-                connection.Open();
-
-                using (OracleCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = "SELECT CategoryID, ParentCategoryID FROM CategoryHierarchyView";
-
-                    using (OracleDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            CategoryItem categoryItem = new CategoryItem
-                            {
-                                CategoryID = reader.GetInt32(reader.GetOrdinal("CategoryID")),
-                                ParentCategoryID = reader.IsDBNull(reader.GetOrdinal("ParentCategoryID")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("ParentCategoryID"))
-                            };
-
-                            result.Add(categoryItem);
-                        }
-                    }
-                }
-            }
-
-            return result;
-
         }
 
         public DataTable GetCategoryHierarchy()
@@ -699,16 +422,6 @@ namespace StoreManager.Models.Abstract.Classes
 
                 connection.Close();
             }
-        }
-
-        public void SaveFileToDisk(string fileName, byte[] fileData)
-        {
-            File.WriteAllBytes(fileName, fileData);
-        }
-
-        public void OpenFileWithDefaultApplication(string fileName)
-        {
-            System.Diagnostics.Process.Start(fileName);
         }
     }
 }

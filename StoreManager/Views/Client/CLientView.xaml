@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="StoreManager.Views.Client.CLientView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StoreManager.Views.Client"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid Style="{StaticResource MainGrid}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="9*"/>
+            </Grid.RowDefinitions>
+            <Grid x:Name="MenuGrid" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="ComboBoxSortCategories" Grid.Row="0" Grid.Column="0" Style="{StaticResource ProductComboBoxStyle}" SelectedItem="{Binding SortCategoriesSelectedItem}"/>
+                <ComboBox x:Name="ComboBoxSortGetDescription" Grid.Row="0" Grid.Column="1" Style="{StaticResource ProductComboBoxStyle}" SelectedItem="{Binding SertGetDescriptions}">
+                    <ComboBoxItem Content="All products"/>
+                    <ComboBoxItem Content="With description"/>
+                    <ComboBoxItem Content="No description"/>
+                </ComboBox>
+                <Button x:Name="ButtonSortPrice" Content="By price" Grid.Row="0" Grid.Column="2" Style="{StaticResource MainSignBtn}" Command="{Binding SortPriceCommand}"/>
+                <Button x:Name="ButtonSortPopularity" Content="By popularity"  Grid.Row="0" Grid.Column="3" Style="{StaticResource MainSignBtn}" Command="{Binding SortPopularityCommand}"/>
+                <Button x:Name="ButtonUpdate" Grid.Row="0" Grid.Column="4" Style="{StaticResource ButtonUpdateStyle}" Command="{Binding UpdateCommand}"/>
+                <Button x:Name="ButtonCart" Grid.Row="0" Grid.Column="5" Style="{StaticResource ButtonCartStyle}" Command="{Binding CartCommand}"/>
+                <Button x:Name="ButtonExit" Grid.Row="0" Grid.Column="6" Style="{StaticResource ExitBtn}" Command="{Binding ExitCommand}"/>
+            </Grid>
+            <ListView x:Name="ProductList" Grid.Row="1" Style="{StaticResource ListViewStyle}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Height="180" Width="150" Cursor="Hand" HorizontalAlignment="Center">
+                            <Image Height="150" Width="150" Source="{Binding Image_src}"/>
+                            <Grid Width="150">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*"/>
+                                    <RowDefinition Height="1*"/>
+                                    <RowDefinition Height="1*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{StaticResource TextBlockClientPage}"/>
+                                <TextBlock Text="{Binding price}" Grid.Row="1" Style="{StaticResource TextBlockClientPage}"/>
+                            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem x:Name="MenuItemAddshoppingCart" Header="Add to cart" Command="{Binding AddShoppingCartCommand}"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,113 @@
+﻿<UserControl x:Class="StoreManager.Views.StoreInteraction.MainStoreInteractionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StoreManager.Views.StoreInteraction"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="9*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="MenuGrid" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="ButtonProfile"
+                    Grid.Row="0" Grid.Column="0" 
+                    Style="{StaticResource MainSignBtn}"
+                    FontSize="20"
+                    Content="{Binding ButtonProfileContent}"
+                    Command="{Binding ButtonProfileCommand}"/>
+            <ComboBox x:Name="ComboBoxSortCategories" 
+              Grid.Row="0" Grid.Column="1" 
+              FontSize="20"
+              ItemsSource="{Binding ComboBoxSortCategoriesItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              SelectedItem="{Binding ComboBoxSortCategoriesSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              Style="{StaticResource ProductComboBoxStyle}"/>
+            <ComboBox x:Name="ComboBoxSortGetDescription" 
+              Grid.Row="0" Grid.Column="2" 
+              FontSize="20"
+              ItemsSource="{Binding ComboBoxSortGetDescriptionItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              SelectedItem="{Binding ComboBoxSortGetDescriptionSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              Style="{StaticResource ProductComboBoxStyle}">
+                <ComboBoxItem Content="All products"/>
+                <ComboBoxItem Content="With description"/>
+                <ComboBoxItem Content="No description"/>
+            </ComboBox>
+            <Button x:Name="ButtonSortPrice" Content="By price" 
+            Grid.Row="0" Grid.Column="3" 
+            Style="{StaticResource MainSignBtn}"
+            FontSize="20"
+            Command="{Binding ButtonSortPriceCommand}"/>
+            <Button x:Name="ButtonSortPopularity" Content="By popularity" 
+            Grid.Row="0" Grid.Column="4" 
+            FontSize="20"
+            Style="{StaticResource MainSignBtn}"
+            Command="{Binding ButtonSortPopularityCommand}"/>
+            <Button x:Name="ButtonUpdate" 
+            Grid.Row="0" Grid.Column="5" 
+            Style="{StaticResource ButtonUpdateStyle}" 
+            Command="{Binding ButtonUpdateCommand}"/>
+            <Button x:Name="ButtonCart" 
+                    Grid.Row="0" Grid.Column="6" 
+                    Style="{StaticResource ButtonCartStyle}"
+                    IsEnabled="{Binding ButtonCartIsEnabled}"
+                    Command="{Binding CartCommand}"/>
+            <Button x:Name="ButtonExit"
+                    Grid.Row="0" Grid.Column="7" 
+                    Style="{StaticResource ExitBtn}" 
+                    IsEnabled="{Binding ButtonExitIsEnabled}"
+                    Command="{Binding ExitCommand}"/>
+        </Grid>
+        <ListView x:Name="ProductList" Grid.Row="1" Style="{StaticResource ListViewStyle}" ItemsSource="{Binding ProductListItems}" >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding MouseDoubleClickCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="2" BorderBrush="Gray">
+                        <Grid>
+                            <StackPanel Height="200" Width="150" Cursor="Hand" HorizontalAlignment="Center">
+                                <Image Height="150" Width="150" Source="{Binding Image_src}"/>
+                                <Grid Width="150" VerticalAlignment="Bottom">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{StaticResource TextBlockClientPage}"/>
+                                    <TextBlock Text="{Binding categoryName}" Grid.Row="1" Style="{StaticResource TextBlockClientPage}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="MenuItemSelectedItem" 
+                              Header="{Binding MenuItemHeader}" 
+                              IsEnabled="{Binding MenuItemIsEnabled}"
+                              Command="{Binding MenuItemDeleteItemCommand}"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+    </Grid>
+</UserControl>

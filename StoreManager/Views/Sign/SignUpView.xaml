@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="StoreManager.Views.Sign.SignUpView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StoreManager.Views.Sign"
+             xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters"
+             xmlns:help="clr-namespace:StoreManager.Views.Help"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <conv:StringAndNullToBoolConverter x:Key="StringAndNullToBoolConverter"/>
+    </UserControl.Resources>
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="ButtonBack" Grid.Column="0" Content="↩" Style="{StaticResource ButonBackStyle}" Command="{Binding ButtonBackCommand}"/>
+            <TextBlock Grid.Column="1" Text="Enter your data" Style="{StaticResource SignUpText}"/>
+        </Grid>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Account name:" Style="{StaticResource SignUpText}"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Password:" Style="{StaticResource SignUpText}"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Contact information" Style="{StaticResource SignUpText}"/>
+        <TextBox x:Name="TextBoxAccountName" Grid.Row="1" Grid.Column="1" Text="{Binding TextAccountName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SignUpTexBox}"/>
+        <help:PasswordView x:Name="PasswordBox" Grid.Row="2" Grid.Column="1" Password="{Binding TextPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox x:Name="TextBoxContactInfo" Grid.Row="3" Grid.Column="1" Text="{Binding TextContactInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SignUpContactInfoTexBox}"/>
+        <Button x:Name="SignUpBtn" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="Register" Style="{StaticResource SignUpBtn}" Command="{Binding SignUpCommand}">
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource StringAndNullToBoolConverter}">
+                    <Binding ElementName="TextBoxAccountName" Path="Text"/>
+                    <Binding ElementName="PasswordBox" Path="Password"/>
+                    <Binding ElementName="TextBoxContactInfo" Path="Text"/>
+                </MultiBinding>
+            </Button.IsEnabled>
+        </Button>
+    </Grid>
+</UserControl>

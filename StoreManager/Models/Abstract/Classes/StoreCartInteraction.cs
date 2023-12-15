@@ -25,8 +25,8 @@ namespace StoreManager.Models.Abstract.Classes
             get { return _orderItems; }
             private set { _orderItems = value; }
         }
-        private ClientStoreInteraction client;
-        protected StoreCartInteraction(ClientStoreInteraction client)
+        private UserStoreInteraction client;
+        protected StoreCartInteraction(UserStoreInteraction client)
         {
             this.client = client;
             this.orderNumber = client.GetNewRandomOrderNumber();

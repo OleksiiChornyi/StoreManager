@@ -40,8 +40,17 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.8.0.0\lib\net462\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Oracle.ManagedDataAccess, Version=4.122.21.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
       <HintPath>..\packages\Oracle.ManagedDataAccess.21.12.0\lib\net462\Oracle.ManagedDataAccess.dll</HintPath>
@@ -74,6 +83,9 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -92,215 +104,161 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DB classes\BinaryContent.cs" />
+    <Compile Include="DB classes\Category.cs" />
+    <Compile Include="DB classes\Description.cs" />
+    <Compile Include="DB classes\Product.cs" />
+    <Compile Include="DB classes\User.cs" />
     <Compile Include="Models\Abstract\Classes\AdminStoreInteraction.cs" />
-    <Compile Include="Models\Abstract\Classes\ClientStoreInteraction.cs" />
+    <Compile Include="Models\Abstract\Classes\AllUsersInteractions.cs" />
     <Compile Include="Models\Abstract\Classes\StoreCartInteraction.cs" />
+    <Compile Include="Models\Abstract\Classes\UserStoreInteraction.cs" />
     <Compile Include="Models\Abstract\Interfaces\IStore.cs" />
     <Compile Include="Models\Abstract\Interfaces\IStoreForAdmin.cs" />
     <Compile Include="Models\Abstract\Interfaces\IStoreForClient.cs" />
     <Compile Include="Models\Abstract\Interfaces\IStoreForGuest.cs" />
     <Compile Include="Models\Admin\StoreManagerForAdmin.cs" />
     <Compile Include="Models\Client\Cart\MyCart.cs" />
+    <Compile Include="Models\Data\ProductItem.cs" />
+    <Compile Include="Models\SQL static\Checkings.cs" />
+    <Compile Include="ViewModels\Admin\AdminViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Creating\ChangeDataProductViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Creating\CreateCategoryViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Creating\CreateDescriptionViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Creating\CreateInventoryViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Creating\CreateProductViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Creating\CreateShipmentsViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Creating\CreateSuppliersViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Creating\CreateWarehousesViewModel.cs" />
+    <Compile Include="ViewModels\Admin\ViewsInfo\AuditLogsViewModel.cs" />
+    <Compile Include="ViewModels\Client\ClientViewModel.cs" />
     <Compile Include="ViewModels\Converters\ChangeDataProductConverter.cs" />
-    <Compile Include="ViewModels\Converters\CheckTextAndComboBoxConverter.cs" />
     <Compile Include="ViewModels\Converters\ConfirmOrderButtonConverter.cs" />
     <Compile Include="ViewModels\Converters\PayByCashConverter.cs" />
-    <Compile Include="ViewModels\Data\CategoryItem.cs" />
-    <Compile Include="ViewModels\Data\ImageItem.cs" />
-    <Compile Include="Views\AdminPages\AdminPage.xaml.cs">
-      <DependentUpon>AdminPage.xaml</DependentUpon>
+    <Compile Include="ViewModels\Converters\PercentToPaddingConverter.cs" />
+    <Compile Include="ViewModels\Converters\StringAndNullToBoolConverter.cs" />
+    <Compile Include="ViewModels\Core\ObservableObject.cs" />
+    <Compile Include="ViewModels\Core\RelayCommand.cs" />
+    <Compile Include="ViewModels\Core\ViewModelBase.cs" />
+    <Compile Include="ViewModels\Help\IBorderDopViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\Services\IInitializable.cs" />
+    <Compile Include="ViewModels\Services\INavigationService.cs" />
+    <Compile Include="ViewModels\Services\NavigationService.cs" />
+    <Compile Include="ViewModels\Sign\MainSignViewModel.cs" />
+    <Compile Include="ViewModels\Sign\SignInViewModel.cs" />
+    <Compile Include="ViewModels\Sign\SignUpViewModel.cs" />
+    <Compile Include="ViewModels\StoreInteraction\MainStoreInterationViewModel.cs" />
+    <Compile Include="Views\Admin\AdminView.xaml.cs">
+      <DependentUpon>AdminView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdminPages\EmulateGuest.xaml.cs">
-      <DependentUpon>EmulateGuest.xaml</DependentUpon>
+    <Compile Include="Views\Admin\Interactions\Creating\ChangeDataProductView.xaml.cs">
+      <DependentUpon>ChangeDataProductView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdminPages\Interactions\Change Data Product.xaml.cs">
-      <DependentUpon>Change Data Product.xaml</DependentUpon>
+    <Compile Include="Views\Admin\Interactions\Creating\CreateCategoryView.xaml.cs">
+      <DependentUpon>CreateCategoryView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdminPages\Interactions\Create Category.xaml.cs">
-      <DependentUpon>Create Category.xaml</DependentUpon>
+    <Compile Include="Views\Admin\Interactions\Creating\CreateDescriptionView.xaml.cs">
+      <DependentUpon>CreateDescriptionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdminPages\Interactions\Create Description.xaml.cs">
-      <DependentUpon>Create Description.xaml</DependentUpon>
+    <Compile Include="Views\Admin\Interactions\Creating\CreateInventoryView.xaml.cs">
+      <DependentUpon>CreateInventoryView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdminPages\Interactions\Create Inventory.xaml.cs">
-      <DependentUpon>Create Inventory.xaml</DependentUpon>
+    <Compile Include="Views\Admin\Interactions\Creating\CreateProductView.xaml.cs">
+      <DependentUpon>CreateProductView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdminPages\Interactions\Create Product.xaml.cs">
-      <DependentUpon>Create Product.xaml</DependentUpon>
+    <Compile Include="Views\Admin\Interactions\Creating\CreateShipmentsView.xaml.cs">
+      <DependentUpon>CreateShipmentsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdminPages\Interactions\Create Shipments.xaml.cs">
-      <DependentUpon>Create Shipments.xaml</DependentUpon>
+    <Compile Include="Views\Admin\Interactions\Creating\CreateSuppliersView.xaml.cs">
+      <DependentUpon>CreateSuppliersView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdminPages\Interactions\Create Suppliers.xaml.cs">
-      <DependentUpon>Create Suppliers.xaml</DependentUpon>
+    <Compile Include="Views\Admin\Interactions\Creating\CreateWarehousesView.xaml.cs">
+      <DependentUpon>CreateWarehousesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdminPages\Interactions\Create Warehouses.xaml.cs">
-      <DependentUpon>Create Warehouses.xaml</DependentUpon>
+    <Compile Include="Views\Admin\Interactions\Updating\UpdateProductsView.xaml.cs">
+      <DependentUpon>UpdateProductsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AdminPages\Interactions\Update Products.xaml.cs">
-      <DependentUpon>Update Products.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewAuditLogs.xaml.cs">
-      <DependentUpon>ViewAuditLogs.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewCategories.xaml.cs">
-      <DependentUpon>ViewCategories.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewDescription.xaml.cs">
-      <DependentUpon>ViewDescription.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewInventory.xaml.cs">
-      <DependentUpon>ViewInventory.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewOrderItems.xaml.cs">
-      <DependentUpon>ViewOrderItems.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewOrders.xaml.cs">
-      <DependentUpon>ViewOrders.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewPayments.xaml.cs">
-      <DependentUpon>ViewPayments.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewProducts.xaml.cs">
-      <DependentUpon>ViewProducts.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewShipments.xaml.cs">
-      <DependentUpon>ViewShipments.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewSuppliers.xaml.cs">
-      <DependentUpon>ViewSuppliers.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewUsers.xaml.cs">
-      <DependentUpon>ViewUsers.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\AdminPages\ViewsInfo\ViewWarehouses.xaml.cs">
-      <DependentUpon>ViewWarehouses.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ClientPages\MyCartPage.xaml.cs">
-      <DependentUpon>MyCartPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ClientPages\ClientDescriptionView.xaml.cs">
-      <DependentUpon>ClientDescriptionView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ClientPages\ClientPage.xaml.cs">
-      <DependentUpon>ClientPage.xaml</DependentUpon>
+    <Compile Include="Views\Admin\ViewsInfo\AuditLogsView.xaml.cs">
+      <DependentUpon>AuditLogsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Client\StoreForClient.cs" />
     <Compile Include="Models\Guest\StoreForGuest.cs" />
     <Compile Include="ViewModels\Converters\CheckTextBlockConverter.cs" />
-    <Compile Include="Views\SignPages\MainSignPage.xaml.cs">
-      <DependentUpon>MainSignPage.xaml</DependentUpon>
+    <Compile Include="Views\Client\CLientView.xaml.cs">
+      <DependentUpon>CLientView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SignPages\SignInPage.xaml.cs">
-      <DependentUpon>SignInPage.xaml</DependentUpon>
+    <Compile Include="Views\Help\DropView.xaml.cs">
+      <DependentUpon>DropView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SignPages\SignUpAdminPage.xaml.cs">
-      <DependentUpon>SignUpAdminPage.xaml</DependentUpon>
+    <Compile Include="Views\Help\PasswordView.xaml.cs">
+      <DependentUpon>PasswordView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SignPages\SignUpPage.xaml.cs">
-      <DependentUpon>SignUpPage.xaml</DependentUpon>
+    <Compile Include="Views\Sign\MainSignView.xaml.cs">
+      <DependentUpon>MainSignView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\AdminPages\AdminPage.xaml">
+    <Compile Include="Views\Sign\SignInView.xaml.cs">
+      <DependentUpon>SignInView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sign\SignUpView.xaml.cs">
+      <DependentUpon>SignUpView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StoreInteraction\MainStoreInteractionView.xaml.cs">
+      <DependentUpon>MainStoreInteractionView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Views\Admin\AdminView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\EmulateGuest.xaml">
+    <Page Include="Views\Admin\Interactions\Creating\ChangeDataProductView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\Interactions\Change Data Product.xaml">
+    <Page Include="Views\Admin\Interactions\Creating\CreateCategoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\Interactions\Create Category.xaml">
+    <Page Include="Views\Admin\Interactions\Creating\CreateDescriptionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\Interactions\Create Description.xaml">
+    <Page Include="Views\Admin\Interactions\Creating\CreateInventoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\Interactions\Create Inventory.xaml">
+    <Page Include="Views\Admin\Interactions\Creating\CreateProductView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\Interactions\Create Product.xaml">
+    <Page Include="Views\Admin\Interactions\Creating\CreateShipmentsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\Interactions\Create Shipments.xaml">
+    <Page Include="Views\Admin\Interactions\Creating\CreateSuppliersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\Interactions\Create Suppliers.xaml">
+    <Page Include="Views\Admin\Interactions\Creating\CreateWarehousesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\Interactions\Create Warehouses.xaml">
+    <Page Include="Views\Admin\Interactions\Updating\UpdateProductsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\Interactions\Update Products.xaml">
+    <Page Include="Views\Admin\ViewsInfo\AuditLogsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewAuditLogs.xaml">
+    <Page Include="Views\Client\CLientView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewCategories.xaml">
+    <Page Include="Views\Help\DropView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewDescription.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewInventory.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewOrderItems.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewOrders.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewPayments.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewProducts.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewShipments.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewSuppliers.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewUsers.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\AdminPages\ViewsInfo\ViewWarehouses.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ClientPages\MyCartPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ClientPages\ClientDescriptionView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ClientPages\ClientPage.xaml">
+    <Page Include="Views\Help\PasswordView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -316,19 +274,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\SignPages\MainSignPage.xaml">
+    <Page Include="Views\Sign\MainSignView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SignPages\SignInPage.xaml">
+    <Page Include="Views\Sign\SignInView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SignPages\SignUpAdminPage.xaml">
+    <Page Include="Views\Sign\SignUpView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SignPages\SignUpPage.xaml">
+    <Page Include="Views\StoreInteraction\MainStoreInteractionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -386,6 +344,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\Admin\Interactions\Deleting\" />
+    <Folder Include="ViewModels\Admin\Interactions\Updating\" />
+    <Folder Include="Views\Admin\Interactions\Deleting\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Text.Json.6.0.1\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.1\build\System.Text.Json.targets')" />

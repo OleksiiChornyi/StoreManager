@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StoreManager.DB_classes;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -10,8 +11,9 @@ namespace StoreManager.Models.Abstract.Interfaces
     public enum Role { client, guest, admin };
     internal interface IStore
     {
-        Role myRole { get; set; }
+        User user { get; set; }
+        //Role myRole { get; set; }
         bool isOk {  get; set; }
-        bool isExist {  get; set; }
+        //bool isExist {  get; set; }
     }
 }

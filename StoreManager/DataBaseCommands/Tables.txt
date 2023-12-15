@@ -1,53 +1,69 @@
 --Tables
---1Користувачі
-    CREATE TABLE Users (
-        UserID NUMBER PRIMARY KEY,
-        UserName VARCHAR2(50) NOT NULL UNIQUE,
-        PasswordHash VARCHAR2(64),
-        ContactInfo VARCHAR2(100),
-        UserRole VARCHAR2(50) NOT NULL,
-        OrderCount NUMBER DEFAULT 0 NOT NULL
-    );
 
---2Категорії
+--1Двійковий контент
+CREATE TABLE BinaryContent (
+    ContentID NUMBER PRIMARY KEY,
+    FileName VARCHAR2(255),
+    FileType VARCHAR2(50),
+    FileExtension VARCHAR2(10),
+    UploadDate TIMESTAMP,
+    ModificationDate TIMESTAMP,
+    Content BLOB
+);
+
+--2Користувачі
+CREATE TABLE Users (
+    UserID NUMBER PRIMARY KEY,
+    UserName VARCHAR2(50) NOT NULL UNIQUE,
+    PasswordHash VARCHAR2(64),
+    Email VARCHAR2(100),
+    ContentID NUMBER,
+    UserRole VARCHAR2(50) NOT NULL,
+    OrderCount NUMBER DEFAULT 0 NOT NULL,
+    BirthDate DATE,
+    PhoneNumber VARCHAR2(20),
+    CreatingDate TIMESTAMP,
+    FOREIGN KEY (ContentID) REFERENCES BinaryContent (ContentID)
+);
+
+--3Категорії
 CREATE TABLE Categories (
     CategoryID NUMBER PRIMARY KEY,
     CategoryName VARCHAR2(50) NOT NULL UNIQUE,
     CategoryDescription VARCHAR2(255),
     ParentCategoryID NUMBER,
     CONSTRAINT FK_ParentCategory
-        FOREIGN KEY (ParentCategoryID)
-        REFERENCES Categories(CategoryID)
+    FOREIGN KEY (ParentCategoryID) REFERENCES Categories(CategoryID)
 );
 
---3Опис
+--4Опис
 CREATE TABLE Descriptions (
     DescriptionID NUMBER PRIMARY KEY,
     FileName VARCHAR2(50),
     FileType VARCHAR2(50),
     FileExtension VARCHAR2(50),
     FileData BLOB,
-    UploadDate DATE,
-    ModificationDate DATE,
+    UploadDate TIMESTAMP,
+    ModificationDate TIMESTAMP,
     Info VARCHAR(255)
 );
 
---4Товари
+--5Товари
 CREATE TABLE Products (
     ProductID NUMBER PRIMARY KEY,
     SKU VARCHAR2(50) NOT NULL,
     ProductName VARCHAR2(100) NOT NULL,
     DescriptionID NUMBER,
-    ProductImage BLOB NOT NULL,
-    ProductImageFileName VARCHAR2(100) NOT NULL,
+    ContentID NUMBER NOT NULL,
     Cost NUMBER NOT NULL,
     CategoryID NUMBER NOT NULL,
     SalesCount NUMBER DEFAULT 0 NOT NULL,
     FOREIGN KEY (CategoryID) REFERENCES Categories (CategoryID),
-    FOREIGN KEY (DescriptionID) REFERENCES Descriptions (DescriptionID)
+    FOREIGN KEY (DescriptionID) REFERENCES Descriptions (DescriptionID),
+    FOREIGN KEY (ContentID) REFERENCES BinaryContent (ContentID)
 );
 
---5Товари замовлення
+--6Товари замовлення
 CREATE TABLE OrderItems (
     OrderItemID NUMBER PRIMARY KEY,
     OrderNumber NUMBER NOT NULL,
@@ -56,30 +72,30 @@ CREATE TABLE OrderItems (
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
 
---6Замовлення
+--7Замовлення
 CREATE TABLE Orders (
     OrderID NUMBER PRIMARY KEY,
     OrderNumber NUMBER NOT NULL,
-    OrderDate DATE NOT NULL,
+    OrderDate TIMESTAMP NOT NULL,
     OrderStatus VARCHAR2(50),
     UserID NUMBER NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
---7Готівка
+--8Готівка
 CREATE TABLE Cash (
     CashID NUMBER PRIMARY KEY,
     OrderNumber NUMBER NOT NULL
 );
 
---8Карта
+--9Карта
 CREATE TABLE BankCard (
     BankCardID NUMBER PRIMARY KEY,
     BankNumber VARCHAR2(50) NOT NULL,
     OrderNumber NUMBER NOT NULL
 );
 
---9Оплата
+--10Оплата
 CREATE TABLE Payments (
     PaymentID NUMBER PRIMARY KEY,
     UserId NUMBER NOT NULL,
@@ -92,7 +108,18 @@ CREATE TABLE Payments (
     FOREIGN KEY (BankCardID) REFERENCES BankCard(BankCardID)
 );
 
---10Постачальники
+--11Транзакції
+CREATE TABLE Transactions (
+    TransactionID NUMBER PRIMARY KEY,
+    UserID NUMBER,
+    OrderNumber NUMBER,
+    TransactionDate TIMESTAMP,
+    TransactionType VARCHAR2(50),
+    Description VARCHAR2(255),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+--12Постачальники
 CREATE TABLE Suppliers (
     SupplierID NUMBER PRIMARY KEY,
     CompanyName VARCHAR2(100) NOT NULL,
@@ -100,17 +127,17 @@ CREATE TABLE Suppliers (
     SupplierAddress VARCHAR2(255) NOT NULL
 );
 
---11Відвантаження
+--13Відвантаження
 CREATE TABLE Shipments (
     ShipmentID NUMBER PRIMARY KEY,
     ShipmentNumber VARCHAR2(50) NOT NULL,
-    ShipmentDate DATE NOT NULL,
+    ShipmentDate TIMESTAMP NOT NULL,
     ShipmentStatus VARCHAR2(50) NOT NULL,
     OrderID NUMBER NOT NULL,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
 );
 
---12Склади
+--14Склади
 CREATE TABLE Warehouses (
     WarehouseID NUMBER PRIMARY KEY,
     WarehouseName VARCHAR2(255) NOT NULL,
@@ -119,19 +146,19 @@ CREATE TABLE Warehouses (
     Availability NUMBER NOT NULL
 );
 
---13Інвентаризація
+--15Інвентаризація
 CREATE TABLE Inventory (
     InventoryID NUMBER PRIMARY KEY,
     ProductID NUMBER NOT NULL,
     QuantityOnHand NUMBER NOT NULL,
     WarehouseID NUMBER NOT NULL,
-    InventoryDate DATE NOT NULL,
+    InventoryDate TIMESTAMP NOT NULL,
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
     FOREIGN KEY (WarehouseID) REFERENCES Warehouses(WarehouseID)
 );
 
 
---14Зміни
+--16Зміни
 CREATE TABLE AuditLogs (
     LogID NUMBER PRIMARY KEY,
     ActionType VARCHAR2(50),

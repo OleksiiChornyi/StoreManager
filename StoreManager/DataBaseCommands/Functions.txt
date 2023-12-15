@@ -1,29 +1,3 @@
--- Функція для входу як користувач
-CREATE OR REPLACE FUNCTION SignIn(
-    p_UserName VARCHAR2,
-    p_PasswordHash VARCHAR2
-) RETURN BOOLEAN IS
-    v_UserCount NUMBER;
-    v_ContactInfo VARCHAR2(100);
-    v_UserRole VARCHAR2(50);
-    v_OrderCount NUMBER;
-BEGIN
-    -- Перевіряємо, чи існує користувач з введеним ім'ям та хешем паролю
-    SELECT COUNT(*), ContactInfo, UserRole, OrderCount
-    INTO v_UserCount, v_ContactInfo, v_UserRole, v_OrderCount
-    FROM Users
-    WHERE UserName = p_UserName
-      AND PasswordHash = p_PasswordHash
-    GROUP BY ContactInfo, UserRole, OrderCount;
-
-    IF v_UserCount = 1 THEN
-        RETURN TRUE;
-    ELSE
-        RETURN FALSE;
-    END IF;
-END;
-/
-
 --Функція для отримання ролі користувача
 CREATE OR REPLACE FUNCTION GetUserRole(p_UserName VARCHAR2) RETURN VARCHAR2 IS
     v_UserRole VARCHAR2(50);
@@ -61,13 +35,32 @@ END GetUserIDByUsername;
 /
 
 
--- Функція перевірки чи існує користувач
 CREATE OR REPLACE FUNCTION CheckUserExistence(
+    p_UserName VARCHAR2,
+    p_PhoneNumber VARCHAR2,
+    p_Email VARCHAR2
+) RETURN BOOLEAN IS
+    v_UserCount NUMBER;
+BEGIN
+    -- Перевіряємо, чи існує користувач з введеним ім'ям, номером телефона или адресом електронної пошти
+    SELECT COUNT(*)
+    INTO v_UserCount
+    FROM Users
+    WHERE UserName = p_UserName
+       OR PhoneNumber = p_PhoneNumber
+       OR Email = p_Email;
+
+    -- Якщо кількість користувачів більше 0, то користувач існує
+    RETURN v_UserCount > 0;
+END;
+/
+
+CREATE OR REPLACE FUNCTION CheckUserNameExistence(
     p_UserName VARCHAR2
 ) RETURN BOOLEAN IS
     v_UserCount NUMBER;
 BEGIN
-    -- Перевіряємо, чи існує користувач з введеним ім'ям
+    -- Перевіряємо, чи існує користувач з введеним ім'ям, номером телефона или адресом електронної пошти
     SELECT COUNT(*)
     INTO v_UserCount
     FROM Users
@@ -77,6 +70,7 @@ BEGIN
     RETURN v_UserCount > 0;
 END;
 /
+
 
 --Функція для перевірки чи існує відвантаження для замовлення
 -- Створюємо функцію HasShipment

@@ -1,9 +1,7 @@
 ﻿using StoreManager.Models.Abstract.Classes;
 using StoreManager.Models.Abstract.Interfaces;
-using StoreManager.Client;
 using StoreManager.Models.Guest;
 using StoreManager.ViewModels;
-using StoreManager.Views.SignPages;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -34,11 +32,6 @@ namespace StoreManager
         public MainWindow()
         {
             InitializeComponent();
-        }
-
-        private void StoreManagerWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            MainFrame.Navigate(new MainSignPage());
         }
     }
 }
