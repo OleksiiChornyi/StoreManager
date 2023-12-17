@@ -44,7 +44,7 @@
                  Grid.Row="4" Grid.Column="1" 
                  Text="{Binding WarehousesAvailabilityTextBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                  Style="{StaticResource SomeCreateTexBox}"/>
-        <Button x:Name="CreateWarehouseButton" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignUpBtn}" Content="Add a warehouse" Command="{Binding CreateWarehouseButtonCommand}">
+        <Button x:Name="CreateWarehouseButton" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignBtn}" Content="Add a warehouse" Command="{Binding CreateWarehouseButtonCommand}">
             <Button.IsEnabled>
                 <MultiBinding Converter="{StaticResource CheckTextBlockConverter}">
                     <Binding ElementName="WarehousesNameTextBox" Path="Text"/>

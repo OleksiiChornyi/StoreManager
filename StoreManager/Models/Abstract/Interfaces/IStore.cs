@@ -8,12 +8,9 @@ using System.Threading.Tasks;
 
 namespace StoreManager.Models.Abstract.Interfaces
 {
-    public enum Role { client, guest, admin };
+    public enum Role { client, guest, admin, manager };
     internal interface IStore
     {
         User user { get; set; }
-        //Role myRole { get; set; }
-        bool isOk {  get; set; }
-        //bool isExist {  get; set; }
     }
 }

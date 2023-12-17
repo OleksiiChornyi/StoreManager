@@ -1,0 +1,60 @@
+﻿<Window x:Class="StoreManager.Views.Admin.Interactions.Updating.UpdateSupplierView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions.Updating" xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters"
+        mc:Ignorable="d"
+        Title="UpdateSupplierView" Height="700" Width="1000">
+    <Window.Resources>
+        <conv:StringAndNullToBoolConverter x:Key="StringAndNullToBoolConverter"/>
+    </Window.Resources>
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Style="{StaticResource MainTextBlockAdminPage}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Enter the supplier's data"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" 
+           Grid.Row="1" Grid.Column="0" 
+           Text="Select a product to change"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" Grid.Row="2" Grid.Column="0" Text="Enter the name of the supplier's company"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" Grid.Row="3" Grid.Column="0" Text="Enter the supplier's contact information"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" Grid.Row="4" Grid.Column="0" Text="Enter the supplier's address"/>
+        <ComboBox x:Name="comboBoxCurrentSupplier" 
+              Grid.Row="1" Grid.Column="1" 
+              ItemsSource="{Binding ComboBoxUpdateItemSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              SelectedItem="{Binding ComboBoxUpdateSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              Style="{StaticResource ProductComboBoxStyle}"/>
+        <TextBox x:Name="SuppliersNameTextBox" 
+             Grid.Row="2" Grid.Column="1" 
+             Text="{Binding SuppliersNameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+             Style="{StaticResource SomeCreateTexBox}"/>
+        <TextBox x:Name="SuppliersContactInfoTextBox" 
+             Grid.Row="3" Grid.Column="1" 
+             Text="{Binding SuppliersContactInfoText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+             Style="{StaticResource SomeCreateTexBox}"/>
+        <TextBox x:Name="SuppliersAddressTextBox"
+             Grid.Row="4" Grid.Column="1" 
+             Text="{Binding SuppliersAddressText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+             Style="{StaticResource SomeCreateTexBox}"/>
+        <Button x:Name="CreateSuppliersButton" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignBtn}" Content="Update a supplier" Command="{Binding UpdateSuppliersButtonCommand}">
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource StringAndNullToBoolConverter}">
+                    <Binding ElementName="SuppliersNameTextBox" Path="Text"/>
+                    <Binding ElementName="SuppliersContactInfoTextBox" Path="Text"/>
+                    <Binding ElementName="comboBoxCurrentSupplier" Path="SelectedItem"/>
+                    <Binding ElementName="SuppliersAddressTextBox" Path="Text"/>
+                </MultiBinding>
+            </Button.IsEnabled>
+        </Button>
+    </Grid>
+</Window>

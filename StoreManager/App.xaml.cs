@@ -2,11 +2,13 @@
 using StoreManager.ViewModels;
 using StoreManager.ViewModels.Admin;
 using StoreManager.ViewModels.Admin.Interactions;
-using StoreManager.ViewModels.Client;
+using StoreManager.ViewModels.Admin.Interactions.Emulating;
+using StoreManager.ViewModels.CLient;
 using StoreManager.ViewModels.Core;
 using StoreManager.ViewModels.Services;
 using StoreManager.ViewModels.Sign;
 using StoreManager.ViewModels.StoreInteraction;
+using StoreManager.Views.Client;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -35,6 +37,8 @@ namespace StoreManager
             services.AddSingleton<MainWindowViewModel>();
             
             services.AddSingleton<MainStoreInterationViewModel>();
+            services.AddSingleton<ProfileViewModel>();
+            services.AddSingleton<ChangeProfileDataViewModel>();
 
             //Sign
             services.AddSingleton<MainSignViewModel>();
@@ -42,10 +46,12 @@ namespace StoreManager
             services.AddSingleton<SignUpViewModel>();
 
             //Client
-            services.AddSingleton<ClientViewModel>();
+            services.AddSingleton<CartViewModel>();
+            //services.AddSingleton<ProductDescriptionViewModel>();
 
             //Admin
             services.AddSingleton<AdminViewModel>();
+            services.AddSingleton<ChooseEmulateUserViewModel>();
 
 
             //Interaction
@@ -53,7 +59,13 @@ namespace StoreManager
             services.AddSingleton<CreateDescriptionViewModel>();*/
 
 
-            services.AddSingleton<INavigationService, NavigationService>();
+            bool isEmulated = false;
+            services.AddSingleton<INavigationService>(provider => new NavigationService(
+                provider.GetRequiredService<Func<Type, ViewModelBase>>(),
+                isEmulated
+            ));
+
+            //services.AddSingleton<INavigationService, NavigationService>();
 
             services.AddSingleton<Func<Type, ViewModelBase>>(ServiceProvider => viewModelType => (ViewModelBase)ServiceProvider.GetRequiredService(viewModelType));
 

@@ -12,6 +12,14 @@ namespace StoreManager.Models.Data
 {
     public class ProductItem : INotifyPropertyChanged
     {
+        public ProductItem()
+        {
+            
+        }
+        public ProductItem(Product product)
+        {
+            Product = product;
+        }
         public Product Product { get; set; }
 
         public BitmapImage Image_src
@@ -20,8 +28,7 @@ namespace StoreManager.Models.Data
             {
                 return Convert(Product.BinaryContent.Content);
             }
-            set
-            { }
+            set { }
         }
 
         private BitmapImage Convert(byte[] bytes)

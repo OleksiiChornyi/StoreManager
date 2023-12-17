@@ -31,6 +31,7 @@ namespace StoreManager.DB_classes
             FileExtension = fileInfo.Extension;
             Content = File.ReadAllBytes(filePath);
         }
+
         public int ContentID { get; set; }
         public string FileName { get; set; }
         public string FileType { get; set; }

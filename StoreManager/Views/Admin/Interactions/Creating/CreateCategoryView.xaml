@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions"
+        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions.Creating"
         xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters"
         mc:Ignorable="d"
-            Title="Create Category" Height="650" Width="800">
+        Title="Create Category" Height="650" Width="800">
     <Window.Resources>
         <conv:CheckTextBlockConverter x:Key="CheckTextBlockConverter"/>
     </Window.Resources>
@@ -27,9 +27,9 @@
         <TextBlock Style="{StaticResource TextBlockAdminPage}" Grid.Row="2" Grid.Column="0" Text="Select a parent category"/>
         <TextBlock Style="{StaticResource TextBlockAdminPage}" Grid.Row="3" Grid.Column="0" Text="Enter a category description"/>
         <TextBox x:Name="CategoryNameTextBox" Grid.Row="1" Grid.Column="1" Text="{Binding CategoryNameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SomeCreateTexBox}"/>
-        <TextBox x:Name="CategoryDescriptionTextBox" Grid.Row="3" Grid.Column="1" Text="{Binding CategoryDescriptionText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SomeCreateTexBox}"/>
         <ComboBox x:Name="comboBoxParentCategory" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ComboBoxParentCategoryItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding ComboBoxParentCategorySelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ProductComboBoxStyle}"/>
-        <Button x:Name="CreateCategoryButton" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignUpBtn}" Content="Create a category" Command="{Binding CreateCategoryButtonCommand}">
+        <TextBox x:Name="CategoryDescriptionTextBox" Grid.Row="3" Grid.Column="1" Text="{Binding CategoryDescriptionText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SomeCreateTexBox}"/>
+        <Button x:Name="CreateCategoryButton" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignBtn}" Content="Create a category" Command="{Binding CreateCategoryButtonCommand}">
             <Button.IsEnabled>
                 <MultiBinding Converter="{StaticResource CheckTextBlockConverter}">
                     <Binding ElementName="CategoryNameTextBox" Path="Text"/>

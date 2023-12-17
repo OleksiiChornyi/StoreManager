@@ -16,10 +16,10 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
 {
     public class CreateInventoryViewModel : ViewModelBase
     {
-        private readonly AdminStoreInteraction _admin;
+        private readonly ManagerStoreInteraction _admin;
         private readonly CreateInventoryView createInventoryView;
 
-        public CreateInventoryViewModel(AdminStoreInteraction admin)
+        public CreateInventoryViewModel(ManagerStoreInteraction admin)
         {
             _admin = admin ?? throw new ArgumentNullException(nameof(admin));
 

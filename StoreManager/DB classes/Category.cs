@@ -8,13 +8,30 @@ namespace StoreManager.DB_classes
 {
     public class Category
     {
+        public Category()
+        { }
+
+        public Category(string categoryNameText, string categoryDescriptionText, int? parentCategoryId)
+        {
+            this.CategoryName = categoryNameText;
+            this.CategoryDescription = categoryDescriptionText;
+            this.ParentCategoryID = parentCategoryId;
+        }
+
+        public Category(int categoryID, string categoryName, string categoryDescription, int? parentCategoryID)
+        {
+            CategoryID = categoryID;
+            CategoryName = categoryName;
+            CategoryDescription = categoryDescription;
+            ParentCategoryID = parentCategoryID;
+        }
         public int CategoryID { get; set; }
         public string CategoryName { get; set; }
         public string CategoryDescription { get; set; }
         public int? ParentCategoryID { get; set; }
         public bool IsCategoryInHierarchy(int categoryId, List<Category> categoryItems)
         {
-            var category = categoryItems.FirstOrDefault(c => c.CategoryID == categoryId);
+            var category = categoryItems.FirstOrDefault(c => c.CategoryID == this.CategoryID);
 
             if (category == null)
             {
@@ -23,7 +40,7 @@ namespace StoreManager.DB_classes
 
             while (category != null)
             {
-                if (category.CategoryID == this.CategoryID)
+                if (category.CategoryID == categoryId)
                 {
                     return true;
                 }

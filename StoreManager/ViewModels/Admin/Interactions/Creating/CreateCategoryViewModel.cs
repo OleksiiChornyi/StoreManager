@@ -12,19 +12,18 @@ using System.Windows.Input;
 using System.Windows;
 using StoreManager.ViewModels.Services;
 using StoreManager.Views.Admin.Interactions.Creating;
+using StoreManager.DB_classes;
 
 namespace StoreManager.ViewModels.Admin.Interactions.Creating
 {
     public class CreateCategoryViewModel : ViewModelBase
     {
-        private readonly AdminStoreInteraction _admin;
+        private readonly ManagerStoreInteraction _admin;
         private readonly CreateCategoryView createCategoryView;
-
-        public CreateCategoryViewModel(AdminStoreInteraction admin)
+        public CreateCategoryViewModel(ManagerStoreInteraction admin)
         {
             _admin = admin ?? throw new ArgumentNullException(nameof(admin));
 
-            // Initialize commands and load data
             CreateCategoryButtonCommand = new RelayCommand(CreateCategory, CanCreateCategory);
             LoadData();
 
@@ -41,10 +40,10 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
             DataTable categoriesTable = _admin.GetDataFromView("ProductsCategoriesView");
             foreach (DataRow row in categoriesTable.Rows)
             {
-                _comboBoxParentCategoryItemsSource.Add(new ComboBoxItem
+                ComboBoxParentCategoryItemsSource.Add(new ComboBoxItem
                 {
-                    Content = row[1],
-                    ToolTip = row[0]
+                    Tag = row[0],
+                    Content = row[1]
                 });
             }
         }
@@ -101,8 +100,13 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
 
         private void CreateCategory(object parameter)
         {
-            int? parentCategoryId = ComboBoxParentCategorySelectedItem?.ToolTip as int?;
-            _admin.CreateCategory(CategoryNameText, CategoryDescriptionText, parentCategoryId);
+            int? parentCategoryId = ComboBoxParentCategorySelectedItem?.Tag != null
+                ? Convert.ToInt32(ComboBoxParentCategorySelectedItem.Tag)
+                : (int?)null;
+
+            Category category = new Category(CategoryNameText, CategoryDescriptionText, parentCategoryId);
+
+            _admin.CreateCategory(category);
             MessageBox.Show("Category created");
             createCategoryView.Close();
         }

@@ -1,43 +1,4 @@
---Функція для отримання ролі користувача
-CREATE OR REPLACE FUNCTION GetUserRole(p_UserName VARCHAR2) RETURN VARCHAR2 IS
-    v_UserRole VARCHAR2(50);
-BEGIN
-    -- Ищем UserRole по заданному UserName
-    SELECT UserRole INTO v_UserRole
-    FROM Users
-    WHERE UserName = p_UserName;
-
-    -- Если найдено, возвращаем UserRole
-    RETURN v_UserRole;
-END GetUserRole;
-/
-
---Функція отримання UserId по UserName
-CREATE OR REPLACE FUNCTION GetUserIDByUsername(
-    p_UserName VARCHAR2
-) RETURN NUMBER
-AS
-    v_UserID NUMBER;
-BEGIN
-    -- Шукаємо UserID за вказаним UserName
-    SELECT UserID INTO v_UserID
-    FROM Users
-    WHERE UserName = p_UserName;
-
-    -- Якщо знайдено, повертаємо UserID
-    RETURN v_UserID;
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        RETURN NULL;
-    WHEN OTHERS THEN
-        RETURN NULL;
-END GetUserIDByUsername;
-/
-
-
-CREATE OR REPLACE FUNCTION CheckUserExistence(
-    p_UserName VARCHAR2,
-    p_PhoneNumber VARCHAR2,
+create or replace FUNCTION CheckUserEmailExistence(
     p_Email VARCHAR2
 ) RETURN BOOLEAN IS
     v_UserCount NUMBER;
@@ -46,16 +7,13 @@ BEGIN
     SELECT COUNT(*)
     INTO v_UserCount
     FROM Users
-    WHERE UserName = p_UserName
-       OR PhoneNumber = p_PhoneNumber
-       OR Email = p_Email;
+    WHERE Email = p_Email;
 
     -- Якщо кількість користувачів більше 0, то користувач існує
     RETURN v_UserCount > 0;
 END;
-/
 
-CREATE OR REPLACE FUNCTION CheckUserNameExistence(
+create or replace FUNCTION CheckUserNameExistence(
     p_UserName VARCHAR2
 ) RETURN BOOLEAN IS
     v_UserCount NUMBER;
@@ -69,175 +27,165 @@ BEGIN
     -- Якщо кількість користувачів більше 0, то користувач існує
     RETURN v_UserCount > 0;
 END;
-/
 
 
---Функція для перевірки чи існує відвантаження для замовлення
--- Створюємо функцію HasShipment
-CREATE OR REPLACE FUNCTION HasShipment (p_OrderID NUMBER)
-RETURN NUMBER -- Змінюємо тип повернення на NUMBER
+create or replace FUNCTION CheckUserPhoneNumberExistence(
+    p_PhoneNumber VARCHAR2
+) RETURN BOOLEAN IS
+    v_UserCount NUMBER;
+BEGIN
+    -- Перевіряємо, чи існує користувач з введеним ім'ям, номером телефона или адресом електронної пошти
+    SELECT COUNT(*)
+    INTO v_UserCount
+    FROM Users
+    WHERE PhoneNumber = p_PhoneNumber;
+
+    -- Якщо кількість користувачів більше 0, то користувач існує
+    RETURN v_UserCount > 0;
+END;
+
+create or replace FUNCTION DeleteProduct(
+    p_ProductID NUMBER
+) RETURN BOOLEAN
 IS
-  v_ShipmentID NUMBER; -- Змінна для зберігання ShipmentID
+    v_InventoryCount NUMBER;
+    v_OrderItemsCount NUMBER;
 BEGIN
-  -- Перевіряємо, чи існує відвантаження для даного замовлення
-  SELECT ShipmentID INTO v_ShipmentID -- Змінюємо колонку на ShipmentID
-  FROM Shipments
-  WHERE OrderID = p_OrderID;
-  -- Повертаємо ShipmentID
-  RETURN v_ShipmentID;
-EXCEPTION
-  WHEN NO_DATA_FOUND THEN -- Якщо відвантаження не існує
-    RETURN NULL; -- Повертаємо NULL
-END;
-
-
--- Функція створення нового номеру замовлення
-CREATE OR REPLACE FUNCTION GetUniqueRandomOrderNumber RETURN NUMBER IS
-    v_RandomNumber NUMBER;
-    v_Count NUMBER;
-BEGIN
-    LOOP
-        -- Генеруємо випадкове число
-        v_RandomNumber := TRUNC(DBMS_RANDOM.VALUE * 1000000);
-
-        -- Перевіряємо, чи таке число вже існує в таблиці або інших місцях
-        SELECT COUNT(*)
-        INTO v_Count
-        FROM ORDERITEMS -- Замініть "YourTable" на назву вашої таблиці тут
-        WHERE ORDERNUMBER = v_RandomNumber; -- Замініть "YourColumn" на назву стовпця, де зберігається випадкове число
-
-        -- Якщо такого числа не знайдено, виходимо з циклу
-        EXIT WHEN v_Count = 0;
-    END LOOP;
-
-    -- Повертаємо унікальне випадкове число
-    RETURN v_RandomNumber;
-END;
-/
-
---Функція для відтворення DescriptionData
-CREATE OR REPLACE FUNCTION GetDescritpionDataByID(p_DescriptionID NUMBER)
-RETURN BLOB
-AS
-    v_FileData BLOB;
-BEGIN
-    SELECT FileData
-    INTO v_FileData
-    FROM Descriptions
-    WHERE DescriptionID = p_DescriptionID;
-
-    RETURN v_FileData;
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        RETURN NULL;
-END GetDescritpionDataByID;
-/
-
---Функція для відтворення ProductImage
-CREATE OR REPLACE FUNCTION GetProductImageByID(p_ProductID NUMBER)
-RETURN BLOB
-AS
-    v_ProductImage BLOB;
-BEGIN
-    SELECT ProductImage
-    INTO v_ProductImage
-    FROM Products
+    -- Проверка наличия записей в таблице Inventory
+    SELECT COUNT(*) INTO v_InventoryCount
+    FROM Inventory
     WHERE ProductID = p_ProductID;
 
-    RETURN v_ProductImage;
+    -- Проверка наличия записей в таблице OrderItems
+    SELECT COUNT(*) INTO v_OrderItemsCount
+    FROM OrderItems
+    WHERE ProductID = p_ProductID;
+
+    -- Если нет записей в Inventory и OrderItems, удаляем из Products
+    IF v_InventoryCount = 0 AND v_OrderItemsCount = 0 THEN
+        DELETE FROM Products
+        WHERE ProductID = p_ProductID;
+        COMMIT;
+        RETURN TRUE;
+    ELSE
+        -- В противном случае возвращаем FALSE
+        RETURN FALSE;
+    END IF;
+END DeleteProduct;
+
+
+create or replace FUNCTION GetNextBackCardID RETURN NUMBER IS
+    v_BankCardID NUMBER;
+BEGIN
+    SELECT BankCardSeq.NEXTVAL INTO v_BankCardID FROM DUAL;
+    RETURN v_BankCardID;
+END GetNextBackCardID;
+
+create or replace FUNCTION GetNextCashID RETURN NUMBER IS
+    v_CashID NUMBER;
+BEGIN
+    SELECT CashSeq.NEXTVAL INTO v_CashID FROM DUAL;
+    RETURN v_CashID;
+END GetNextCashID;
+
+create or replace FUNCTION GetPasswordHash(
+    p_UserID NUMBER
+) RETURN VARCHAR2
+AS
+    v_PasswordHash VARCHAR2(64);
+BEGIN
+    SELECT PasswordHash INTO v_PasswordHash
+    FROM Users
+    WHERE UserID = p_UserID;
+
+    RETURN v_PasswordHash;
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         RETURN NULL;
-END GetProductImageByID;
-/
+END GetPasswordHash;
 
---Функція для назви файлу та зображення товару:
-create or replace FUNCTION GetProductImage(p_ProductID NUMBER)
+
+create or replace FUNCTION GetProductData
 RETURN SYS_REFCURSOR
 IS
     v_cursor SYS_REFCURSOR;
 BEGIN
     OPEN v_cursor FOR
         SELECT
-            p.ProductImage,
-            p.ProductImageFileName
+            P.ProductID,
+            P.SKU,
+            P.ProductName,
+            P.Cost,
+            P.SalesCount,
+            C.CategoryID,
+            C.CategoryName,
+            C.CategoryDescription,
+            C.ParentCategoryID,
+            D.DescriptionID,
+            D.FileName AS DescriptionFileName,
+            D.FileType AS DescriptionFileType,
+            D.FileExtension AS DescriptionFileExtension,
+            D.FileData,
+            D.UploadDate AS DescriptionUploadDate,
+            D.ModificationDate AS DescriptionModificationDate,
+            D.Info,
+            BC.ContentID,
+            BC.FileName AS BinaryContentFileName,
+            BC.FileType AS BinaryContentFileType,
+            BC.FileExtension AS BinaryContentFileExtension,
+            BC.UploadDate AS BinaryContentUploadDate,
+            BC.ModificationDate AS BinaryContentModificationDate,
+            BC.ModificationDate,
+            BC.Content
         FROM
-            Products p
-        WHERE
-            p.ProductID = p_ProductID;
+            Products P
+        LEFT JOIN
+            Categories C ON P.CategoryID = C.CategoryID
+        LEFT JOIN
+            Descriptions D ON P.DescriptionID = D.DescriptionID
+        LEFT JOIN
+            BinaryContent BC ON P.ContentID = BC.ContentID;
 
     RETURN v_cursor;
+END GetProductData;
+
+
+create or replace FUNCTION GetUniqueRandomOrderNumber RETURN NUMBER IS
+    v_RandomNumber NUMBER;
+    v_Count NUMBER;
+BEGIN
+    LOOP
+        v_RandomNumber := TRUNC(DBMS_RANDOM.VALUE * 1000000);
+
+        SELECT COUNT(*)
+        INTO v_Count
+        FROM ORDERITEMS
+        WHERE ORDERNUMBER = v_RandomNumber;
+        EXIT WHEN v_Count = 0;
+    END LOOP;
+    RETURN v_RandomNumber;
 END;
-/
 
---Функція для назви файлу та даних цього файлу:
-CREATE OR REPLACE FUNCTION GetDescriptionData(
-    p_DescriptionID NUMBER
-) RETURN SYS_REFCURSOR
+create or replace FUNCTION GetUserRole(p_UserName VARCHAR2) RETURN VARCHAR2 IS
+    v_UserRole VARCHAR2(50);
+BEGIN
+    SELECT UserRole INTO v_UserRole
+    FROM Users
+    WHERE UserName = p_UserName;
+
+    RETURN v_UserRole;
+END GetUserRole;
+
+
+create or replace FUNCTION HasShipment (p_OrderID NUMBER)
+RETURN NUMBER
 IS
-    v_cursor SYS_REFCURSOR;
+  v_ShipmentID NUMBER;
 BEGIN
-    OPEN v_cursor FOR
-        SELECT
-            d.FileData,
-            d.FileName
-        FROM
-            Descriptions d
-        WHERE
-            d.DescriptionID = p_DescriptionID;
-
-    RETURN v_cursor;
-END;
-/
-
-
---Видалити продукт
-CREATE OR REPLACE FUNCTION DeleteProduct(p_productID NUMBER)
-RETURN BOOLEAN
-IS
-  v_success BOOLEAN := FALSE;
-BEGIN
-  DELETE FROM Products
-  WHERE ProductID = p_productID;
-
-  v_success := TRUE;
-
-  RETURN v_success;
-EXCEPTION
-  WHEN OTHERS THEN
-    RETURN FALSE;
-END;
-/
-
---Отримати наступний айді готівки
-CREATE OR REPLACE FUNCTION GetNextCashID RETURN NUMBER IS
-    v_CashID NUMBER;
-BEGIN
-    -- Используем секвенцию для получения нового CashID
-    SELECT CashSeq.NEXTVAL INTO v_CashID FROM DUAL;
-    RETURN v_CashID;
-END GetNextCashID;
-
---Отримати наступний айді банківскьої карти
-CREATE OR REPLACE FUNCTION GetNextBackCardID RETURN NUMBER IS
-    v_BankCardID NUMBER;
-BEGIN
-    -- Используем секвенцию для получения нового BankCardID
-    SELECT BankCardSeq.NEXTVAL INTO v_BankCardID FROM DUAL;
-    RETURN v_BankCardID;
-END GetNextBackCardID;
-
---Отримати назву опису по айді
-create or replace FUNCTION GetDescriptionName(d_descriptionID NUMBER)
-RETURN VARCHAR2
-IS
-  v_descriptionFileName VARCHAR2(50);
-BEGIN
-  SELECT FileName INTO v_descriptionFileName
-  FROM Descriptions
-  WHERE DescriptionID = d_descriptionID;
-
-  RETURN v_descriptionFileName;
+  SELECT ShipmentID INTO v_ShipmentID
+  FROM Shipments
+  WHERE OrderID = p_OrderID;
+  RETURN v_ShipmentID;
 EXCEPTION
   WHEN NO_DATA_FOUND THEN
     RETURN NULL;

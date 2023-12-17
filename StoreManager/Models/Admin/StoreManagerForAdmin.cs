@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace StoreManager.Models.Admin
 {
-    internal class StoreManagerForAdmin : AdminStoreInteraction
+    public class StoreManagerForAdmin : AdminStoreInteraction
     {
         public StoreManagerForAdmin(User user) : base(user, true) { }
     }

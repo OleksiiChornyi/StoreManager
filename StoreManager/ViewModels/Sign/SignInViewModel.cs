@@ -4,11 +4,12 @@ using StoreManager.Models.Abstract.Interfaces;
 using StoreManager.Models.Admin;
 using StoreManager.Models.Client;
 using StoreManager.Models.Guest;
+using StoreManager.Models.Manager;
 using StoreManager.Models.SQL_static;
 using StoreManager.ViewModels.Admin;
-using StoreManager.ViewModels.Client;
 using StoreManager.ViewModels.Core;
 using StoreManager.ViewModels.Services;
+using StoreManager.ViewModels.StoreInteraction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,18 @@ namespace StoreManager.ViewModels.Sign
                 OnPropertyChanged();
             }
         }
+        public SignInViewModel(INavigationService navigation)
+        {
+            Navigation = navigation;
+            ButtonBackCommand = new RelayCommand(GoBack);
+            SignInCommand = new RelayCommand(NavigateToUserViewModel);
+        }
+
+        public void Initialize(object parameter = null)
+        {
+            TextAccountName = string.Empty;
+            TextPassword = string.Empty;
+        }
         private string _textAccountName;
         public string TextAccountName
         {
@@ -47,17 +60,6 @@ namespace StoreManager.ViewModels.Sign
         }
         public ICommand ButtonBackCommand { get; }
         public ICommand SignInCommand { get; }
-        public SignInViewModel(INavigationService navigation)
-        {
-            Navigation = navigation;
-            ButtonBackCommand = new RelayCommand(GoBack);
-            SignInCommand = new RelayCommand(NavigateToUserViewModel);
-        }
-
-        public void Initialize(object parameter = null)
-        {
-            TextPassword = string.Empty;
-        }
 
         private void GoBack(object parameter)
         {
@@ -67,34 +69,43 @@ namespace StoreManager.ViewModels.Sign
         {
             if (Checkings.CheckUserNameExistence(TextAccountName))
             {
-                AllUsersInteractions user;
+                AllUsersInteractions account;
                 switch (Checkings.GetUserRole(TextAccountName))
                 {
                     case Role.client:
                         {
-                            user = new StoreForClient(
+                            account = new StoreForClient(
                                 new User(TextAccountName, TextPassword),
                                 true);
-                            if (user.isOk)
-                                Navigation.NavigateTo<ClientViewModel>(user);
+                            if (account.user.IsAutorize)
+                                Navigation.NavigateTo<MainStoreInterationViewModel>(account);
                             else
                                 MessageBox.Show("Error in username or password");
                         }
                         break;
                     case Role.guest:
                         {
-                            user = new StoreForGuest();
-                            if (user.isOk)
-                                Navigation.NavigateTo<ClientViewModel>(user);
+                            account = new StoreForGuest();
+                            if (account.user.IsAutorize)
+                                Navigation.NavigateTo<MainStoreInterationViewModel>(account);
+                            else
+                                MessageBox.Show("Error in username or password");
+                        }
+                        break;
+                    case Role.manager:
+                        {
+                            account = new StoreManagerForManager(new User(TextAccountName, TextPassword));
+                            if (account.user.IsAutorize)
+                                Navigation.NavigateTo<MainStoreInterationViewModel>(account);
                             else
                                 MessageBox.Show("Error in username or password");
                         }
                         break;
                     case Role.admin:
                         {
-                            user = new StoreManagerForAdmin(new User(TextAccountName, TextPassword));
-                            if (user.isOk)
-                                Navigation.NavigateTo<AdminViewModel>(user);
+                            account = new StoreManagerForAdmin(new User(TextAccountName, TextPassword));
+                            if (account.user.IsAutorize)
+                                Navigation.NavigateTo<MainStoreInterationViewModel>(account);
                             else
                                 MessageBox.Show("Error in username or password");
                         }

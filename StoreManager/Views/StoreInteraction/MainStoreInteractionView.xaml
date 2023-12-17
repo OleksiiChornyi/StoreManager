@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:StoreManager.Views.StoreInteraction"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
     <Grid Style="{StaticResource MainGrid}">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -14,12 +15,8 @@
         </Grid.RowDefinitions>
         <Grid x:Name="MenuGrid" Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="4*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="7*"/>
+                <ColumnDefinition Width="8*"/>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
@@ -27,50 +24,78 @@
                     Grid.Row="0" Grid.Column="0" 
                     Style="{StaticResource MainSignBtn}"
                     FontSize="20"
-                    Content="{Binding ButtonProfileContent}"
+                    IsEnabled="{Binding IsEnabledButtonProfile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Content="{Binding ButtonProfileContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Command="{Binding ButtonProfileCommand}"/>
-            <ComboBox x:Name="ComboBoxSortCategories" 
-              Grid.Row="0" Grid.Column="1" 
-              FontSize="20"
-              ItemsSource="{Binding ComboBoxSortCategoriesItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-              SelectedItem="{Binding ComboBoxSortCategoriesSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-              Style="{StaticResource ProductComboBoxStyle}"/>
-            <ComboBox x:Name="ComboBoxSortGetDescription" 
-              Grid.Row="0" Grid.Column="2" 
-              FontSize="20"
-              ItemsSource="{Binding ComboBoxSortGetDescriptionItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-              SelectedItem="{Binding ComboBoxSortGetDescriptionSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-              Style="{StaticResource ProductComboBoxStyle}">
-                <ComboBoxItem Content="All products"/>
-                <ComboBoxItem Content="With description"/>
-                <ComboBoxItem Content="No description"/>
-            </ComboBox>
-            <Button x:Name="ButtonSortPrice" Content="By price" 
-            Grid.Row="0" Grid.Column="3" 
-            Style="{StaticResource MainSignBtn}"
-            FontSize="20"
-            Command="{Binding ButtonSortPriceCommand}"/>
-            <Button x:Name="ButtonSortPopularity" Content="By popularity" 
-            Grid.Row="0" Grid.Column="4" 
-            FontSize="20"
-            Style="{StaticResource MainSignBtn}"
-            Command="{Binding ButtonSortPopularityCommand}"/>
+            <Menu x:Name="SortMenu"
+                  Grid.Row="0" Grid.Column="1"
+                  FontSize="25"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+                <MenuItem x:Name="MainSortMenuItem" 
+                          Header="Sorting" 
+                          Cursor="Hand"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch">
+                    <MenuItem x:Name="MenuButtonAllProducts" 
+                          Header="All products" 
+                          Cursor="Hand" 
+                          Command="{Binding MenuButtonAllProductsCommand}"/>
+                    <MenuItem x:Name="MenuItemSortCategories" 
+                              Cursor="Hand"
+                              Header="Categories"
+                              Command="{Binding MenuItemSortCategoriesCommand}"
+                              ItemsSource="{Binding MenuItemSortCategories, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <!--<ComboBox x:Name="ComboBoxSortCategories" 
+                            FontSize="20"
+                            ItemsSource="{Binding ComboBoxSortCategoriesItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            SelectedItem="{Binding ComboBoxSortCategoriesSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Style="{StaticResource ProductComboBoxStyle}"/>-->
+                    </MenuItem>
+
+                    <MenuItem x:Name="MenuItemComboBoxSortGetDescription"
+                              Cursor="Hand">
+                        <MenuItem.Header>
+                            <ComboBox x:Name="ComboBoxSortGetDescription" 
+                                 FontSize="20"
+                                 Width="180"
+                                 ItemsSource="{Binding ComboBoxSortGetDescriptionItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 SelectedItem="{Binding ComboBoxSortGetDescriptionSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Style="{StaticResource ProductComboBoxStyle}"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                    <MenuItem x:Name="MenuButtonSortPrice" 
+                              Header="By price" 
+                              Cursor="Hand" 
+                              Command="{Binding ButtonSortPriceCommand}"/>
+                    <MenuItem x:Name="MenuButtonSortPopularity" 
+                              Header="By popularity" 
+                              Cursor="Hand" 
+                              Command="{Binding ButtonSortPopularityCommand}"/>
+                </MenuItem>
+            </Menu>
+            
             <Button x:Name="ButtonUpdate" 
-            Grid.Row="0" Grid.Column="5" 
-            Style="{StaticResource ButtonUpdateStyle}" 
-            Command="{Binding ButtonUpdateCommand}"/>
+                    Grid.Row="0" Grid.Column="2" 
+                    Style="{StaticResource ButtonUpdateStyle}" 
+                    Command="{Binding ButtonUpdateCommand}"/>
             <Button x:Name="ButtonCart" 
-                    Grid.Row="0" Grid.Column="6" 
+                    Grid.Row="0" Grid.Column="3" 
                     Style="{StaticResource ButtonCartStyle}"
-                    IsEnabled="{Binding ButtonCartIsEnabled}"
-                    Command="{Binding CartCommand}"/>
-            <Button x:Name="ButtonExit"
-                    Grid.Row="0" Grid.Column="7" 
+                    IsEnabled="{Binding ButtonCartIsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Command="{Binding ButtonCartCommand}"/>
+            <!--<Button x:Name="ButtonExit"
+                    Grid.Row="0" Grid.Column="4" 
                     Style="{StaticResource ExitBtn}" 
-                    IsEnabled="{Binding ButtonExitIsEnabled}"
-                    Command="{Binding ExitCommand}"/>
+                    IsEnabled="{Binding ButtonExitIsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Command="{Binding ExitCommand}"/>-->
         </Grid>
-        <ListView x:Name="ProductList" Grid.Row="1" Style="{StaticResource ListViewStyle}" ItemsSource="{Binding ProductListItems}" >
+        
+        <ListView x:Name="ProductList" 
+                  Grid.Row="1" 
+                  Style="{StaticResource ListViewStyle}" 
+                  ItemsSource="{Binding ProductListItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction Command="{Binding MouseDoubleClickCommand}" />
@@ -86,14 +111,22 @@
                     <Border BorderThickness="2" BorderBrush="Gray">
                         <Grid>
                             <StackPanel Height="200" Width="150" Cursor="Hand" HorizontalAlignment="Center">
-                                <Image Height="150" Width="150" Source="{Binding Image_src}"/>
+                                <Image 
+                                    Height="150" Width="150" 
+                                    Source="{Binding Image_src, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 <Grid Width="150" VerticalAlignment="Bottom">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="1*"/>
                                         <RowDefinition Height="1*"/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{StaticResource TextBlockClientPage}"/>
-                                    <TextBlock Text="{Binding categoryName}" Grid.Row="1" Style="{StaticResource TextBlockClientPage}"/>
+                                    <TextBlock 
+                                        Grid.Row="0" 
+                                        Text="{Binding Product.ProductName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                        Style="{StaticResource TextBlockClientPage}"/>
+                                    <TextBlock 
+                                        Grid.Row="1" 
+                                        Text="{Binding Product.Category.CategoryName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                        Style="{StaticResource TextBlockClientPage}"/>
                                 </Grid>
                             </StackPanel>
                         </Grid>
@@ -102,10 +135,14 @@
             </ListView.ItemTemplate>
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem x:Name="MenuItemSelectedItem" 
-                              Header="{Binding MenuItemHeader}" 
-                              IsEnabled="{Binding MenuItemIsEnabled}"
-                              Command="{Binding MenuItemDeleteItemCommand}"/>
+                    <MenuItem x:Name="MenuItemAddToCartItem" 
+                              Header="Add To Card"
+                              Visibility="{Binding MenuItemAddToCartVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Command="{Binding MenuItemAddToCartItemCommand}"/>
+                    <MenuItem x:Name="MenuItemDeleteItem" 
+                              Header="Delete item"
+                              Visibility="{Binding MenuItemDeleteItemVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Command="{Binding MenuItemDeleteItemItemCommand}"/>
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>

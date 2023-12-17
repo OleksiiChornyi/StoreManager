@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions"
+        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions.Creating"
         xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters"
         mc:Ignorable="d"
                 Title="Change Data Product" Height="650" Width="1000">
@@ -38,7 +38,7 @@
         <Button x:Name="CreateProductImageButton" Grid.Row="3" Grid.Column="1" Style="{StaticResource MainSignBtn}" Content="{Binding CreateProductImageButtonContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True" DragEnter="{Binding CreateProductImageButtonDragEnterCommand}" Drop="{Binding CreateProductImageButtonDropCommand}" Command="{Binding CreateProductImageButtonCommand}"/>
         <ComboBox x:Name="comboBoxCategories" Grid.Row="4" Grid.Column="1" Style="{StaticResource ProductComboBoxStyle}" ItemsSource="{Binding comboBoxCategoriesItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding comboBoxCategoriesSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <ComboBox x:Name="comboBoxDescriptions" Grid.Row="5" Grid.Column="1" Style="{StaticResource ProductComboBoxStyle}" ItemsSource="{Binding comboBoxDescriptionsItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding comboBoxDescriptionsSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        <Button x:Name="UpdateProductButton" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignUpBtn}" Content="Update product data" Command="{Binding UpdateProductButtonCommand}">
+        <Button x:Name="UpdateProductButton" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignBtn}" Content="Update product data" Command="{Binding UpdateProductButtonCommand}">
             <Button.IsEnabled>
                 <MultiBinding Converter="{StaticResource ChangeDataProductConverter}">
                     <Binding ElementName="ProductNameTextBox" Path="Text"/>

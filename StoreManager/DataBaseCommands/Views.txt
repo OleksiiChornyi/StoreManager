@@ -1,5 +1,75 @@
-CREATE OR REPLACE VIEW ProductCategoryDescriptionsView AS
-SELECT
+
+  CREATE OR REPLACE VIEW CATEGORIESVIEW AS
+  SELECT CATEGORYID,CATEGORYNAME, CATEGORYDESCRIPTION,PARENTCATEGORYID
+FROM Categories;
+
+
+  CREATE OR REPLACE VIEW CATEGORYHIERARCHYVIEW AS 
+  SELECT 
+    CategoryID, 
+    ParentCategoryID,
+    CategoryName, 
+    CategoryDescription, 
+    CONNECT_BY_ROOT CategoryID AS RootCategoryID,
+    LEVEL AS CategoryLevel
+FROM Categories
+START WITH ParentCategoryID IS NULL
+CONNECT BY PRIOR CategoryID = ParentCategoryID;
+
+
+  CREATE OR REPLACE VIEW DELETEPRODUCTVIEW AS 
+  SELECT
+    ProductID,
+    ProductName
+FROM
+    Products;
+
+
+    
+  CREATE OR REPLACE VIEW DESCRIPTIONVIEW AS 
+  SELECT
+    D.FileName,
+    D.FileType,
+    D.FileExtension,
+    D.UploadDate,
+    D.ModificationDate,
+    D.Info,
+    COUNT(P.DescriptionID) AS UsageCount
+FROM
+    Descriptions D
+LEFT JOIN
+    Products P ON D.DescriptionID = P.DescriptionID
+GROUP BY
+    D.FileName,
+    D.FileType,
+    D.FileExtension,
+    D.UploadDate,
+    D.ModificationDate,
+    D.Info;
+
+    
+  CREATE OR REPLACE VIEW ORDERDETAILSVIEW AS 
+  SELECT
+    O.OrderNumber,
+    O.OrderDate,
+    O.OrderStatus,
+    U.UserName,
+    C.CashID,
+    BC.BankCardID,
+    BC.BankNumber
+FROM
+    Orders O
+LEFT JOIN
+    Users U ON O.UserID = U.UserID
+LEFT JOIN
+    Cash C ON O.OrderNumber = C.OrderNumber
+LEFT JOIN
+    BankCard BC ON O.OrderNumber = BC.OrderNumber;
+
+
+    
+  CREATE OR REPLACE VIEW PRODUCTCATEGORYDESCRIPTIONSVIEW AS 
+  SELECT
     P.ProductID,
     P.SKU,
     P.ProductName,
@@ -24,245 +94,117 @@ SELECT
     BC.ModificationDate AS FileBinaryContentModificationDate,
     BC.Content
 FROM
-Products P
+    Products P
 JOIN
-Categories C ON P.CategoryID = C.CategoryID
+    Categories C ON P.CategoryID = C.CategoryID
 JOIN
-Descriptions D ON P.DescriptionID = D.DescriptionID
+    Descriptions D ON P.DescriptionID = D.DescriptionID
 JOIN
-BinaryContent BC ON BC.ContentID = p.ContentID;
+    BinaryContent BC ON BC.ContentID = p.ContentID;
 
-CREATE OR REPLACE VIEW CategoryHierarchyView AS
-    SELECT 
-    CategoryID, 
-    ParentCategoryID,
-    CategoryName, 
-    CategoryDescription, 
-    CONNECT_BY_ROOT CategoryID AS RootCategoryID,
-    LEVEL AS CategoryLevel
-FROM Categories
-START WITH ParentCategoryID IS NULL
-CONNECT BY PRIOR CategoryID = ParentCategoryID;
-
-
---Погляд для отримання продуктів для клієнта
-CREATE OR REPLACE VIEW ProductCategoryIdView AS
-SELECT
-    p.ProductID,
-    p.ProductName,
-    p.ProductImageFileName,
-    p.ProductImage,
-    p.Cost,
-    c.CategoryID,
-    c.CategoryName,
-    c.CategoryDescription,
-    p.SalesCount,
-    p.DescriptionID
-FROM Products p
-JOIN Categories c ON p.CategoryID = c.CategoryID;
-
-
---Погляд для категорій
-CREATE VIEW ProductsCategoriesView AS
-SELECT 
+    
+  CREATE OR REPLACE VIEW PRODUCTSCATEGORIESVIEW AS 
+  SELECT 
     CategoryID,
     CategoryName
 FROM
     Categories;
 
---Погляд для опису
-CREATE VIEW ProductsDescriptionsView AS
-SELECT
-    DescriptionID,
-    FileName
+    
+  CREATE OR REPLACE VIEW PRODUCTSVIEW AS 
+  SELECT
+    P.ProductName,
+    P.SKU,
+    P.Cost,
+    D.FileName AS DescriptionFileName,
+    D.UploadDate AS DescriptionUploadDate,
+    D.ModificationDate AS DescriptionModificationDate,
+    BC.FileName AS ContentFileName,
+    BC.UploadDate AS ContentUploadDate,
+    BC.ModificationDate AS ContentModificationDate,
+    PC.CategoryName AS ParentCategoryName,
+    PC.CategoryDescription AS ParentCategoryDescription,
+    P.SalesCount
 FROM
-    Descriptions;
+    Products P
+LEFT JOIN
+    Descriptions D ON P.DescriptionID = D.DescriptionID
+LEFT JOIN
+    BinaryContent BC ON P.ContentID = BC.ContentID
+LEFT JOIN
+    Categories PC ON P.CategoryID = PC.CategoryID;
 
---Погляд для замовлень
-CREATE VIEW ShipmentsOrdersView AS
-SELECT
+    
+  CREATE OR REPLACE VIEW SHIPMENTSORDERSVIEW AS 
+  SELECT
     OrderID,
-    OrderNumber
+    OrderNumber,
+    OrderStatus
 FROM
     Orders;
 
---Погляд для продуктів для інвентаризації
-CREATE VIEW InventoryProductsView AS
-SELECT
-    ProductID,
-    ProductName
+    
+  CREATE OR REPLACE  VIEW UPDATEDESCRIPTIONVIEW AS 
+  SELECT DescriptionID, FileName
+FROM Descriptions;
+
+
+  CREATE OR REPLACE VIEW UPDATEPRODUCTSVIEW AS 
+  SELECT
+    P.ProductID,
+    P.ProductName,
+    P.DescriptionID,
+    D.FileName AS DescriptionFileName,
+    P.ContentID,
+    BC.FileName AS ContentFileName,
+    P.Cost,
+    P.CategoryID,
+    PC.CategoryName AS ParentCategoryName,
+    P.SalesCount
 FROM
-    Products;
+    Products P
+LEFT JOIN
+    Descriptions D ON P.DescriptionID = D.DescriptionID
+LEFT JOIN
+    BinaryContent BC ON P.ContentID = BC.ContentID
+LEFT JOIN
+    Categories PC ON P.CategoryID = PC.CategoryID;
 
---Погляд для складів для інвентаризації
-CREATE VIEW InventoryWarehousesView AS
-SELECT
-    WarehouseID,
-    WarehouseName
-FROM
-    Warehouses;
-
---Погляд для користувачів
-CREATE VIEW UsersView AS
-SELECT UserID, UserName, ContactInfo, UserRole, OrderCount
-FROM Users;
-/
-
---Погляд для категорій
-CREATE VIEW CategoriesView AS
-SELECT *
-FROM Categories;
-/
-
---Погляд для описів
-CREATE VIEW DescriptionsView AS
-SELECT
-    d.DescriptionID,
-    d.FileName,
-    d.FileType,
-    d.FileExtension,
-    d.UploadDate,
-    d.ModificationDate
-FROM Descriptions d;
-
-
---Погляд для товарів
-CREATE VIEW ProductDetailsView AS
-SELECT
-    p.ProductID,
-    p.SKU,
-    p.ProductName,
-    p.Cost,
-    c.CategoryName,
-    p.SalesCount
-FROM Products p
-JOIN Categories c ON p.CategoryID = c.CategoryID;
-
---Погляд для товарів замовлень
-CREATE VIEW AllOrderItemsData AS
-SELECT
-    oi.OrderItemID,
-    oi.OrderNumber,
-    oi.Quantity,
-    p.ProductID,
-    p.SKU,
-    p.ProductName,
-    p.Cost,
-    c.CategoryName,
-    u.UserID,
-    u.UserName,
-    o.OrderID,
-    o.OrderDate,
-    o.OrderStatus
-FROM OrderItems oi
-JOIN Products p ON oi.ProductID = p.ProductID
-JOIN Categories c ON p.CategoryID = c.CategoryID
-JOIN Orders o ON oi.OrderNumber = o.OrderNumber
-JOIN Users u ON o.UserID = u.UserID;
-
-
---Погляд для замовлень
-CREATE VIEW OrdersView AS
-SELECT
-    o.OrderID,
-    o.OrderNumber,
-    o.OrderDate,
-    o.OrderStatus,
-    u.UserName,
-    u.ContactInfo,
-    SUM(oi.Quantity) AS TotalQuantity
-FROM
-    Orders o
-    JOIN Users u ON o.UserID = u.UserID
-    LEFT JOIN OrderItems oi ON o.OrderNumber = oi.OrderNumber
-GROUP BY
-o.OrderID,
-o.OrderNumber,
-o.OrderDate,
-o.OrderStatus,
-u.UserName,
-u.ContactInfo;
-
-
---Погляд для постачальників
-CREATE VIEW SupplierDetails AS
-SELECT *
+    
+  CREATE OR REPLACE  VIEW UPDATESUPPLIERSVIEW AS 
+  SELECT SUPPLIERID,COMPANYNAME,CONTACTINFO,SUPPLIERADDRESS
 FROM Suppliers;
 
---Погляд для відвантажень
-CREATE VIEW ShipmentDetails AS
-SELECT
-    s.ShipmentID,
-    s.ShipmentNumber,
-    s.ShipmentDate,
-    s.ShipmentStatus,
-    o.OrderNumber,
-    o.OrderDate,
-    u.UserName AS CustomerName,
-    p.ProductID,
-    p.ProductName,
-    oi.Quantity
+
+  CREATE OR REPLACE  VIEW UPDATEUSERVIEW AS 
+  SELECT UserID, UserName, UserRole
+FROM Users;
+
+
+  CREATE OR REPLACE VIEW USERSVIEW AS 
+  SELECT
+    U.UserName,
+    U.Email,
+    BC.FileName,
+    U.UserRole,
+    U.OrderCount,
+    U.BirthDate,
+    U.PhoneNumber,
+    U.CreatingDate
 FROM
-    Shipments s
+    Users U
 JOIN
-    Orders o ON s.OrderID = o.OrderID
-JOIN
-    Users u ON o.UserID = u.UserID
-JOIN
-    OrderItems oi ON o.OrderNumber = oi.OrderNumber
-JOIN
-    Products p ON oi.ProductID = p.ProductID;
+    BinaryContent BC ON U.ContentID = BC.ContentID;
 
---Погляд для складів
-CREATE VIEW WarehousesView AS
-SELECT *
-FROM Warehouses;
+    
+  CREATE OR REPLACE VIEW VIEWSUPPLIERS AS 
+  SELECT CompanyName,
+    ContactInfo,
+    SupplierAddress
+FROM Suppliers;
 
---Погляд для інвентаризації
-CREATE VIEW InventoryView AS
-SELECT
-    I.InventoryID,
-    I.ProductID,
-    P.SKU,
-    P.ProductName,
-    I.QuantityOnHand,
-    I.WarehouseID,
-    W.WarehouseName,
-    W.Location,
-    W.Capacity,
-    W.Availability,
-    I.InventoryDate
-FROM
-    Inventory I
-JOIN
-    Products P ON I.ProductID = P.ProductID
-JOIN
-    Warehouses W ON I.WarehouseID = W.WarehouseID;
 
---Погляд для платежів
-CREATE VIEW PaymentsView AS
-SELECT
-    p.PaymentID,
-    p.UserId,
-    u.UserName,
-    o.OrderNumber,
-    o.OrderDate,
-    p.CashID,
-    p.BankCardID,
-    bc.BankNumber
-FROM
-    Payments p
-JOIN
-    Users u ON p.UserId = u.UserID
-JOIN
-    Orders o ON p.OrderNumber = o.OrderNumber
-LEFT JOIN
-    Cash c ON p.CashID = c.CashID
-LEFT JOIN
-    BankCard bc ON p.BankCardID = bc.BankCardID;
+  CREATE OR REPLACE VIEW VIEWSUPPLIERSVIEW AS 
+  SELECT SUPPLIERID,COMPANYNAME,CONTACTINFO,SUPPLIERADDRESS
+FROM Suppliers;
 
---Погляд для айдиту
-CREATE VIEW AuditLogsDetails AS
-SELECT *
-FROM AuditLogs;
-/

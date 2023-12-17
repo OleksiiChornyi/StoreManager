@@ -2,12 +2,16 @@
 using Oracle.ManagedDataAccess.Types;
 using StoreManager.DB_classes;
 using StoreManager.Models.Abstract.Interfaces;
+using StoreManager.Models.Guest;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Remoting.Contexts;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,23 +27,78 @@ namespace StoreManager.Models.SQL_static
             get { return _connectionString; }
             set { _connectionString = ConfigurationManager.ConnectionStrings["conString"].ConnectionString; }
         }
-
-        public static void CreateGuestIfNotExist()
+        private static string _imagePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources\\Standart profile image\\StandartProfileImage.png");
+        public static BinaryContent standartImage = new BinaryContent(_imagePath) { ContentID = 1 };
+        public static User guest = new User();
+        private static void CreateStandartImage()
         {
-            string guestName = "Guest";
-            string email = null;
-            string phoneNumber = null;
-            if (!CheckUserExistence(guestName, email, phoneNumber))
+            using (OracleConnection connection = new OracleConnection(connectionString))
             {
-                string password = "1111";
-                string passwordHash = HashPassword(password);
-                string userRole = Role.guest.ToString();
-                DateTime birthDate = DateTime.Now;
-                CreateGuestUser(guestName, passwordHash, email, userRole, birthDate, phoneNumber);
+                connection.Open();
+
+                using (OracleCommand command = connection.CreateCommand())
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandText = "InsertOrUpdateBinaryContent";
+
+                    command.Parameters.Add("p_ContentID", OracleDbType.Int32).Value = standartImage.ContentID;
+                    command.Parameters.Add("p_FileName", OracleDbType.Varchar2).Value = standartImage.FileName;
+                    command.Parameters.Add("p_FileType", OracleDbType.Varchar2).Value = standartImage.FileType;
+                    command.Parameters.Add("p_FileExtension", OracleDbType.Varchar2).Value = standartImage.FileExtension;
+
+                    OracleParameter paramContent = new OracleParameter("p_Content", OracleDbType.Blob);
+                    paramContent.Direction = ParameterDirection.Input;
+                    paramContent.Value = standartImage.Content;
+                    command.Parameters.Add(paramContent);
+
+                    OracleParameter outCursorParam = new OracleParameter();
+                    outCursorParam.ParameterName = "p_Cursor";
+                    outCursorParam.OracleDbType = OracleDbType.RefCursor;
+                    outCursorParam.Direction = ParameterDirection.Output;
+                    command.Parameters.Add(outCursorParam);
+
+
+
+                    command.ExecuteNonQuery();
+
+                    if (outCursorParam.Value != DBNull.Value)
+                    {
+                        OracleDataReader reader = ((OracleRefCursor)outCursorParam.Value).GetDataReader();
+
+                        while (reader.Read())
+                        {
+                            int contentID = reader.IsDBNull(reader.GetOrdinal("ContentID")) ? default(int) : reader.GetInt32(reader.GetOrdinal("ContentID"));
+                            string fileName = reader.IsDBNull(reader.GetOrdinal("FileName")) ? string.Empty : reader.GetString(reader.GetOrdinal("FileName"));
+                            string fileType = reader.IsDBNull(reader.GetOrdinal("FileType")) ? string.Empty : reader.GetString(reader.GetOrdinal("FileType"));
+                            string fileExtension = reader.IsDBNull(reader.GetOrdinal("FileExtension")) ? string.Empty : reader.GetString(reader.GetOrdinal("FileExtension"));
+                            DateTime uploadDate = reader.IsDBNull(reader.GetOrdinal("UploadDate")) ? default(DateTime) : reader.GetDateTime(reader.GetOrdinal("UploadDate"));
+                            DateTime modificationDate = reader.IsDBNull(reader.GetOrdinal("ModificationDate")) ? default(DateTime) : reader.GetDateTime(reader.GetOrdinal("ModificationDate"));
+                            byte[] content = reader.IsDBNull(reader.GetOrdinal("Content")) ? null : (byte[])reader.GetValue(reader.GetOrdinal("Content"));
+
+                            standartImage = new BinaryContent(contentID, fileName, fileType, fileExtension, uploadDate, modificationDate, content);
+                        }
+
+                        reader.Close();
+                    }
+                }
             }
         }
 
-        private static void CreateGuestUser(string userName, string passwordHash, string email, string userRole, DateTime birthDate, string phoneNumber)
+        public static void CreateGuestIfNotExist()
+        {
+            CreateStandartImage();
+
+            guest = User.CreateGuest();
+
+            if (!CheckUserNameExistence(guest.UserName))
+            {
+                CreateGuestUser(guest);
+            }
+            var acc = new StoreForGuest();
+            guest = acc.user;
+        }
+
+        private static void CreateGuestUser(User userGuest)
         {
             using (OracleConnection connection = new OracleConnection(connectionString))
             {
@@ -55,17 +114,26 @@ namespace StoreManager.Models.SQL_static
                         paramUserID.Direction = ParameterDirection.Output;
                         command.Parameters.Add(paramUserID);
 
-                        command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = userName;
-                        command.Parameters.Add("p_PasswordHash", OracleDbType.Varchar2).Value = passwordHash;
-                        command.Parameters.Add("p_Email", OracleDbType.Varchar2).Value = email;
-                        command.Parameters.Add("p_ContentID", OracleDbType.Int64).Value = null;
-                        command.Parameters.Add("p_UserRole", OracleDbType.Varchar2).Value = userRole;
-                        command.Parameters.Add("p_BirthDate", OracleDbType.Date).Value = new OracleDate(birthDate);
-                        command.Parameters.Add("p_PhoneNumber", OracleDbType.Varchar2).Value = phoneNumber;
+                        OracleParameter paramUserCreatingDate = new OracleParameter("p_CreatingDate", OracleDbType.Date);
+                        paramUserCreatingDate.Direction = ParameterDirection.Output;
+                        command.Parameters.Add(paramUserCreatingDate);
+
+                        command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = userGuest.UserName;
+                        command.Parameters.Add("p_PasswordHash", OracleDbType.Varchar2).Value = userGuest.PasswordHash;
+                        command.Parameters.Add("p_Email", OracleDbType.Varchar2).Value = userGuest.Email;
+                        command.Parameters.Add("p_ContentID", OracleDbType.Int64).Value = userGuest.BinaryContent.ContentID;
+                        command.Parameters.Add("p_UserRole", OracleDbType.Varchar2).Value = userGuest.UserRole;
+                        command.Parameters.Add("p_BirthDate", OracleDbType.Date).Value = new OracleDate(userGuest.BirthDate);
+                        command.Parameters.Add("p_PhoneNumber", OracleDbType.Varchar2).Value = userGuest.PhoneNumber;
 
                         command.ExecuteNonQuery();
 
-                    }
+                        userGuest.UserID = int.Parse(paramUserID.Value.ToString());
+
+                        OracleDate oracleDateValue = (OracleDate)paramUserCreatingDate.Value;
+                        if (!oracleDateValue.IsNull)
+                            userGuest.CreatingDate = oracleDateValue.Value;
+                    }   
                 }
                 catch (Exception ex)
                 {
@@ -127,71 +195,143 @@ namespace StoreManager.Models.SQL_static
             }
             return null;
         }
+        private static bool CheckUserNameExistence(string UserName, OracleConnection connection)
+        {
+            try
+            {
+                using (OracleCommand command = new OracleCommand("BEGIN :result := CheckUserNameExistence(:p_UserName); END;", connection))
+                {
+                    command.Parameters.Add("result", OracleDbType.Boolean, ParameterDirection.ReturnValue);
+                    command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = UserName;
 
+                    command.ExecuteNonQuery();
+
+                    OracleBoolean oracleBooleanResult = (OracleBoolean)command.Parameters["result"].Value;
+
+                    bool userExists = oracleBooleanResult.Equals(OracleBoolean.True);
+
+                    return userExists;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            return true;
+        }
+        private static bool CheckUserPhoneNumberExistence(string PhoneNumber, OracleConnection connection)
+        {
+            try
+            {
+                using (OracleCommand command = new OracleCommand("BEGIN :result := CheckUserPhoneNumberExistence(:p_PhoneNumber); END;", connection))
+                {
+                    command.Parameters.Add("result", OracleDbType.Boolean, ParameterDirection.ReturnValue);
+                    command.Parameters.Add("p_PhoneNumber", OracleDbType.Varchar2).Value = PhoneNumber;
+
+                    command.ExecuteNonQuery();
+
+                    OracleBoolean oracleBooleanResult = (OracleBoolean)command.Parameters["result"].Value;
+
+                    bool userExists = oracleBooleanResult.Equals(OracleBoolean.True);
+
+                    return userExists;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            return true;
+        }
+        private static bool CheckUserEmailExistence(string Email, OracleConnection connection)
+        {
+            try
+            {
+                using (OracleCommand command = new OracleCommand("BEGIN :result := CheckUserEmailExistence(:p_PhoneNumber); END;", connection))
+                {
+                    command.Parameters.Add("result", OracleDbType.Boolean, ParameterDirection.ReturnValue);
+                    command.Parameters.Add("p_Email", OracleDbType.Varchar2).Value = Email;
+
+                    command.ExecuteNonQuery();
+
+                    OracleBoolean oracleBooleanResult = (OracleBoolean)command.Parameters["result"].Value;
+
+                    bool userExists = oracleBooleanResult.Equals(OracleBoolean.True);
+
+                    return userExists;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            return true;
+        }
+
+        /*public static bool CheckUserExistence(string UserName, string Email, string PhoneNumber)
+        {
+            using (OracleConnection connection = new OracleConnection(connectionString))
+            {
+                connection.Open();
+
+                if (CheckUserNameExistence(UserName, connection))
+                {
+                    return true;
+                }
+                if (CheckUserEmailExistence(Email, connection))
+                {
+                    return true;
+                }
+                if (CheckUserPhoneNumberExistence(PhoneNumber, connection))
+                {
+                    return true;
+                }
+
+                connection.Close();
+            }
+            return false;
+        }*/
         public static bool CheckUserNameExistence(string UserName)
         {
             using (OracleConnection connection = new OracleConnection(connectionString))
             {
                 connection.Open();
 
-                try
+                if (CheckUserNameExistence(UserName, connection))
                 {
-                    using (OracleCommand command = new OracleCommand("BEGIN :result := CheckUserNameExistence(:p_UserName); END;", connection))
-                    {
-                        command.Parameters.Add("result", OracleDbType.Boolean, ParameterDirection.ReturnValue);
-                        command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = UserName;
-
-                        command.ExecuteNonQuery();
-
-                        OracleBoolean oracleBooleanResult = (OracleBoolean)command.Parameters["result"].Value;
-
-                        bool userExists = oracleBooleanResult.Equals(OracleBoolean.True);
-
-                        return userExists;
-                    }
+                    return true;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                }
-
                 connection.Close();
             }
-            return true;
+            return false;
         }
-
-        public static bool CheckUserExistence(string UserName, string Email, string PhoneNumber)
+        public static bool CheckUserEmailExistence(string Email)
+        {
+            using (OracleConnection connection = new OracleConnection(connectionString))
+            {
+                connection.Open();
+                if (CheckUserEmailExistence(Email, connection))
+                {
+                    return true;
+                }
+                connection.Close();
+            }
+            return false;
+        }
+        public static bool CheckUserPhoneNumberExistence(string PhoneNumber)
         {
             using (OracleConnection connection = new OracleConnection(connectionString))
             {
                 connection.Open();
 
-                try
+                if (CheckUserPhoneNumberExistence(PhoneNumber, connection))
                 {
-                    using (OracleCommand command = new OracleCommand("BEGIN :result := CheckUserExistence(:p_UserName, :p_PhoneNumber, :p_Email); END;", connection))
-                    {
-                        command.Parameters.Add("result", OracleDbType.Boolean, System.Data.ParameterDirection.ReturnValue);
-                        command.Parameters.Add("p_UserName", OracleDbType.Varchar2).Value = UserName;
-                        command.Parameters.Add("p_PhoneNumber", OracleDbType.Varchar2).Value = Email;
-                        command.Parameters.Add("p_Email", OracleDbType.Varchar2).Value = PhoneNumber;
-
-                        command.ExecuteNonQuery();
-
-                        OracleBoolean oracleBooleanResult = (OracleBoolean)command.Parameters["result"].Value;
-
-                        bool userExists = oracleBooleanResult.Equals(OracleBoolean.True);
-
-                        return userExists;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
+                    return true;
                 }
 
                 connection.Close();
             }
-            return true;
+            return false;
         }
     }
 }

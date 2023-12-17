@@ -10,15 +10,17 @@ using System.Windows.Input;
 using System.Windows;
 using Microsoft.Win32;
 using StoreManager.ViewModels.Help;
+using System.IO;
+using StoreManager.DB_classes;
 
 namespace StoreManager.ViewModels.Admin.Interactions.Creating
 {
     public class CreateDescriptionViewModel : ViewModelBase, IBorderDopViewModel
     {
-        private readonly AdminStoreInteraction _admin;
+        private readonly ManagerStoreInteraction _admin;
         private readonly CreateDescriptionView createDescriptionView;
 
-        public CreateDescriptionViewModel(AdminStoreInteraction admin)
+        public CreateDescriptionViewModel(ManagerStoreInteraction admin)
         {
             _admin = admin ?? throw new ArgumentNullException(nameof(admin));
 
@@ -63,7 +65,16 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
                     MessageBox.Show("Select one file");
                     return;
                 }
-                _admin.CreateDescription(ofd.FileName);
+
+                FileInfo fileInfo = new FileInfo(ofd.FileName);
+                string fileName = fileInfo.Name;
+                string fileExtension = fileInfo.Extension;
+                string fileType = AdminStoreInteraction.GetFileType(fileExtension);
+                byte[] fileData = File.ReadAllBytes(ofd.FileName);
+
+                Description description = new Description(ofd.FileName, "Some Info");
+
+                _admin.CreateDescription(description);
                 MessageBox.Show("Description created");
                 createDescriptionView.Close();
             }
@@ -79,9 +90,11 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
                 {
                     string filePath = files[0];
 
-                    if (System.IO.File.Exists(filePath))
+                    if (File.Exists(filePath))
                     {
-                        _admin.CreateDescription(filePath);
+                        Description description = new Description(filePath, "Some Info");
+
+                        _admin.CreateDescription(description);
                         MessageBox.Show("Description created");
                         createDescriptionView.Close();
                     }

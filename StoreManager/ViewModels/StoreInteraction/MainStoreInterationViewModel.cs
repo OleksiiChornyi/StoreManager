@@ -21,187 +21,330 @@ using StoreManager.Models.SQL_static;
 using StoreManager.ViewModels.Sign;
 using StoreManager.DB_classes;
 using StoreManager.Models.Data;
+using StoreManager.Models.Admin;
+using System.Windows.Data;
+using StoreManager.Models.Client.Cart;
+using StoreManager.ViewModels.CLient;
+using StoreManager.Models.Manager;
 
 namespace StoreManager.ViewModels.StoreInteraction
 {
-    internal class MainStoreInterationViewModel : ViewModelBase
+    internal class MainStoreInterationViewModel : ViewModelBase, IInitializable
     {
-        private enum sortStyle { up, down, cencel }
-        private readonly AllUsersInteractions account;
-        private readonly Window ProductsView;
-        private List<Category> categoryItems = new List<Category>();
-        private List<ProductItem> ProductItems = new List<ProductItem>();
-        private List<ProductItem> myChangeProductItems = new List<ProductItem>();
 
-        public MainStoreInterationViewModel(INavigationService navigation = null, AllUsersInteractions account = null)
+        private INavigationService _navigation;
+        public INavigationService Navigation
         {
-            if (account == null)
+            get => _navigation;
+            set
             {
-                Checkings.CreateGuestIfNotExist();
-                this.account = new StoreForGuest();
+                _navigation = value;
+                OnPropertyChanged();
             }
-            else
-            {
-                this.account = account;
-            }
-
+        }
+        private enum sortStyle { up, down, cencel }
+        private AllUsersInteractions account;
+        private StoreCartInteraction myCart = null;
+        private List<Category> categoryItems = new List<Category>();
+        private readonly List<ProductItem> StaticProductItems = new List<ProductItem>();
+        private List<ProductItem> myChangeProductItems = new List<ProductItem>();
+        private int? _selectedCategoryID = null;
+        public MainStoreInterationViewModel(INavigationService navigation)
+        {
             Navigation = navigation;
 
             ButtonProfileCommand = new RelayCommand(ButtonProfile);
             ButtonSortPriceCommand = new RelayCommand(ButtonSortPrice);
             ButtonSortPopularityCommand = new RelayCommand(ButtonSortPopularity);
             ButtonUpdateCommand = new RelayCommand(ButtonUpdate);
-            MenuItemCommand = new RelayCommand(ExecuteMenuItemCommand, CanExecuteMenuItem);
+            ButtonCartCommand = new RelayCommand(ButtonCart);
+            MenuItemAddToCartItemCommand = new RelayCommand(MenuItemAddToCartItem, CanExecuteMenuItemAddToCartItem);
+            MenuItemDeleteItemItemCommand = new RelayCommand(MenuItemDeleteItemItem, CanExecuteMenuItemDeleteItemItem);
             MouseDoubleClickCommand = new RelayCommand(MouseDoubleClick);
+            MenuButtonAllProductsCommand = new RelayCommand(MenuButtonAllProducts);
+        }
+        private ContextMenu _contextMenu;
+        public ContextMenu ContextMenu
+        {
+            get { return _contextMenu; }
+            set 
+            {
+                _contextMenu = value; 
+                OnPropertyChanged(nameof(ContextMenu));
+            }
+        }
+        public void Initialize(object parameter)
+        {
+            if (parameter == null)
+            {
+                Checkings.CreateGuestIfNotExist();
+                account = new StoreForGuest();
+                myCart = null;
+            }
+            else if (parameter is User)
+            {
+                User user = parameter as User;
+                switch (user.UserRole)
+                {
+                    case Role.admin:
+                        account = new StoreManagerForAdmin(user);
+                        break;
+                    case Role.manager:
+                        account = new StoreManagerForManager(user);
+                        break;
+                    case Role.client:
+                        account = new StoreForClient(user, true);
+                        break;
+                    default:
+                        account = new StoreForGuest();
+                        break;
+                }
+            }
+            else
+            {
+                int? userId = account?.user?.UserID;
+                account = parameter as AllUsersInteractions;
+                if (account.user.UserID != userId)
+                {
+                    switch (account?.user?.UserRole)
+                    {
+                        case Role.admin:
+                            myCart = new MyCart(account);
+                            break;
+                        case Role.manager:
+                            myCart = new MyCart(account);
+                            break;
+                        case Role.client:
+                            myCart = new MyCart(account);
+                            break;
+                        case Role.guest:
+                            myCart = null;
+                            break;
+                        default:
+                            myCart = null;
+                            break;
+                    }
+                }
+            }
 
             LoadData();
-
-            if (account?.user?.UserRole== Role.admin)
-            {
-                ProductsView = new UpdateProductsView()
-                {
-                    DataContext = this
-                };
-                ProductsView.Show();
-            }
         }
 
         #region Functions
         private async void LoadData()
         {
+            IsEnabledButtonProfile = true;
 
             switch (account?.user?.UserRole)
             {
                 case Role.admin:
                     ButtonCartIsEnabled = true;
-                    ButtonExitIsEnabled = true;
-                    MenuItemIsEnabled = true;
+                    MenuItemAddToCartVisibility = Visibility.Visible;
+                    MenuItemDeleteItemVisibility = Visibility.Visible;
                     ButtonProfileContent = "Profile";
-                    MenuItemHeader = "Delete the item";
+                    break;
+                case Role.manager:
+                    ButtonCartIsEnabled = true;
+                    MenuItemAddToCartVisibility = Visibility.Visible;
+                    //MenuItemDeleteItemVisibility = Visibility.Visible;
+                    ButtonProfileContent = "Profile";
                     break;
                 case Role.client:
                     ButtonCartIsEnabled = true;
-                    ButtonExitIsEnabled = true;
-                    MenuItemIsEnabled = true;
+                    MenuItemAddToCartVisibility = Visibility.Visible;
+                    MenuItemDeleteItemVisibility = Visibility.Collapsed;
                     ButtonProfileContent = "Profile";
-                    MenuItemHeader = "Add to cart";
                     break;
                 case Role.guest:
                     ButtonCartIsEnabled = false;
-                    ButtonExitIsEnabled = false;
-                    MenuItemIsEnabled = false;
+                    MenuItemAddToCartVisibility = Visibility.Collapsed;
+                    MenuItemDeleteItemVisibility = Visibility.Collapsed;
                     ButtonProfileContent = "Autorize";
-                    MenuItemHeader = string.Empty;
+                    IsEnabledButtonProfile = !Navigation.isEmulated;
                     break;
                 default:
                     ButtonCartIsEnabled = false;
-                    ButtonExitIsEnabled = false;
-                    MenuItemIsEnabled = false;
+                    MenuItemAddToCartVisibility = Visibility.Collapsed;
+                    MenuItemDeleteItemVisibility = Visibility.Collapsed;
                     ButtonProfileContent = "Autorize";
-                    MenuItemHeader = string.Empty;
+                    IsEnabledButtonProfile = !Navigation.isEmulated;
                     break;
             }
-            await ChangeProductList();
-            categoryItems = account?.CreateCategoryHierarchy();
-
-            foreach (var category in categoryItems)
-            {
-                ComboBoxSortCategoriesItemsSource = new ObservableCollection<ComboBoxItem>();
-                ComboBoxItem item = new ComboBoxItem
+            if (myCart == null)
+                switch (account?.user?.UserRole)
                 {
-                    Content = category.CategoryName,
-                    ToolTip = category.CategoryID
-                };
-                ComboBoxSortCategoriesItemsSource.Add(item);
-            }
+                    case Role.admin:
+                        myCart = new MyCart(account);
+                        break;
+                    case Role.manager:
+                        myCart = new MyCart(account);
+                        break;
+                    case Role.client:
+                        myCart = new MyCart(account);
+                        break;
+                    case Role.guest:
+                        myCart = null;
+                        break;
+                    default:
+                        myCart = null;
+                        break;
+                }
+            await ChangeProductList();
         }
 
         private async Task ChangeProductList()
         {
-            ComboBoxItem selectedItem = ComboBoxSortCategoriesSelectedItem;
-            ComboBoxSortCategoriesSelectedItem = null;
+            _selectedCategoryID = null;
             ComboBoxSortGetDescriptionSelectedItem = null;
+            StaticProductItems.Clear();
             ProductListItems = new ObservableCollection<ProductItem>();
-            ProductItems = new List<ProductItem>();
-            DataTable productTable = await Task.Run(() => account?.GetDataFromView("ProductCategoryDescriptionsView"));
-            foreach (DataRow row in productTable.Rows)
+            List<Product> products = await Task.Run(() => account?.GetProductDataFromDatabase());
+            foreach (Product product in products)
             {
-                if (row[0] != null)
-                {
-                    ProductItem ProductItem = new ProductItem
-                    {
-                        Product = new Product(
-                            int.Parse(row[0].ToString()),
-                            row[1].ToString(),
-                            row[2].ToString(),
-                            new BinaryContent(),
-                            new Category(),
-                            int.Parse(row[3].ToString()),
-                            int.Parse(row[4].ToString()),
-                            new Description()
-                            )
-                    };
-                    ProductItems.Add(ProductItem);
-                    myChangeProductItems.Add(ProductItem);
-                    ProductListItems.Add(ProductItem);
-                }
+                ProductItem ProductItem = new ProductItem(product);
+                StaticProductItems.Add(ProductItem);
+                myChangeProductItems.Add(ProductItem);
+                ProductListItems.Add(ProductItem);
             }
-            if (selectedItem == null)
-                return;
-            string selectedToolTipContent = selectedItem.ToolTip.ToString();
-            SelectCategoryId(int.Parse(selectedToolTipContent));
+
+            categoryItems = account?.CreateCategoryHierarchy();
+            var groupedCategories = categoryItems.GroupBy(c => c.ParentCategoryID);
+            PopulateMenuItemSortCategories(groupedCategories);
         }
 
-        private void SelectCategoryId(int categoryId = 0)
+        public void PopulateMenuItemSortCategories(IEnumerable<IGrouping<int?, Category>> groupedCategories)
         {
-            if (categoryId != 0)
+            var rootCategories = groupedCategories.FirstOrDefault(g => !g.Key.HasValue);
+
+            if (rootCategories == null)
+            {
+                MenuItemSortCategories = new ObservableCollection<MenuItem>();
+            }
+            else
+            {
+                var rootMenuItems = rootCategories.Select(rootCategory => CreateMenuItem(rootCategory, groupedCategories));
+
+                MenuItemSortCategories = new ObservableCollection<MenuItem>(rootMenuItems);
+            }
+        }
+
+        private MenuItem CreateMenuItem(Category category, IEnumerable<IGrouping<int?, Category>> groupedCategories)
+        {
+            var menuItem = new MenuItem
+            {
+                Header = category.CategoryName,
+                Tag = category
+            };
+            menuItem.PreviewMouseLeftButtonDown += SelectNewCategory;
+
+            var subCategories = groupedCategories.FirstOrDefault(g => g.Key == category.CategoryID);
+
+            if (subCategories != null)
+            {
+                foreach (var subCategory in subCategories)
+                {
+                    var subMenuItem = CreateMenuItem(subCategory, groupedCategories);
+                    menuItem.Items.Add(subMenuItem);
+                }
+            }
+
+            return menuItem;
+        }
+
+        private void SelectCategoryId()
+        {
+            if (_selectedCategoryID != null)
             {
                 myChangeProductItems = new List<ProductItem>();
-                foreach (var ProductItem in ProductItems)
+                foreach (var ProductItem in StaticProductItems)
                 {
-                    if (ProductItem.Product.Category.IsCategoryInHierarchy(categoryId, categoryItems))
+                    if (ProductItem.Product.Category.IsCategoryInHierarchy((int)_selectedCategoryID, categoryItems))
                     {
                         myChangeProductItems.Add(ProductItem);
                     }
                 }
-                ProductListItems = new ObservableCollection<ProductItem>(myChangeProductItems);
             }
+            else
+            {
+                myChangeProductItems = new List<ProductItem>(StaticProductItems);
+            }
+            ProductListItems = new ObservableCollection<ProductItem>(ComboBoxSortGetDescriptionSelectionChanged(myChangeProductItems));
         }
-        private void ComboBoxSortCategoriesSelectionChanged(ComboBoxItem selectedItem)
+        private List<ProductItem> ComboBoxSortGetDescriptionSelectionChanged(List<ProductItem> items)
         {
-            if (selectedItem == null)
-                return;
-            ComboBoxSortGetDescriptionSelectedItem = null;
-            string selectedToolTipContent = selectedItem.ToolTip.ToString();
-            SelectCategoryId(int.Parse(selectedToolTipContent));
+            if (ComboBoxSortGetDescriptionSelectedItem == null)
+                return items;
+
+            int selectedIndex = ComboBoxSortGetDescriptionItemsSource.IndexOf(ComboBoxSortGetDescriptionSelectedItem);
+
+            _selectedCategoryID = null;
+
+            switch (selectedIndex)
+            {
+                case 1:
+                    items = SortByDescription(items, sortStyle.up);
+                    break;
+                case 2:
+                    items = SortByDescription(items, sortStyle.down);
+                    break;
+                default:
+                    break;
+            }
+            return items;
         }
-        private void SortByDescription(sortStyle sortGetDescription = sortStyle.cencel)
+        private List<ProductItem> SortByDescription(List<ProductItem> items, sortStyle sortGetDescription)
         {
             switch (sortGetDescription)
             {
                 case sortStyle.up:
-                    myChangeProductItems = new List<ProductItem>(ProductItems.Where(item => item.Product.Description != null));
-                    ProductListItems = new ObservableCollection<ProductItem>(myChangeProductItems);
+                    items = new List<ProductItem>(items.Where(item => item.Product.Description != null));
                     break;
                 case sortStyle.down:
-                    myChangeProductItems = new List<ProductItem>(ProductItems.Where(item => item.Product.Description == null));
-                    ProductListItems = new ObservableCollection<ProductItem>(myChangeProductItems);
+                    items = new List<ProductItem>(items.Where(item => item.Product.Description == null));
                     break;
                 default:
-                    myChangeProductItems = ProductItems;
-                    ProductListItems = new ObservableCollection<ProductItem>(myChangeProductItems);
+                    items = items.ToList();
                     break;
+            }
+            return items;
+        }
+        private void SortByDescription(sortStyle sortGetDescription = sortStyle.cencel)
+        {
+            ProductListItems = new ObservableCollection<ProductItem>();
+            switch (sortGetDescription)
+            {
+                case sortStyle.up:
+                    myChangeProductItems = new List<ProductItem>(StaticProductItems.Where(item => item.Product.Description != null));
+                    break;
+                case sortStyle.down:
+                    myChangeProductItems = new List<ProductItem>(StaticProductItems.Where(item => item.Product.Description == null));
+                    break;
+                default:
+                    myChangeProductItems = StaticProductItems.ToList();
+                    break;
+            }
+            if (_selectedCategoryID != null)
+            {
+                foreach (var ProductItem in myChangeProductItems)
+                {
+                    if (ProductItem.Product.Category.IsCategoryInHierarchy((int)_selectedCategoryID, categoryItems))
+                    {
+                        ProductListItems.Add(ProductItem);
+                    }
+                }
+            }
+            else
+            {
+                ProductListItems = new ObservableCollection<ProductItem>(myChangeProductItems);
             }
         }
 
-        private void ComboBoxSortGetDescriptionSelectionChanged(ComboBoxItem selectedItem)
+        private void ComboBoxSortGetDescriptionSelectionChanged()
         {
-            if (selectedItem == null)
+            if (ComboBoxSortGetDescriptionSelectedItem == null)
                 return;
 
-            int selectedIndex = ComboBoxSortGetDescriptionItemsSource.IndexOf(selectedItem);
-
-            ComboBoxSortCategoriesSelectedItem = null;
+            int selectedIndex = ComboBoxSortGetDescriptionItemsSource.IndexOf(ComboBoxSortGetDescriptionSelectedItem);
 
             switch (selectedIndex)
             {
@@ -212,10 +355,10 @@ namespace StoreManager.ViewModels.StoreInteraction
                     SortByDescription(sortStyle.down);
                     break;
                 default:
+                    SortByDescription(sortStyle.cencel);
                     break;
             }
         }
-
 
         private T FindVisualParent<T>(DependencyObject depObj) where T : DependencyObject
         {
@@ -229,25 +372,7 @@ namespace StoreManager.ViewModels.StoreInteraction
             }
             return null;
         }
-        private async void AdminMouseDoubleClick()
-        {
-            DependencyObject dep = (DependencyObject)Mouse.DirectlyOver;
-
-            ListViewItem listViewItem = FindVisualParent<ListViewItem>(dep);
-
-            if (listViewItem != null)
-            {
-                ProductItem selectedItem = (ProductItem)listViewItem.DataContext;
-
-                if (selectedItem != null && account is AdminStoreInteraction acc)
-                {
-                    /*Change_Data_Product changeDataProductForm = new Change_Data_Product(acc, selectedItem);
-                    changeDataProductForm.ShowDialog();
-                    await ChangeProductList();*/
-                }
-            }
-        }
-        private async void AdminMenuItemCommand()
+        private async void ClientMouseDoubleClick()
         {
             DependencyObject dep = (DependencyObject)Mouse.DirectlyOver;
 
@@ -259,54 +384,18 @@ namespace StoreManager.ViewModels.StoreInteraction
 
                 if (selectedItem != null)
                 {
-                    if (account is AdminStoreInteraction acc && acc.DeleteProduct(selectedItem.Product.ProductID))
-                        await ChangeProductList();
-                }
-            }
-        }
-        private async void ClientMouseDoubleClick()
-        {
-            DependencyObject dep = (DependencyObject)Mouse.DirectlyOver;
-
-            ListViewItem listViewItem = FindVisualParent<ListViewItem>(dep);
-
-            if (listViewItem != null)
-            {
-                ProductItem selectedItem = (ProductItem)listViewItem.DataContext;
-
-                if (selectedItem != null && account is IStoreForClient)
-                {
-                    /*Change_Data_Product changeDataProductForm = new Change_Data_Product(acc, selectedItem);
-                    changeDataProductForm.ShowDialog();
-                    await ChangeProductList();*/
-                }
-            }
-        }
-        private async void ClientMenuItemCommand()
-        {
-            DependencyObject dep = (DependencyObject)Mouse.DirectlyOver;
-
-            ListViewItem listViewItem = FindVisualParent<ListViewItem>(dep);
-
-            if (listViewItem != null)
-            {
-                ProductItem selectedItem = (ProductItem)listViewItem.DataContext;
-
-                if (selectedItem != null && account is IStoreForClient)
-                {
-                    /*if (account is AdminStoreInteraction acc && acc.DeleteProduct(selectedItem.productId))
-                        await ChangeProductList();*/
+                    new ProductDescriptionViewModel(myCart, selectedItem);
                 }
             }
         }
 
         private void AdminButtonProfile()
         {
-            Navigation?.NavigateTo<MainSignViewModel>();
+            Navigation?.NavigateTo<ProfileViewModel>(account);
         }
         private void ClientButtonProdile()
         {
-            Navigation?.NavigateTo<MainSignViewModel>();
+            Navigation?.NavigateTo<ProfileViewModel>(account);
         }
         private void GuestButtonAutorize()
         {
@@ -315,16 +404,6 @@ namespace StoreManager.ViewModels.StoreInteraction
         #endregion
 
         #region Properties
-        private INavigationService _navigation;
-        public INavigationService Navigation
-        {
-            get => _navigation;
-            set
-            {
-                _navigation = value;
-                OnPropertyChanged();
-            }
-        }
         private bool _isSortedPrice = false;
         private bool isSortedPrice
         {
@@ -361,7 +440,7 @@ namespace StoreManager.ViewModels.StoreInteraction
         public string ButtonProfileContent
         {
             get { return _buttonProfileContent; }
-            set { _buttonProfileContent = value; OnPropertyChanged(nameof(ButtonProfileContent)); }
+            set { SetProperty(ref _buttonProfileContent, value, nameof(ButtonProfileContent)); }
         }
         private bool _buttonCartIsEnabled;
         public bool ButtonCartIsEnabled
@@ -369,44 +448,38 @@ namespace StoreManager.ViewModels.StoreInteraction
             get { return _buttonCartIsEnabled; }
             set { _buttonCartIsEnabled = value; OnPropertyChanged(nameof(ButtonCartIsEnabled)); }
         }
-        private bool _buttonExitIsEnabled;
-        public bool ButtonExitIsEnabled
+        private bool _isEnabledButtonProfile;
+        public bool IsEnabledButtonProfile
         {
-            get { return _buttonExitIsEnabled; }
-            set { _buttonExitIsEnabled = value; OnPropertyChanged(nameof(ButtonExitIsEnabled)); }
+            get { return _isEnabledButtonProfile; }
+            set { _isEnabledButtonProfile = value; OnPropertyChanged(nameof(IsEnabledButtonProfile)); }
         }
-        private bool _menuItemIsEnabled;
-        public bool MenuItemIsEnabled
+        private Visibility _menuItemAddToCartVisibility;
+        public Visibility MenuItemAddToCartVisibility
         {
-            get { return _menuItemIsEnabled; }
-            set { _menuItemIsEnabled = value; OnPropertyChanged(nameof(MenuItemIsEnabled)); }
+            get { return _menuItemAddToCartVisibility; }
+            set { _menuItemAddToCartVisibility = value; OnPropertyChanged(nameof(MenuItemAddToCartVisibility)); }
         }
-        private string _menuItemHeader;
-        public string MenuItemHeader
+        private Visibility _menuItemDeleteItemVisibility;
+        public Visibility MenuItemDeleteItemVisibility
         {
-            get { return _menuItemHeader; }
-            set { _menuItemHeader = value; OnPropertyChanged(nameof(MenuItemHeader)); }
-        }
-        private ObservableCollection<ComboBoxItem> _comboBoxSortCategoriesItemsSource;
-        public ObservableCollection<ComboBoxItem> ComboBoxSortCategoriesItemsSource
-        {
-            get { return _comboBoxSortCategoriesItemsSource; }
-            set { _comboBoxSortCategoriesItemsSource = value; OnPropertyChanged(nameof(ComboBoxSortCategoriesItemsSource)); }
+            get { return _menuItemDeleteItemVisibility; }
+            set { _menuItemDeleteItemVisibility = value; OnPropertyChanged(nameof(MenuItemDeleteItemVisibility)); }
         }
 
-        private ComboBoxItem _comboBoxSortCategoriesSelectedItem;
-        public ComboBoxItem ComboBoxSortCategoriesSelectedItem
+        private ObservableCollection<MenuItem> _menuItemSortCategories = new ObservableCollection<MenuItem>();
+        public ObservableCollection<MenuItem> MenuItemSortCategories
         {
-            get { return _comboBoxSortCategoriesSelectedItem; }
-            set 
-            { 
-                _comboBoxSortCategoriesSelectedItem = value;
-                ComboBoxSortCategoriesSelectionChanged(value);
-                OnPropertyChanged(nameof(ComboBoxSortCategoriesSelectedItem)); 
-            }
+            get { return _menuItemSortCategories; }
+            set { _menuItemSortCategories = value; OnPropertyChanged(nameof(MenuItemSortCategories)); }
         }
 
-        private ObservableCollection<ComboBoxItem> _comboBoxSortGetDescriptionItemsSource;
+        private ObservableCollection<ComboBoxItem> _comboBoxSortGetDescriptionItemsSource = new ObservableCollection<ComboBoxItem>(new List<ComboBoxItem>() 
+        { 
+            new ComboBoxItem() { Content = "All products" },
+            new ComboBoxItem() { Content = "With description" },
+            new ComboBoxItem() { Content = "No description" } 
+        });
         public ObservableCollection<ComboBoxItem> ComboBoxSortGetDescriptionItemsSource
         {
             get { return _comboBoxSortGetDescriptionItemsSource; }
@@ -419,7 +492,7 @@ namespace StoreManager.ViewModels.StoreInteraction
             get { return _comboBoxSortGetDescriptionSelectedItem; }
             set { 
                 _comboBoxSortGetDescriptionSelectedItem = value;
-                ComboBoxSortGetDescriptionSelectionChanged(value);
+                ComboBoxSortGetDescriptionSelectionChanged();
                 OnPropertyChanged(nameof(ComboBoxSortGetDescriptionSelectedItem)); 
             }
         }
@@ -439,19 +512,17 @@ namespace StoreManager.ViewModels.StoreInteraction
         public ICommand ButtonSortPriceCommand { get; }
         public ICommand ButtonSortPopularityCommand { get; }
         public ICommand ButtonUpdateCommand { get; }
-        public ICommand MenuItemCommand { get; }
+        public ICommand ButtonCartCommand { get; }
+        public ICommand MenuItemAddToCartItemCommand { get; }
+        public ICommand MenuItemDeleteItemItemCommand { get; }
         public ICommand MouseDoubleClickCommand { get; }
+        public ICommand MenuButtonAllProductsCommand { get; }
 
         private void MouseDoubleClick(object parameter)
         {
-            switch (account?.user?.UserRole)
+            if (account?.user?.UserRole != Role.guest)
             {
-                case Role.admin:
-                    AdminMouseDoubleClick();
-                    break;
-                case Role.client:
-                    ClientMouseDoubleClick();
-                    break;
+                ClientMouseDoubleClick();
             }
         }
 
@@ -460,6 +531,9 @@ namespace StoreManager.ViewModels.StoreInteraction
             switch (account?.user?.UserRole)
             {
                 case Role.admin:
+                    AdminButtonProfile();
+                    break;
+                case Role.manager:
                     AdminButtonProfile();
                     break;
                 case Role.client:
@@ -474,12 +548,12 @@ namespace StoreManager.ViewModels.StoreInteraction
         {
             if (isSortedPrice)
             {
-                ProductListItems = new ObservableCollection<ProductItem>(myChangeProductItems.OrderBy(item => item.Product.Price));
+                ProductListItems = new ObservableCollection<ProductItem>(ProductListItems.OrderBy(item => item.Product.Price));
                 isSortedPrice = !isSortedPrice;
             }
             else
             {
-                ProductListItems = new ObservableCollection<ProductItem>(myChangeProductItems.OrderByDescending(item => item.Product.Price));
+                ProductListItems = new ObservableCollection<ProductItem>(ProductListItems.OrderByDescending(item => item.Product.Price));
                 isSortedPrice = !isSortedPrice;
             }
         }
@@ -488,12 +562,12 @@ namespace StoreManager.ViewModels.StoreInteraction
         {
             if (isSortedPopularity)
             {
-                ProductListItems = new ObservableCollection<ProductItem>(myChangeProductItems.OrderBy(item => item.Product.SalesCount));
+                ProductListItems = new ObservableCollection<ProductItem>(ProductListItems.OrderBy(item => item.Product.SalesCount));
                 isSortedPopularity = !isSortedPopularity;
             }
             else
             {
-                ProductListItems = new ObservableCollection<ProductItem>(myChangeProductItems.OrderByDescending(item => item.Product.SalesCount));
+                ProductListItems = new ObservableCollection<ProductItem>(ProductListItems.OrderByDescending(item => item.Product.SalesCount));
                 isSortedPopularity = !isSortedPopularity;
             }
         }
@@ -503,23 +577,69 @@ namespace StoreManager.ViewModels.StoreInteraction
             await ChangeProductList();
         }
 
-        private void ExecuteMenuItemCommand(object parameter)
+        private void ButtonCart(object parameter)
         {
-            switch (account?.user?.UserRole)
-            {
-                case Role.admin:
-                    AdminMenuItemCommand();
-                    break;
-                case Role.client:
-                    ClientMenuItemCommand();
-                    break;
-            }
-        }
-        private bool CanExecuteMenuItem(object parameter)
-        {
-            return account?.user?.UserRole == Role.admin || account?.user?.UserRole == Role.client;
+            Navigation.NavigateTo<CartViewModel>(myCart);
         }
 
+        private void MenuItemAddToCartItem(object parameter)
+        {
+            DependencyObject dep = (DependencyObject)Mouse.DirectlyOver;
+
+            ListViewItem listViewItem = FindVisualParent<ListViewItem>(dep);
+
+            if (listViewItem != null)
+            {
+                ProductItem selectedItem = (ProductItem)listViewItem.DataContext;
+
+                if (selectedItem != null && account.user.UserRole != Role.guest)
+                {
+                    myCart.AddOrUpdateItem(selectedItem.Product, 1);
+                }
+            }
+        }
+        private async void MenuItemDeleteItemItem(object parameter)
+        {
+            DependencyObject dep = (DependencyObject)Mouse.DirectlyOver;
+
+            ListViewItem listViewItem = FindVisualParent<ListViewItem>(dep);
+
+            if (listViewItem != null)
+            {
+                ProductItem selectedItem = (ProductItem)listViewItem.DataContext;
+
+                if (selectedItem != null)
+                {
+
+                    if (account is AdminStoreInteraction acc && acc.DeleteProduct(selectedItem.Product.ProductID))
+                        await ChangeProductList();
+                }
+            }
+        }
+        private bool CanExecuteMenuItemAddToCartItem(object parameter)
+        {
+            return account?.user?.UserRole == Role.admin || account?.user?.UserRole == Role.manager || account?.user?.UserRole == Role.client;
+        }
+        private bool CanExecuteMenuItemDeleteItemItem(object parameter)
+        {
+            return account?.user?.UserRole == Role.admin;
+        }
+
+
+        private void SelectNewCategory(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem && menuItem.Tag is Category category)
+            {
+                _selectedCategoryID = category.CategoryID;
+                SelectCategoryId();
+            }
+        }
+        private void MenuButtonAllProducts(object parameter)
+        {
+            _selectedCategoryID = null;
+            ComboBoxSortGetDescriptionSelectedItem = null;
+            SelectCategoryId();
+        }
         #endregion
     }
 }

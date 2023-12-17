@@ -13,15 +13,16 @@ using System.Windows.Controls;
 using System.Data;
 using Microsoft.Win32;
 using StoreManager.ViewModels.Help;
+using StoreManager.DB_classes;
 
 namespace StoreManager.ViewModels.Admin.Interactions.Creating
 {
     public class CreateProductViewModel : ViewModelBase, IBorderDopViewModel
     {
-        private readonly AdminStoreInteraction _admin;
+        private readonly ManagerStoreInteraction _admin;
         private readonly CreateProductView createProductView;
 
-        public CreateProductViewModel(AdminStoreInteraction admin)
+        public CreateProductViewModel(ManagerStoreInteraction admin)
         {
             _admin = admin ?? throw new ArgumentNullException(nameof(admin));
 
@@ -45,16 +46,16 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
             foreach (DataRow row in categoriesTable.Rows)
             {
                 ComboBoxItem item = new ComboBoxItem();
+                item.Tag = row[0];
                 item.Content = row[1];
-                item.ToolTip = row[0];
                 ComboBoxCategoriesItemsSource.Add(item);
             }
-            DataTable descriptionsTable = _admin.GetDataFromView("ProductsDescriptionsView");
+            DataTable descriptionsTable = _admin.GetDataFromView("UpdateDescriptionView");
             foreach (DataRow row in descriptionsTable.Rows)
             {
                 ComboBoxItem item = new ComboBoxItem();
+                item.Tag = row[0];
                 item.Content = row[1];
-                item.ToolTip = row[0];
                 ComboBoxDescriptionsItemsSource.Add(item);
             }
         }
@@ -164,19 +165,22 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
             var selectedCategory = ComboBoxCategoriesSelectedItem;
             if (selectedCategory != null)
             {
-                int categoryId = int.Parse(selectedCategory.ToolTip.ToString());
+                int categoryId = Convert.ToInt32(selectedCategory.Tag);
 
                 var selectedDescription = ComboBoxDescriptionsSelectedItem;
+
+                Product product;
                 if (selectedDescription != null)
                 {
-                    int descriptionId = int.Parse(selectedDescription.ToolTip.ToString());
-                    _admin.CreateProduct(ProductNameText, int.Parse(ProductCostText), categoryId, FilePath, descriptionId);
+                    int descriptionId = Convert.ToInt32(selectedDescription.Tag);
+                    product = new Product(ProductNameText, int.Parse(ProductCostText), categoryId, FilePath, descriptionId);
                 }
                 else
                 {
-                    _admin.CreateProduct(ProductNameText, int.Parse(ProductCostText), categoryId, FilePath, null);
+                    product = new Product(ProductNameText, int.Parse(ProductCostText), categoryId, FilePath, null);
                 }
 
+                _admin.CreateProduct(product);
                 MessageBox.Show("Product created");
                 createProductView.Close();
             }

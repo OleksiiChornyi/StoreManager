@@ -1,203 +1,4 @@
---Тригер для зміни OrderCount в таблиці Users:
-CREATE OR REPLACE TRIGGER UpdateOrderCountTrigger
-AFTER INSERT OR DELETE ON Orders
-FOR EACH ROW
-BEGIN
-    IF INSERTING THEN
-        UPDATE Users SET OrderCount = OrderCount + 1 WHERE UserID = :new.UserID;
-    ELSIF DELETING THEN
-        UPDATE Users SET OrderCount = OrderCount - 1 WHERE UserID = :old.UserID;
-    END IF;
-END;
-/
-
---Тригер для генерації нового SKU
-CREATE OR REPLACE TRIGGER GenerateRandomSKUTrigger
-BEFORE INSERT ON Products
-FOR EACH ROW
-BEGIN
-    :new.SKU := DBMS_RANDOM.STRING('X', 10) || SKUSeq.NEXTVAL; -- Генерує випадковий рядок і додає до нього значення з секвенції
-END;
-/
-
-
---Тригер для зміни ModificationDate в таблиці Descriptions:
-CREATE OR REPLACE TRIGGER UpdateModificationDateTrigger
-BEFORE UPDATE ON Descriptions
-FOR EACH ROW
-BEGIN
-    :new.ModificationDate := SYSDATE;
-END;
-/
-
---Тригер для зміни SalesCount в таблиці Products:
-CREATE OR REPLACE TRIGGER UpdateSalesCountTrigger
-AFTER INSERT OR DELETE ON OrderItems
-FOR EACH ROW
-BEGIN
-    IF INSERTING THEN
-        UPDATE Products SET SalesCount = SalesCount + :new.Quantity WHERE ProductID = :new.ProductID;
-    ELSIF DELETING THEN
-        UPDATE Products SET SalesCount = SalesCount - :old.Quantity WHERE ProductID = :old.ProductID;
-    END IF;
-END;
-/
-
---Тригер для зміни OrderStatus в таблиці Orders:
-create or replace TRIGGER UpdateOrderStatusTrigger
-AFTER INSERT OR UPDATE ON Shipments
-FOR EACH ROW
-BEGIN
-    UPDATE Orders SET OrderStatus = :new.ShipmentStatus WHERE OrderID = :new.OrderID;
-END;
-/
-
---Тригер для аудиту категорій
-CREATE OR REPLACE TRIGGER AuditCategoriesTrigger
-AFTER INSERT OR UPDATE OR DELETE ON Categories
-FOR EACH ROW
-DECLARE
-    ActionType VARCHAR2(50);
-    ChangedID NUMBER;
-BEGIN
-    IF INSERTING THEN
-        ActionType := 'INSERT into Categories';
-        ChangedID := :NEW.categoryID;
-    ELSIF UPDATING THEN
-        ActionType := 'UPDATE Categories';
-        ChangedID := :OLD.categoryID;
-    ELSIF DELETING THEN
-        ActionType := 'DELETE from Categories';
-        ChangedID := :OLD.categoryID;
-    END IF;
-
-    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
-    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
-END;
-/
-
---Тригер для аудиту опису
-CREATE OR REPLACE TRIGGER AuditDescriptionsTrigger
-AFTER INSERT OR UPDATE OR DELETE ON Descriptions
-FOR EACH ROW
-DECLARE
-    ActionType VARCHAR2(50);
-    ChangedID NUMBER;
-BEGIN
-    IF INSERTING THEN
-        ActionType := 'INSERT into Descriptions';
-        ChangedID := :NEW.DESCRIPTIONID;
-    ELSIF UPDATING THEN
-        ActionType := 'UPDATE Descriptions';
-        ChangedID := :OLD.DESCRIPTIONID;
-    ELSIF DELETING THEN
-        ActionType := 'DELETE from Descriptions';
-        ChangedID := :OLD.DESCRIPTIONID;
-    END IF;
-
-    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
-    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
-END;
-/
-
---Тригер для аудиту інвенторизації
-CREATE OR REPLACE TRIGGER AuditInventoryTrigger
-AFTER INSERT OR UPDATE OR DELETE ON Inventory
-FOR EACH ROW
-DECLARE
-    ActionType VARCHAR2(50);
-    ChangedID NUMBER;
-BEGIN
-    IF INSERTING THEN
-        ActionType := 'INSERT into Inventory';
-        ChangedID := :NEW.INVENTORYID;
-    ELSIF UPDATING THEN
-        ActionType := 'UPDATE Inventory';
-        ChangedID := :OLD.INVENTORYID;
-    ELSIF DELETING THEN
-        ActionType := 'DELETE from Inventory';
-        ChangedID := :OLD.INVENTORYID;
-    END IF;
-
-    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
-    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
-END;
-/
-
---Тригер для аудиту товарів-замовлень
-CREATE OR REPLACE TRIGGER AuditOrderItemsTrigger
-AFTER INSERT OR UPDATE OR DELETE ON OrderItems
-FOR EACH ROW
-DECLARE
-    ActionType VARCHAR2(50);
-    ChangedID NUMBER;
-BEGIN
-    IF INSERTING THEN
-        ActionType := 'INSERT into OrderItems';
-        ChangedID := :NEW.ORDERITEMID;
-    ELSIF UPDATING THEN
-        ActionType := 'UPDATE OrderItems';
-        ChangedID := :OLD.ORDERITEMID;
-    ELSIF DELETING THEN
-        ActionType := 'DELETE from OrderItems';
-        ChangedID := :OLD.ORDERITEMID;
-    END IF;
-
-    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
-    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
-END;
-/
-
---Тригер для аудиту замовлень
-CREATE OR REPLACE TRIGGER AuditOrdersTrigger
-AFTER INSERT OR UPDATE OR DELETE ON Orders
-FOR EACH ROW
-DECLARE
-    ActionType VARCHAR2(50);
-    ChangedID NUMBER;
-BEGIN
-    IF INSERTING THEN
-        ActionType := 'INSERT into Orders';
-        ChangedID := :NEW.ORDERID;
-    ELSIF UPDATING THEN
-        ActionType := 'UPDATE Orders';
-        ChangedID := :OLD.ORDERID;
-    ELSIF DELETING THEN
-        ActionType := 'DELETE from Orders';
-        ChangedID := :OLD.ORDERID;
-    END IF;
-
-    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
-    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
-END;
-/
-
---Тригер для аудиту готівки
-CREATE OR REPLACE TRIGGER AuditCashTrigger
-AFTER INSERT OR UPDATE OR DELETE ON Cash
-FOR EACH ROW
-DECLARE
-    ActionType VARCHAR2(50);
-    ChangedID NUMBER;
-BEGIN
-    IF INSERTING THEN
-        ActionType := 'INSERT into Cash';
-        ChangedID := :NEW.CASHID;
-    ELSIF UPDATING THEN
-        ActionType := 'UPDATE Cash';
-        ChangedID := :OLD.CASHID;
-    ELSIF DELETING THEN
-        ActionType := 'DELETE from Cash';
-        ChangedID := :OLD.CASHID;
-    END IF;
-
-    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
-    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
-END;
-/
-
---Тригер для аудиту банківської карти
-CREATE OR REPLACE TRIGGER AuditBankCardTrigger
+create or replace TRIGGER AuditBankCardTrigger
 AFTER INSERT OR UPDATE OR DELETE ON BankCard
 FOR EACH ROW
 DECLARE
@@ -218,10 +19,141 @@ BEGIN
     INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
     VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
 END;
-/
 
---Тригер для аудиту оплати
-CREATE OR REPLACE TRIGGER AuditPaymentsTrigger
+create or replace TRIGGER AuditCashTrigger
+AFTER INSERT OR UPDATE OR DELETE ON Cash
+FOR EACH ROW
+DECLARE
+    ActionType VARCHAR2(50);
+    ChangedID NUMBER;
+BEGIN
+    IF INSERTING THEN
+        ActionType := 'INSERT into Cash';
+        ChangedID := :NEW.CASHID;
+    ELSIF UPDATING THEN
+        ActionType := 'UPDATE Cash';
+        ChangedID := :OLD.CASHID;
+    ELSIF DELETING THEN
+        ActionType := 'DELETE from Cash';
+        ChangedID := :OLD.CASHID;
+    END IF;
+
+    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
+    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
+END;
+
+create or replace TRIGGER AuditCategoriesTrigger
+AFTER INSERT OR UPDATE OR DELETE ON Categories
+FOR EACH ROW
+DECLARE
+    ActionType VARCHAR2(50);
+    ChangedID NUMBER;
+BEGIN
+    IF INSERTING THEN
+        ActionType := 'INSERT into Categories';
+        ChangedID := :NEW.categoryID;
+    ELSIF UPDATING THEN
+        ActionType := 'UPDATE Categories';
+        ChangedID := :OLD.categoryID;
+    ELSIF DELETING THEN
+        ActionType := 'DELETE from Categories';
+        ChangedID := :OLD.categoryID;
+    END IF;
+
+    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
+    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
+END;
+
+create or replace TRIGGER AuditDescriptionsTrigger
+AFTER INSERT OR UPDATE OR DELETE ON Descriptions
+FOR EACH ROW
+DECLARE
+    ActionType VARCHAR2(50);
+    ChangedID NUMBER;
+BEGIN
+    IF INSERTING THEN
+        ActionType := 'INSERT into Descriptions';
+        ChangedID := :NEW.DESCRIPTIONID;
+    ELSIF UPDATING THEN
+        ActionType := 'UPDATE Descriptions';
+        ChangedID := :OLD.DESCRIPTIONID;
+    ELSIF DELETING THEN
+        ActionType := 'DELETE from Descriptions';
+        ChangedID := :OLD.DESCRIPTIONID;
+    END IF;
+
+    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
+    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
+END;
+
+create or replace TRIGGER AuditInventoryTrigger
+AFTER INSERT OR UPDATE OR DELETE ON Inventory
+FOR EACH ROW
+DECLARE
+    ActionType VARCHAR2(50);
+    ChangedID NUMBER;
+BEGIN
+    IF INSERTING THEN
+        ActionType := 'INSERT into Inventory';
+        ChangedID := :NEW.INVENTORYID;
+    ELSIF UPDATING THEN
+        ActionType := 'UPDATE Inventory';
+        ChangedID := :OLD.INVENTORYID;
+    ELSIF DELETING THEN
+        ActionType := 'DELETE from Inventory';
+        ChangedID := :OLD.INVENTORYID;
+    END IF;
+
+    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
+    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
+END;
+
+create or replace TRIGGER AuditOrderItemsTrigger
+AFTER INSERT OR UPDATE OR DELETE ON OrderItems
+FOR EACH ROW
+DECLARE
+    ActionType VARCHAR2(50);
+    ChangedID NUMBER;
+BEGIN
+    IF INSERTING THEN
+        ActionType := 'INSERT into OrderItems';
+        ChangedID := :NEW.ORDERITEMID;
+    ELSIF UPDATING THEN
+        ActionType := 'UPDATE OrderItems';
+        ChangedID := :OLD.ORDERITEMID;
+    ELSIF DELETING THEN
+        ActionType := 'DELETE from OrderItems';
+        ChangedID := :OLD.ORDERITEMID;
+    END IF;
+
+    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
+    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
+END;
+
+
+create or replace TRIGGER AuditOrdersTrigger
+AFTER INSERT OR UPDATE OR DELETE ON Orders
+FOR EACH ROW
+DECLARE
+    ActionType VARCHAR2(50);
+    ChangedID NUMBER;
+BEGIN
+    IF INSERTING THEN
+        ActionType := 'INSERT into Orders';
+        ChangedID := :NEW.ORDERID;
+    ELSIF UPDATING THEN
+        ActionType := 'UPDATE Orders';
+        ChangedID := :OLD.ORDERID;
+    ELSIF DELETING THEN
+        ActionType := 'DELETE from Orders';
+        ChangedID := :OLD.ORDERID;
+    END IF;
+
+    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
+    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
+END;
+
+create or replace TRIGGER AuditPaymentsTrigger
 AFTER INSERT OR UPDATE OR DELETE ON Payments
 FOR EACH ROW
 DECLARE
@@ -242,10 +174,8 @@ BEGIN
     INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
     VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
 END;
-/
 
---Тригер для аудиту продуктів
-CREATE OR REPLACE TRIGGER AuditProductsTrigger
+create or replace TRIGGER AuditProductsTrigger
 AFTER INSERT OR UPDATE OR DELETE ON Products
 FOR EACH ROW
 DECLARE
@@ -266,10 +196,8 @@ BEGIN
     INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
     VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
 END;
-/
 
---Тригер для аудиту відвантажень
-CREATE OR REPLACE TRIGGER AuditShipmentsTrigger
+create or replace TRIGGER AuditShipmentsTrigger
 AFTER INSERT OR UPDATE OR DELETE ON Shipments
 FOR EACH ROW
 DECLARE
@@ -290,10 +218,8 @@ BEGIN
     INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
     VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
 END;
-/
 
---Тригер для аудиту постачальників
-CREATE OR REPLACE TRIGGER AuditSuppliersTrigger
+create or replace TRIGGER AuditSuppliersTrigger
 AFTER INSERT OR UPDATE OR DELETE ON Suppliers
 FOR EACH ROW
 DECLARE
@@ -314,10 +240,30 @@ BEGIN
     INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
     VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
 END;
-/
 
---Тригер для аудиту користувачів
-CREATE OR REPLACE TRIGGER AuditUsersTrigger
+create or replace TRIGGER AuditTransactionTrigger
+AFTER INSERT OR UPDATE OR DELETE ON Transactions
+FOR EACH ROW
+DECLARE
+    ActionType VARCHAR2(50);
+    ChangedID NUMBER;
+BEGIN
+    IF INSERTING THEN
+        ActionType := 'INSERT into Payments';
+        ChangedID := :NEW.TransactionID;
+    ELSIF UPDATING THEN
+        ActionType := 'UPDATE Payments';
+        ChangedID := :OLD.TransactionID;
+    ELSIF DELETING THEN
+        ActionType := 'DELETE from Payments';
+        ChangedID := :OLD.TransactionID;
+    END IF;
+
+    INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
+    VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
+END;
+
+create or replace TRIGGER AuditUsersTrigger
 AFTER INSERT OR UPDATE OR DELETE ON Users
 FOR EACH ROW
 DECLARE
@@ -338,10 +284,8 @@ BEGIN
     INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
     VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
 END;
-/
 
---Тригер для аудиту складів
-CREATE OR REPLACE TRIGGER AuditWarehousesTrigger
+create or replace TRIGGER AuditWarehousesTrigger
 AFTER INSERT OR UPDATE OR DELETE ON Warehouses
 FOR EACH ROW
 DECLARE
@@ -362,4 +306,64 @@ BEGIN
     INSERT INTO AuditLogs (LogID, ActionType, ActionDateTime, ActionDetails)
     VALUES (AuditLogsSeq.NEXTVAL, ActionType, SYSTIMESTAMP, 'ID: ' || ChangedID);
 END;
-/
+
+create or replace TRIGGER GenerateRandomSKUTrigger
+BEFORE INSERT ON Products
+FOR EACH ROW
+BEGIN
+    :new.SKU := DBMS_RANDOM.STRING('X', 10) || SKUSeq.NEXTVAL;
+END;
+
+create or replace TRIGGER InsertOrUpdateBinaryContentTrigger
+BEFORE INSERT OR UPDATE ON BinaryContent
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN
+        :new.UploadDate := SYSTIMESTAMP;
+        :new.ModificationDate := SYSTIMESTAMP;
+    ELSIF UPDATING THEN
+        :new.ModificationDate := SYSTIMESTAMP;
+    END IF;
+END;
+
+create or replace TRIGGER InsertOrUpdateDescriptionTrigger
+BEFORE INSERT OR UPDATE ON Descriptions
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN
+        :new.UploadDate := SYSDATE;
+        :new.ModificationDate := SYSDATE;
+    ELSIF UPDATING THEN
+        :new.ModificationDate := SYSDATE;
+    End IF;
+END;
+
+
+create or replace TRIGGER UpdateOrderCountTrigger
+AFTER INSERT OR DELETE ON Orders
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN
+        UPDATE Users SET OrderCount = OrderCount + 1 WHERE UserID = :new.UserID;
+    ELSIF DELETING THEN
+        UPDATE Users SET OrderCount = OrderCount - 1 WHERE UserID = :old.UserID;
+    END IF;
+END;
+
+create or replace TRIGGER UpdateOrderStatusTrigger
+AFTER INSERT OR UPDATE ON Shipments
+FOR EACH ROW
+BEGIN
+    UPDATE Orders SET OrderStatus = :new.ShipmentStatus WHERE OrderID = :new.OrderID;
+END;
+
+create or replace TRIGGER UpdateSalesCountTrigger
+AFTER INSERT OR DELETE ON OrderItems
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN
+        UPDATE Products SET SalesCount = SalesCount + :new.Quantity WHERE ProductID = :new.ProductID;
+    ELSIF DELETING THEN
+        UPDATE Products SET SalesCount = SalesCount - :old.Quantity WHERE ProductID = :old.ProductID;
+    END IF;
+END;

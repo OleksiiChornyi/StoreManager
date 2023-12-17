@@ -1,4 +1,5 @@
-﻿using StoreManager.ViewModels.Core;
+﻿using StoreManager.DB_classes;
+using StoreManager.ViewModels.Core;
 using StoreManager.ViewModels.Services;
 using StoreManager.ViewModels.Sign;
 using StoreManager.ViewModels.StoreInteraction;
@@ -22,7 +23,7 @@ namespace StoreManager.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        private User user;
         public RelayCommand NavigateToMainSignCommand { get; set; }
         public MainWindowViewModel(INavigationService navigation)
         {
@@ -30,9 +31,20 @@ namespace StoreManager.ViewModels
             NavigateToMainSignCommand = new RelayCommand(NavigateToMainSignViewModel);
             NavigateToMainSignCommand.Execute(this);
         }
+        public MainWindowViewModel(User user, INavigationService navigation)
+        {
+            this.user = user;
+            Navigation = navigation;
+            NavigateToMainSignCommand = new RelayCommand(NavigateToMainSignViewModelWithParameter);
+            NavigateToMainSignCommand.Execute(this);
+        }
         private void NavigateToMainSignViewModel(object parameter)
         {
             Navigation.NavigateTo<MainStoreInterationViewModel>();
+        }
+        private void NavigateToMainSignViewModelWithParameter(object parameter)
+        {
+            Navigation.NavigateTo<MainStoreInterationViewModel>(user);
         }
     }
 }

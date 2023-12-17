@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions"
+        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions.Creating"
         xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters"
         mc:Ignorable="d"
         Title="Create Inventory" Height="550" Width="800">
@@ -50,7 +50,7 @@
                  Style="{StaticResource SomeCreateTexBox}" />
         <Button x:Name="CreateInventoryButton" 
                 Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" 
-                Style="{StaticResource SignUpBtn}" 
+                Style="{StaticResource SignBtn}" 
                 Content="Add inventory" 
                 Command="{Binding CreateInventoryButtonCommand}">
             <Button.IsEnabled>

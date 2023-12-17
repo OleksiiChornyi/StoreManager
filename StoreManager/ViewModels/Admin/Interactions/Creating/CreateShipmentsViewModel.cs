@@ -17,9 +17,9 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
 {
     public class CreateShipmentsViewModel : ViewModelBase
     {
-        private readonly AdminStoreInteraction _admin;
+        private readonly ManagerStoreInteraction _admin;
         private readonly CreateShipmentsView createShipmentsView;
-        public CreateShipmentsViewModel(AdminStoreInteraction admin)
+        public CreateShipmentsViewModel(ManagerStoreInteraction admin)
         {
             _admin = admin ?? throw new ArgumentNullException(nameof(admin));
 

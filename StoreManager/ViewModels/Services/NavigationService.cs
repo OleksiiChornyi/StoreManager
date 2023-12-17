@@ -1,6 +1,8 @@
 ﻿using StoreManager.ViewModels.Core;
+using StoreManager.ViewModels.StoreInteraction;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +15,7 @@ namespace StoreManager.ViewModels.Services
         private ViewModelBase _currentView;
         private readonly Func<Type, ViewModelBase> _viewModelFactory;
         private readonly Stack<ViewModelBase> _navigationStack;
-
+        public bool isEmulated { get; set; } = false;
         public ViewModelBase CurrentView
         {
             get => _currentView;
@@ -24,10 +26,11 @@ namespace StoreManager.ViewModels.Services
             }
         }
 
-        public NavigationService(Func<Type, ViewModelBase> viewModelFactory)
+        public NavigationService(Func<Type, ViewModelBase> viewModelFactory, bool isEmulated)
         {
             _viewModelFactory = viewModelFactory;
             _navigationStack = new Stack<ViewModelBase>();
+            this.isEmulated = isEmulated;
         }
 
         public void NavigateTo<TViewModel>(object parameter = null) where TViewModel : ViewModelBase
@@ -42,43 +45,26 @@ namespace StoreManager.ViewModels.Services
             }
         }
 
-        public void GoBack()
+        public void GoBack(object parameter = null)
         {
             if (_navigationStack.Count > 0)
             {
                 ViewModelBase previousView = _navigationStack.Pop();
                 CurrentView = previousView;
+                if (CurrentView is IInitializable initializable)
+                {
+                    initializable.Initialize(parameter);
+                }
             }
         }
 
         public void GoBackWhile()
         {
-            while (_navigationStack.Count > 2)
+            while (_navigationStack.Count > 0)
             {
                 _navigationStack.Pop();
             }
-            if (_navigationStack.Count > 0)
-            {
-                CurrentView = _navigationStack.Pop();
-                _navigationStack.Push(CurrentView);
-            }
+            NavigateTo<MainStoreInterationViewModel>();
         }
-        /*public void OpenWindow<TViewModel>(object parameter = null) where TViewModel : ViewModelBase
-        {
-            ViewModelBase viewModel = _viewModelFactory.Invoke(typeof(TViewModel));
-
-            if (viewModel is IInitializable initializable)
-            {
-                initializable.Initialize(parameter);
-            }
-
-            Window newWindow = new Window
-            {
-                DataContext = viewModel,
-                Content = viewModel
-            };
-
-            newWindow.Show();
-        }*/
     }
 }

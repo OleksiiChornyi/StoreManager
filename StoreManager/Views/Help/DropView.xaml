@@ -19,8 +19,9 @@
         <TextBlock Text="{Binding DropBorderText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                    Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight}" 
                    Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualWidth}" 
-                   Padding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight, Converter={StaticResource PercentToPaddingConverter}, ConverterParameter=50}" 
                    TextAlignment="Center"/>
     </Border>
 
 </UserControl>
+
+                   <!--Padding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight, Converter={StaticResource PercentToPaddingConverter}, ConverterParameter=50}"--> 

@@ -10,6 +10,27 @@ namespace StoreManager.DB_classes
     {
         public Product()
         { }
+
+        public Product(string productNameText, int price, int categoryId, string filePath, int? descriptionId)
+        {
+            ProductName = productNameText;
+            Price = price;
+            Category = new Category() { CategoryID = categoryId };
+            BinaryContent = new BinaryContent(filePath);
+            Description = descriptionId == null ? null : Description = new Description() { DescriptionID = (int)descriptionId };
+        }
+
+        public Product(int productID, string productName, Description description, BinaryContent binaryContent, int price, Category category, int salesCount)
+        {
+            ProductID = productID;
+            ProductName = productName;
+            Description = description;
+            BinaryContent = binaryContent;
+            Price = price;
+            Category = category;
+            SalesCount = salesCount;
+        }
+
         public Product(int productID, string SKU, string productName, BinaryContent binaryContent, Category category, int price, int salesCount, Description description)
         {
             ProductID = productID;

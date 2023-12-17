@@ -10,9 +10,10 @@ namespace StoreManager.ViewModels.Services
     public interface INavigationService
     {
         ViewModelBase CurrentView { get; }
+        bool isEmulated { get; set; }
         void NavigateTo<T>(object parameter = null) where T : ViewModelBase;
 
-        void GoBack();
+        void GoBack(object parameter = null);
         void GoBackWhile();
         //void OpenWindow<TViewModel>(object parameter = null) where TViewModel : ViewModelBase;
     }

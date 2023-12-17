@@ -10,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace StoreManager.Views.Client
+namespace StoreManager.Views.Admin.ViewsInfo
 {
     /// <summary>
-    /// Interaction logic for CLientView.xaml
+    /// Interaction logic for CategoriesView.xaml
     /// </summary>
-    public partial class CLientView : UserControl
+    public partial class CategoriesView : Window
     {
-        public CLientView()
+        public CategoriesView()
         {
             InitializeComponent();
         }

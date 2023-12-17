@@ -29,14 +29,34 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="10*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="ButtonBack" Grid.Row="0" Grid.Column="0" Content="↩" Style="{StaticResource ButonBackStyle}" Command="{Binding ButtonBackCommand}"/>
-            <TextBlock Grid.Column="1" Text="Enter your data" Style="{StaticResource SignUpText}"/>
+            <Button x:Name="ButtonBack" 
+                    Grid.Row="0" Grid.Column="0" 
+                    Style="{StaticResource ButonBackStyle}" 
+                    Command="{Binding ButtonBackCommand}"/>
+            <TextBlock 
+                Grid.Column="1" 
+                Text="Enter your data" 
+                Style="{StaticResource HeaderSignText}"/>
         </Grid>
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Account name:" Style="{StaticResource SignUpText}"/>
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Password:" Style="{StaticResource SignUpText}"/>
-        <TextBox x:Name="TextBoxAccountName" Grid.Row="1" Grid.Column="1" Text="{Binding TextAccountName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SignUpTexBox}"/>
-        <help:PasswordView x:Name="PasswordBox" Grid.Row="2" Grid.Column="1" Password="{Binding TextPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        <Button x:Name="SignIpBtn" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Sign in" Style="{StaticResource SignUpBtn}" Command="{Binding SignInCommand}">
+        <TextBlock 
+            Grid.Row="1" Grid.Column="0" 
+            Text="Account name:"
+            Style="{StaticResource SignInText}"/>
+        <TextBlock 
+            Grid.Row="2" Grid.Column="0" 
+            Text="Password:" 
+            Style="{StaticResource SignInText}"/>
+        <TextBox x:Name="TextBoxAccountName" 
+                 Grid.Row="1" Grid.Column="1" 
+                 Text="{Binding TextAccountName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 Style="{StaticResource SignInTexBoxAccountName}"/>
+        <help:PasswordView x:Name="PasswordBox" 
+                           Grid.Row="2" Grid.Column="1" 
+                           Password="{Binding TextPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button x:Name="SignIpBtn" 
+                Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" 
+                Content="Sign in" Style="{StaticResource SignBtn}" 
+                Command="{Binding SignInCommand}">
             <Button.IsEnabled>
                 <MultiBinding Converter="{StaticResource StringAndNullToBoolConverter}">
                     <Binding ElementName="TextBoxAccountName" Path="Text"/>

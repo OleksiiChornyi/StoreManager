@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions"
+        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions.Creating"
         xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters" 
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:help="clr-namespace:StoreManager.Views.Help"
@@ -53,7 +53,7 @@
                   ItemsSource="{Binding ComboBoxDescriptionsItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                   SelectedItem="{Binding ComboBoxDescriptionsSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                   Style="{StaticResource ProductComboBoxStyle}"/>
-        <Button x:Name="CreateProductButton" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignUpBtn}" Content="Create a product" Command="{Binding CreateProductButtonCommand}">
+        <Button x:Name="CreateProductButton" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SignBtn}" Content="Create a product" Command="{Binding CreateProductButtonCommand}">
             <Button.IsEnabled>
                 <MultiBinding Converter="{StaticResource StringAndNullToBoolConverter}">
                     <Binding ElementName="ProductNameTextBox" Path="Text"/>

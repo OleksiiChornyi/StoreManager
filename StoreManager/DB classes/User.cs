@@ -42,13 +42,20 @@ namespace StoreManager.DB_classes
         public int OrderCount { get; set; }
         public DateTime BirthDate { get; set; }
         public string PhoneNumber { get; set; }
+        public DateTime CreatingDate { get; set; }
+        public bool IsAutorize { get; set; } = false;
+
         public static User CreateGuest()
         {
             return new User()
             {
                 UserName = "Guest",
                 PasswordHash = Checkings.HashPassword("1111"),
-                UserRole = Role.guest
+                Email = null,
+                BinaryContent = Checkings.standartImage,
+                UserRole = Role.guest,
+                BirthDate = DateTime.Now,
+                PhoneNumber = null
             };
         }
     }

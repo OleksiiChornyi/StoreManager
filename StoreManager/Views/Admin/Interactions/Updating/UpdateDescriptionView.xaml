@@ -1,0 +1,36 @@
+﻿<Window x:Class="StoreManager.Views.Admin.Interactions.Updating.UpdateDescriptionView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions.Updating" 
+        xmlns:help="clr-namespace:StoreManager.Views.Help"
+        mc:Ignorable="d"
+        Title="Update Description" Height="450" Width="800">
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Style="{StaticResource MainTextBlockAdminPage}" Grid.Row="0" Grid.Column="0"
+               Text="Select the description Data"/>
+            <ComboBox x:Name="comboBoxCurrentDescription" 
+              Grid.Row="1" Grid.Column="0"
+                      HorizontalAlignment="Stretch"
+              ItemsSource="{Binding ComboBoxCurrentDescriptionItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              SelectedItem="{Binding ComboBoxCurrentDescriptionSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              Style="{StaticResource ProductComboBoxStyle}"/>
+        <Button x:Name="UpdateDescriptionButton" Grid.Row="2" Grid.Column="0"
+            Style="{StaticResource MainSignBtn}" 
+            IsEnabled="{Binding UpdateDescriptionButtonIsEnabled,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            Command="{Binding UpdateDescriptionButtonCommand}">
+            <Button.Content>
+                <help:DropView/>
+            </Button.Content>
+        </Button>
+    </Grid>
+</Window>

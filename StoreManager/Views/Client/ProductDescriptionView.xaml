@@ -1,0 +1,45 @@
+﻿<Window x:Class="StoreManager.Views.Client.ProductDescriptionView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StoreManager.Views.Client"
+        mc:Ignorable="d"
+        Title="ProductDescriptionView" Height="650" Width="800">
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" >
+            <TextBlock x:Name="CategoryNameTextBlock" Text="{Binding CategoryNameTextBlock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MainSignText}"/>
+            <TextBlock x:Name="CategoryDescriptionTextBlock" Text="{Binding CategoryDescriptionTextBlock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MainSignText}"/>
+        </StackPanel>
+        <Image x:Name="ProductImage" Grid.Row="1" Grid.RowSpan="3" Grid.Column="0" Source="{Binding Product.Image_src, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Grid Grid.Row="1" Grid.Column="1">
+            <StackPanel Orientation="Vertical">
+                <TextBlock x:Name="ProductNameTextBlock" Text="{Binding ProductNameTextBlock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Style="{StaticResource ClientDescriptionText}"/>
+                <TextBlock x:Name="ProductPriceTextBlock" Text="{Binding ProductPriceTextBlock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Style="{StaticResource ClientDescriptionText}"/>
+            </StackPanel>
+        </Grid>
+        <Button x:Name="AddOrderItem" Grid.Row="2" Grid.Column="2" Content="Add to cart" FontSize="30" IsEnabled="{Binding AddOrderItemIsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding AddOrderItemCommand}"/>
+        <Button Grid.Row="3" Grid.Column="1" x:Name="DescriptionButton" IsEnabled="{Binding ViewDescriptionIsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ButonBackStyle}" Command="{Binding ViewDescriptionCommand}">
+            <Button.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="📑" Grid.Column="0" FontSize="100" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="DescriptionButtonTextBlock" Text="{Binding DescriptionButtonTextBlock, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextWrapping="Wrap" Grid.Column="1" FontSize="30"/>
+                </Grid>
+            </Button.Content>
+        </Button>
+    </Grid>
+</Window>

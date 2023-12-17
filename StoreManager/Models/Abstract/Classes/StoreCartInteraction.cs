@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StoreManager.DB_classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,16 +9,13 @@ namespace StoreManager.Models.Abstract.Classes
 {
     public abstract class StoreCartInteraction
     {
-        private int orderNumber { get; set; }
+        public int orderNumber { get; set; }
         public struct OrderItem
         {
-            public int orderNumber { get; set; }
-            public int productId { get; set; }
-            public string productName { get; set; }
-            public string categoryName { get; set; }
-            public int price { get; set; }
+            public Product product { get; set; }
             public int quantity { get; set; }
         }
+
         public bool isCreating = false;
         private List<OrderItem> _orderItems = new List<OrderItem>();
         public List<OrderItem> orderItems 
@@ -25,8 +23,8 @@ namespace StoreManager.Models.Abstract.Classes
             get { return _orderItems; }
             private set { _orderItems = value; }
         }
-        private UserStoreInteraction client;
-        protected StoreCartInteraction(UserStoreInteraction client)
+        public AllUsersInteractions client;
+        protected StoreCartInteraction(AllUsersInteractions client)
         {
             this.client = client;
             this.orderNumber = client.GetNewRandomOrderNumber();
@@ -39,34 +37,30 @@ namespace StoreManager.Models.Abstract.Classes
             this.isCreating = false;
         }
 
-        public void AddOrUpdateItem(int productId, string productName, int price, string categoryName, int quantity)
+        public void AddOrUpdateItem(Product product, int quantity)
         {
-            if (orderItems.Where(item => item.productId == productId).Count() < 1)
+            if (orderItems.Where(item => item.product.ProductID == product.ProductID).Count() < 1)
             {
-                AddItem(productId, productName, categoryName, price, quantity);
+                AddItem(product, quantity);
             }
             else
             {
-                UpdateItem(productId, quantity);
+                UpdateItem(product, quantity);
             }
         }
 
-        private void AddItem(int productId, string productName, string categoryName, int price, int quantity)
+        private void AddItem(Product product, int quantity)
         {
             orderItems.Add(new OrderItem
             {
-                orderNumber = this.orderNumber,
-                productId = productId,
-                productName = productName,
-                categoryName = categoryName,
-                price = price,
+                product = product,
                 quantity = quantity
             });
         }
 
-        private void UpdateItem(int productId, int quantity)
+        private void UpdateItem(Product product, int quantity)
         {
-            OrderItem itemToUpdate = orderItems.Find(item => item.productId == productId);
+            OrderItem itemToUpdate = orderItems.Find(item => item.product.ProductID == product.ProductID);
             orderItems.Remove(itemToUpdate);
             itemToUpdate.quantity += quantity;
             if (itemToUpdate.quantity <= 0)
@@ -74,9 +68,9 @@ namespace StoreManager.Models.Abstract.Classes
             orderItems.Add(itemToUpdate);
         }
 
-        public void RemoveItem(int productId)
+        public void RemoveItem(Product product)
         {
-            OrderItem itemToRemove = orderItems.Find(item => item.productId == productId);
+            OrderItem itemToRemove = orderItems.Find(item => item.product.ProductID == product.ProductID);
             if (!itemToRemove.Equals(null))
             {
                 orderItems.Remove(itemToRemove);
@@ -87,14 +81,14 @@ namespace StoreManager.Models.Abstract.Classes
             int totalPrice = 0;
             foreach(var item in this.orderItems)
             {
-                totalPrice += item.price * item.quantity;
+                totalPrice += item.product.Price * item.quantity;
             }
             return totalPrice;
         }
-        public void CreateOrder(bool isBankCard, string BankCardNumber)
+        public bool CreateOrder(bool isBankCard, string BankCardNumber)
         {
-            client.CreateOrder(orderNumber, orderItems, GetTotalPrice(), isBankCard, BankCardNumber);
-            isCreating = true;
+            isCreating = client.CreateOrder(orderNumber, orderItems, GetTotalPrice(), isBankCard, BankCardNumber);
+            return isCreating;
         }
     }
 }

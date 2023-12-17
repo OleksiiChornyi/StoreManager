@@ -15,10 +15,10 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
 {
     public class CreateSuppliersViewModel : ViewModelBase
     {
-        private readonly AdminStoreInteraction _admin;
+        private readonly ManagerStoreInteraction _admin;
         private readonly CreateSuppliersView createSuppliersView;
 
-        public CreateSuppliersViewModel(AdminStoreInteraction admin)
+        public CreateSuppliersViewModel(ManagerStoreInteraction admin)
         {
             _admin = admin ?? throw new ArgumentNullException(nameof(admin));
 

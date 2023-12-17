@@ -257,11 +257,11 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
                 }
             }
 
-            if (_admin.UpdateProduct(productId, productName, cost, categoryId, fileData, fileName, descriptionId))
+            /*if (_admin.UpdateProduct(productId, productName, cost, categoryId, fileData, fileName, descriptionId))
             {
                 MessageBox.Show("The product has been updated");
                 _navigation.GoBackWhile();
-            }
+            }*/
         }
 
         private void ProductCostTextBoxPreviewTextInput(object parameter)

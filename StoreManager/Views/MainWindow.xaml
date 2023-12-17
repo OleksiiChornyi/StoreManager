@@ -6,13 +6,15 @@
         xmlns:local="clr-namespace:StoreManager"
         xmlns:viewSign="clr-namespace:StoreManager.Views.Sign"
         xmlns:viewMain="clr-namespace:StoreManager.Views.StoreInteraction"
-        xmlns:viewClient="clr-namespace:StoreManager.Views.Client"
         xmlns:viewAdmin="clr-namespace:StoreManager.Views.Admin"
+        xmlns:viewEmulating="clr-namespace:StoreManager.Views.Admin.Interactions.Emulating"
+        xmlns:viewClient="clr-namespace:StoreManager.Views.Client"
         xmlns:viewModel="clr-namespace:StoreManager.ViewModels"
         xmlns:viewModelMain="clr-namespace:StoreManager.ViewModels.StoreInteraction"
         xmlns:viewModelSign="clr-namespace:StoreManager.ViewModels.Sign"
-        xmlns:viewModelClient="clr-namespace:StoreManager.ViewModels.Client"
         xmlns:viewModelAdmin="clr-namespace:StoreManager.ViewModels.Admin"
+        xmlns:viewModelEmulatng="clr-namespace:StoreManager.ViewModels.Admin.Interactions.Emulating"
+        xmlns:viewModelClient="clr-namespace:StoreManager.ViewModels.CLient"
         mc:Ignorable="d"
         x:Name="StoreManagerWindow"
         Title="Store Manager" Height="450" Width="800">
@@ -21,7 +23,15 @@
         <DataTemplate DataType="{x:Type TypeName=viewModelMain:MainStoreInterationViewModel}">
             <viewMain:MainStoreInteractionView/>
         </DataTemplate>
-        
+
+        <DataTemplate DataType="{x:Type TypeName=viewModelMain:ProfileViewModel}">
+            <viewMain:ProfileView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type TypeName=viewModelMain:ChangeProfileDataViewModel}">
+            <viewMain:ProfileChangeDataView/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type TypeName=viewModelSign:MainSignViewModel}">
             <viewSign:MainSignView/>
         </DataTemplate>
@@ -34,14 +44,18 @@
             <viewSign:SignUpView/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type TypeName=viewModelClient:ClientViewModel}">
-            <viewClient:CLientView/>
+        <DataTemplate DataType="{x:Type TypeName=viewModelClient:CartViewModel}">
+            <viewClient:CartView/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:AdminViewModel}">
             <viewAdmin:AdminView/>
         </DataTemplate>
-        
+
+        <DataTemplate DataType="{x:Type TypeName=viewModelEmulatng:ChooseEmulateUserViewModel}">
+            <viewEmulating:ChooseEmulateUserView/>
+        </DataTemplate>
+
     </Window.Resources>
 
     <ContentControl Content="{Binding Navigation.CurrentView}"/>

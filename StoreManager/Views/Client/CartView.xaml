@@ -1,0 +1,107 @@
+﻿<UserControl x:Class="StoreManager.Views.Client.CartView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StoreManager.Views.Client" 
+             xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <conv:ConfirmOrderButtonConverter x:Key="ConfirmOrderButtonConverter" />
+        <conv:PayByCashConverter x:Key="PayByCashConverter" />
+    </UserControl.Resources>
+
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="ButtonBack" Grid.Row="0" Grid.Column="0" Content="↩" Style="{StaticResource ButonBackStyle}" Command="{Binding ButtonBackCommand}"/>
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock Style="{StaticResource MainSignText}" Text="Total price: "/>
+            <TextBlock x:Name="TotalPrice" Style="{StaticResource MainSignText}" Text="{Binding TotalPriceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+        <DataGrid x:Name="dataGrid" 
+                  IsReadOnly="True" 
+                  Grid.Row="1" Grid.Column="0" 
+                  Grid.RowSpan="2" Grid.ColumnSpan="3" 
+                  AutoGenerateColumns="False"
+                  ItemsSource="{Binding DataGridItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding DataGridSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Product Name">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding product.ProductName}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Product categoty">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding product.Category.CategoryName}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Price">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding product.Price}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Quantity">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding quantity}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="MenuItemDeleteOrderItem" Header="Delete item" Command="{Binding MenuItemDeleteOrderItemCommand}"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
+        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <CheckBox x:Name="IsCard" 
+                          Content="Pay by bank card"
+                          FontSize="30"
+                          IsChecked="{Binding IsCardIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox x:Name="CardNumber" 
+                         Width="250" Margin="5" 
+                         FontSize="28" 
+                         Visibility="{Binding ElementName=IsCard, Path=IsChecked, Converter={StaticResource PayByCashConverter}}" 
+                         MaxLength="16"
+                         Text="{Binding CardNumberText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+            <Button x:Name="ConfirmOrder" 
+                    Grid.Column="1" 
+                    Content="Confirm the order" 
+                    Style="{StaticResource ButonBackStyle}"
+                    Command="{Binding ConfirmOrderCommand}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource ConfirmOrderButtonConverter}">
+                        <Binding ElementName="dataGrid" Path="Items.Count"/>
+                        <Binding ElementName="IsCard" Path="IsChecked"/>
+                        <Binding ElementName="CardNumber" Path="Text"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

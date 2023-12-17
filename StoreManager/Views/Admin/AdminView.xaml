@@ -5,36 +5,137 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:StoreManager.Views.Admin"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="700" d:DesignWidth="1800">
     <Grid Style="{StaticResource MainGrid}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="6*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="ButtonExit" Grid.Row="0" Grid.Column="7" Style="{StaticResource ExitBtn}" Content="X" Command="{Binding ExitCommand}"/>
+        <Button x:Name="ButtonBack" Grid.Row="0" Grid.Column="0" Style="{StaticResource ButonBackStyle}" Command="{Binding ButtonBackCommand}"/>
         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="7" Style="{StaticResource SignUpText}" Text="Select the option"/>
-        <Button x:Name="CreateCategoryButton" Grid.Row="1" Grid.Column="0" Content="Add category" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateCategoryCommand}"/>
-        <Button x:Name="CreateDescriptionButton" Grid.Row="1" Grid.Column="1" Content="Add description" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateDescriptionCommand}"/>
-        <Button x:Name="CreateProductButton" Grid.Row="1" Grid.Column="2" Content="Add product" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateProductCommand}"/>
-        <Button x:Name="CreateSuppliersButton" Grid.Row="1" Grid.Column="3" Content="Add supplier" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateSuppliersCommand}"/>
-        <Button x:Name="CreateShipmentsButton" Grid.Row="1" Grid.Column="4" Content="Add/update shipments" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateShipmentsCommand}"/>
-        <Button x:Name="CreateWarehousesButton" Grid.Row="1" Grid.Column="5" Content="Add a warehouse" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateWarehousesCommand}"/>
-        <Button x:Name="CreateInventoryButton" Grid.Row="1" Grid.Column="6" Content="Add inventory" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateInventoryCommand}"/>
+        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Style="{StaticResource SignUpText}" Text="Categoties"/>
+                    <Button x:Name="CreateCategoryButton" Grid.Row="1" Content="Add category" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateCategoryCommand}"/>
+                    <Button x:Name="UpdateCategory" Grid.Row="2" Content="Update category" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding UpdateCategoryCommand}"/>
+                    <Button x:Name="DeleteCategorys" Grid.Row="3" Content="Delete category" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding DeleteCategoryCommand}"/>
+                    <Button x:Name="ViewCategories" Grid.Row="4" Content="View categories" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding ViewCategoriesCommand}"/>
+                </Grid>
+                <Grid Grid.Row="0" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Style="{StaticResource SignUpText}" Text="Descriptions"/>
+                    <Button x:Name="CreateDescriptionButton" Grid.Row="1" Content="Add description" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateDescriptionCommand}"/>
+                    <Button x:Name="UpdateDescription" Grid.Row="2" Content="Update description" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding UpdateDescriptionCommand}"/>
+                    <Button x:Name="DeleteDescriptions" Grid.Row="3" Content="Delete description" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding DeleteDescriptionCommand}"/>
+                    <Button x:Name="ViewDescription" Grid.Row="4" Content="View descriptions" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding ViewDescriptionsCommand}"/>
+                </Grid>
+                <Grid Grid.Row="0" Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Style="{StaticResource SignUpText}" Text="Products"/>
+                    <Button x:Name="CreateProductButton" Grid.Row="1" Content="Add product" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateProductCommand}"/>
+                    <Button x:Name="UpdateProduct" Grid.Row="2" Content="Update product" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding UpdateProductCommand}"/>
+                    <Button x:Name="DeleteProduct" Grid.Row="3" Content="Delete product" 
+                            Style="{StaticResource AdminPageCreateBtn}" 
+                            Visibility="{Binding IsVisibleForManager, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Command="{Binding DeleteProductCommand}"/>
+                    <Button x:Name="ViewProducts" Grid.Row="4" Content="View products" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding ViewProductsCommand}"/>
+                </Grid>
+                <Grid Grid.Row="0" Grid.Column="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Style="{StaticResource SignUpText}" Text="Users"/>
+                    <Button x:Name="UpdateUser" Grid.Row="1" Content="Update user" 
+                            Style="{StaticResource AdminPageCreateBtn}" 
+                            Visibility="{Binding IsVisibleForManager, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Command="{Binding UpdateUserCommand}"/>
+                    <Button x:Name="DeleteUser" Grid.Row="2" Content="Delete user" 
+                            Style="{StaticResource AdminPageCreateBtn}" 
+                            Visibility="{Binding IsVisibleForManager, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Command="{Binding DeleteUserCommand}"/>
+                    <Button x:Name="ViewUsers" Grid.Row="3" Content="View users" 
+                            Style="{StaticResource AdminPageCreateBtn}" 
+                            Command="{Binding ViewUsersCommand}"/>
+                    <Button x:Name="EmulateUser" Grid.Row="4" Content="Emulate user" 
+                            Style="{StaticResource AdminPageCreateBtn}" 
+                            Visibility="{Binding IsVisibleForManager, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Command="{Binding EmulateUserCommand}"/>
+                </Grid>
+                <Grid Grid.Row="0" Grid.Column="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Style="{StaticResource SignUpText}" Text="Orders"/>
+                    <Button x:Name="UpdateOrders" Grid.Row="1" Content="Update shipments" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding UpdateOrdersCommand}"/>
+                    <Button x:Name="DeleteOrders" Grid.Row="2" Content="Delete Order" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding DeleteOrdersCommand}"/>
+                    <Button x:Name="ViewOrders" Grid.Row="3" Content="View Orders" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding ViewOrdersCommand}"/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Style="{StaticResource SignUpText}" Text="Suppliers"/>
+                    <Button x:Name="CreateSuppliersButton" Grid.Row="1" Content="Add supplier" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateSuppliersCommand}"/>
+                    <Button x:Name="UpdateSuppliersButton" Grid.Row="2" Content="Update Suppliers" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding UpdateSuppliersCommand}"/>
+                    <Button x:Name="ViewSuppliersrButton" Grid.Row="3" Content="View Suppliers" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding ViewSuppliersrCommand}"/>
+                    <Button x:Name="DeleteSuppliersrButton" Grid.Row="4" Content="Delete Supplier" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding DeleteSuppliersCommand}"/>
+                </Grid>
+            </Grid>
 
-        <Button x:Name="UpdateProductsButton" Grid.Row="3" Grid.Column="5" Content="Update product data" Style="{StaticResource AdminPageUpdateBtn}" Command="{Binding UpdateProductsCommand}"/>
-        
+        </ScrollViewer>
+
         <!--
+                <Button x:Name="CreateShipmentsButton" Grid.Row="1" Grid.Column="4" Content="Add/update shipments" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateShipmentsCommand}"/>
+                <Button x:Name="CreateWarehousesButton" Grid.Row="1" Grid.Column="5" Content="Add a warehouse" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateWarehousesCommand}"/>
+                <Button x:Name="CreateInventoryButton" Grid.Row="1" Grid.Column="6" Content="Add inventory" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding CreateInventoryCommand}"/>
+                <Button x:Name="UpdateProductsButton" Grid.Row="3" Grid.Column="5" Content="Update product data" Style="{StaticResource AdminPageUpdateBtn}" Command="{Binding UpdateProductsCommand}"/>
         <Button x:Name="ViewCategoriesButton" Grid.Row="2" Grid.Column="0" Content="View categories" Style="{StaticResource AdminPageViewBtn}" Click="ViewCategoriesButton_Click"/>
         <Button x:Name="ViewDescritpinsButton" Grid.Row="2" Grid.Column="1" Content="View descriptions" Style="{StaticResource AdminPageViewBtn}" Click="ViewDescritpinsButton_Click"/>
         <Button x:Name="ViewProductsButton" Grid.Row="2" Grid.Column="2" Content="View products" Style="{StaticResource AdminPageViewBtn}" Click="ViewProductsButton_Click"/>
