@@ -165,7 +165,7 @@
                         <RowDefinition Height="2*"/>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Style="{StaticResource SignUpText}" Text="AuditLogs"/>
-                    <Button x:Name="ViewAuditLogs" Grid.Row="1" Content="View Orders" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding ViewAuditLogsCommand}"/>
+                    <Button x:Name="ViewAuditLogs" Grid.Row="1" Content="View Audit Logs" Style="{StaticResource AdminPageCreateBtn}" Command="{Binding ViewAuditLogsCommand}"/>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="4">
                     <Grid.RowDefinitions>
