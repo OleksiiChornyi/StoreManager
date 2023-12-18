@@ -146,21 +146,27 @@
     <Compile Include="ViewModels\Admin\Interactions\Creating\CreateWarehousesViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Deleting\DeleteCategoryViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Deleting\DeleteDescriptionViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Deleting\DeleteInventoryViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Deleting\DeleteOrdersViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Deleting\DeleteProductViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Deleting\DeleteSuppliersViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Deleting\DeleteUserViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Deleting\DeleteWarehouseViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Emulating\ChooseEmulateUserViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Emulating\EmulateUserViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Updating\UpdateCategoryViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Updating\UpdateDescriptionViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Updating\UpdateInventoryViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Updating\UpdateOrdersViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Updating\UpdateProductViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Updating\UpdateSupplierViewModel.cs" />
     <Compile Include="ViewModels\Admin\Interactions\Updating\UpdateUserViewModel.cs" />
-    <Compile Include="ViewModels\Admin\ViewsInfo\AuditLogsViewModel.cs" />
+    <Compile Include="ViewModels\Admin\Interactions\Updating\UpdateWarehousesViewModel.cs" />
+    <Compile Include="ViewModels\Admin\ViewsInfo\ViewAuditLogssViewModel.cs" />
     <Compile Include="ViewModels\Admin\ViewsInfo\ViewDescriptionViewModel.cs" />
     <Compile Include="ViewModels\Admin\ViewsInfo\ViewCategoriesViewModel.cs" />
+    <Compile Include="ViewModels\Admin\ViewsInfo\ViewWarehouseViewModel.cs" />
+    <Compile Include="ViewModels\Admin\ViewsInfo\ViewInventoryViewModel.cs" />
     <Compile Include="ViewModels\Admin\ViewsInfo\ViewOrdersViewModel.cs" />
     <Compile Include="ViewModels\Admin\ViewsInfo\ViewProductViewModel.cs" />
     <Compile Include="ViewModels\Admin\ViewsInfo\ViewSupplierViewModel.cs" />
@@ -176,6 +182,12 @@
     <Compile Include="ViewModels\Core\ObservableObject.cs" />
     <Compile Include="ViewModels\Core\RelayCommand.cs" />
     <Compile Include="ViewModels\Core\ViewModelBase.cs" />
+    <Compile Include="ViewModels\DB Data\FunctionsDBViewModel.cs" />
+    <Compile Include="ViewModels\DB Data\ProceduresDBViewModel.cs" />
+    <Compile Include="ViewModels\DB Data\SequencesDBViewModel.cs" />
+    <Compile Include="ViewModels\DB Data\TablesDBViewModel.cs" />
+    <Compile Include="ViewModels\DB Data\TriggersDBViewModel.cs" />
+    <Compile Include="ViewModels\DB Data\ViewsDBViewModel.cs" />
     <Compile Include="ViewModels\Help\IBorderDopViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\Services\IInitializable.cs" />
@@ -220,6 +232,9 @@
     <Compile Include="Views\Admin\Interactions\Deleting\DeleteDescriptionView.xaml.cs">
       <DependentUpon>DeleteDescriptionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Admin\Interactions\Deleting\DeleteInventoryView.xaml.cs">
+      <DependentUpon>DeleteInventoryView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Admin\Interactions\Deleting\DeleteOrderView.xaml.cs">
       <DependentUpon>DeleteOrderView.xaml</DependentUpon>
     </Compile>
@@ -231,6 +246,9 @@
     </Compile>
     <Compile Include="Views\Admin\Interactions\Deleting\DeleteUserView.xaml.cs">
       <DependentUpon>DeleteUserView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Admin\Interactions\Deleting\DeleteWarehouseView.xaml.cs">
+      <DependentUpon>DeleteWarehouseView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Admin\Interactions\Emulating\ChooseEmulateUserView.xaml.cs">
       <DependentUpon>ChooseEmulateUserView.xaml</DependentUpon>
@@ -244,6 +262,9 @@
     <Compile Include="Views\Admin\Interactions\Updating\UpdateDescriptionView.xaml.cs">
       <DependentUpon>UpdateDescriptionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Admin\Interactions\Updating\UpdateInventoryView.xaml.cs">
+      <DependentUpon>UpdateInventoryView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Admin\Interactions\Updating\UpdateOrdersView.xaml.cs">
       <DependentUpon>UpdateOrdersView.xaml</DependentUpon>
     </Compile>
@@ -256,8 +277,8 @@
     <Compile Include="Views\Admin\Interactions\Updating\UpdateUserView.xaml.cs">
       <DependentUpon>UpdateUserView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Admin\ViewsInfo\AuditLogsView.xaml.cs">
-      <DependentUpon>AuditLogsView.xaml</DependentUpon>
+    <Compile Include="Views\Admin\Interactions\Updating\UpdateWarehousesView.xaml.cs">
+      <DependentUpon>UpdateWarehousesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Client\StoreForClient.cs" />
     <Compile Include="Models\Guest\StoreForGuest.cs" />
@@ -267,6 +288,12 @@
     </Compile>
     <Compile Include="Views\Admin\ViewsInfo\DescriptionView.xaml.cs">
       <DependentUpon>DescriptionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Admin\ViewsInfo\ViewAuditLogssView.xaml.cs">
+      <DependentUpon>ViewAuditLogssView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Admin\ViewsInfo\ViewInventoryView.xaml.cs">
+      <DependentUpon>ViewInventoryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Admin\ViewsInfo\ViewOrdersView.xaml.cs">
       <DependentUpon>ViewOrdersView.xaml</DependentUpon>
@@ -280,11 +307,32 @@
     <Compile Include="Views\Admin\ViewsInfo\ViewUsersView.xaml.cs">
       <DependentUpon>ViewUsersView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Admin\ViewsInfo\ViewWarehouseView.xaml.cs">
+      <DependentUpon>ViewWarehouseView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Client\CartView.xaml.cs">
       <DependentUpon>CartView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Client\ProductDescriptionView.xaml.cs">
       <DependentUpon>ProductDescriptionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DB Data\FunctionsDBView.xaml.cs">
+      <DependentUpon>FunctionsDBView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DB Data\ProceduresDBView.xaml.cs">
+      <DependentUpon>ProceduresDBView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DB Data\SequencesDBView.xaml.cs">
+      <DependentUpon>SequencesDBView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DB Data\TablesDBView.xaml.cs">
+      <DependentUpon>TablesDBView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DB Data\TriggerssDBView.xaml.cs">
+      <DependentUpon>TriggerssDBView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DB Data\ViewsDBView.xaml.cs">
+      <DependentUpon>ViewsDBView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Help\DropView.xaml.cs">
       <DependentUpon>DropView.xaml</DependentUpon>
@@ -354,6 +402,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Admin\Interactions\Deleting\DeleteInventoryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Admin\Interactions\Deleting\DeleteOrderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -367,6 +419,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Admin\Interactions\Deleting\DeleteUserView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Admin\Interactions\Deleting\DeleteWarehouseView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -386,6 +442,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Admin\Interactions\Updating\UpdateInventoryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Admin\Interactions\Updating\UpdateOrdersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -402,7 +462,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Admin\ViewsInfo\AuditLogsView.xaml">
+    <Page Include="Views\Admin\Interactions\Updating\UpdateWarehousesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -411,6 +471,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Admin\ViewsInfo\DescriptionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Admin\ViewsInfo\ViewAuditLogssView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Admin\ViewsInfo\ViewInventoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -430,11 +498,39 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Admin\ViewsInfo\ViewWarehouseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Client\CartView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Client\ProductDescriptionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DB Data\FunctionsDBView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DB Data\ProceduresDBView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DB Data\SequencesDBView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DB Data\TablesDBView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DB Data\TriggerssDBView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DB Data\ViewsDBView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

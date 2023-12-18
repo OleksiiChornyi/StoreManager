@@ -1,4 +1,5 @@
-﻿using StoreManager.Models.Abstract.Classes;
+﻿using StoreManager.DB_classes;
+using StoreManager.Models.Abstract.Classes;
 using StoreManager.ViewModels.Core;
 using StoreManager.Views.Admin.Interactions.Creating;
 using System;
@@ -41,7 +42,7 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
             {
                 ComboBoxItem item = new ComboBoxItem();
                 item.Content = row[1];
-                item.ToolTip = row[0];
+                item.Tag = row[0];
                 ComboBoxProductNameItemsSource.Add(item);
             }
 
@@ -50,7 +51,7 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
             {
                 ComboBoxItem item = new ComboBoxItem();
                 item.Content = row[1];
-                item.ToolTip = row[0];
+                item.Tag = row[0];
                 ComboBoxWarehousesNameItemsSource.Add(item);
             }
         }
@@ -138,13 +139,13 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
             var selectedProduct = ComboBoxProductNameSelectedItem;
             if (selectedProduct != null)
             {
-                int productId = int.Parse(selectedProduct.ToolTip.ToString());
+                int productId = int.Parse(selectedProduct.Tag.ToString());
 
                 var selectedWarehouse = ComboBoxWarehousesSelectedItem;
                 if (selectedWarehouse != null)
                 {
-                    int warehouseId = int.Parse(selectedWarehouse.ToolTip.ToString());
-                    _admin.CreateInventory(productId, int.Parse(QuantityOnHandText), warehouseId);
+                    int warehouseId = int.Parse(selectedWarehouse.Tag.ToString());
+                    _admin.CreateInventory(new Inventory() { ProductID = productId, QuantityOnHand = int.Parse(QuantityOnHandText), WareHouseID = warehouseId } );
                 }
                 MessageBox.Show("Inventory added");
                 createInventoryView.Close();

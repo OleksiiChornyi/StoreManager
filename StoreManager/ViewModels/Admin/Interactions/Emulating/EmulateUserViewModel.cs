@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using StoreManager.DB_classes;
 using StoreManager.Models.Abstract.Classes;
+using StoreManager.ViewModels.CLient;
 using StoreManager.ViewModels.Core;
 using StoreManager.ViewModels.Services;
 using StoreManager.ViewModels.Sign;
@@ -41,6 +42,7 @@ namespace StoreManager.ViewModels.Admin.Interactions.Emulating
             services.AddSingleton<SignUpViewModel>();
 
             //Client
+            services.AddSingleton<CartViewModel>();
 
             //Admin
             services.AddSingleton<AdminViewModel>();

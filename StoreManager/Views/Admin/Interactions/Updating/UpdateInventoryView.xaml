@@ -1,0 +1,74 @@
+﻿<Window x:Class="StoreManager.Views.Admin.Interactions.Updating.UpdateInventoryView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StoreManager.Views.Admin.Interactions.Updating" 
+        xmlns:conv="clr-namespace:StoreManager.ViewModels.Converters"
+        mc:Ignorable="d"
+        Title="Update Inventory" Height="550" Width="1000">
+    <Window.Resources>
+        <conv:StringAndNullToBoolConverter x:Key="StringAndNullToBoolConverter"/>
+    </Window.Resources>
+    <Grid Style="{StaticResource MainGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Style="{StaticResource MainTextBlockAdminPage}" 
+               Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+               Text="Enter the inventory data"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" 
+               Grid.Row="1" Grid.Column="0" 
+               Text="Select a inventory to update"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" 
+               Grid.Row="2" Grid.Column="0" 
+               Text="Select a product name"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" 
+               Grid.Row="3" Grid.Column="0" 
+               Text="Choose a warehouse"/>
+        <TextBlock Style="{StaticResource TextBlockAdminPage}" 
+               Grid.Row="4" Grid.Column="0" 
+               Text="Keep track of the amount of product in stock"/>
+        <ComboBox x:Name="ComboBoxInventoty" 
+              Grid.Row="1" Grid.Column="1" 
+              ItemsSource="{Binding ComboBoxInventotyItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              SelectedItem="{Binding ComboBoxInventotySelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              Style="{StaticResource ProductComboBoxStyle}"/>
+        <ComboBox x:Name="ComboBoxProductName" 
+              Grid.Row="2" Grid.Column="1" 
+              ItemsSource="{Binding ComboBoxProductNameItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              SelectedItem="{Binding ComboBoxProductNameSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              Style="{StaticResource ProductComboBoxStyle}"/>
+        <ComboBox x:Name="ComboBoxWarehousesName" 
+              Grid.Row="3" Grid.Column="1" 
+              ItemsSource="{Binding ComboBoxWarehousesNameItemsSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              SelectedItem="{Binding ComboBoxWarehousesSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              Style="{StaticResource ProductComboBoxStyle}"/>
+        <TextBox x:Name="QuantityOnHandTextBox" 
+             Grid.Row="4" Grid.Column="1" 
+             Text="{Binding QuantityOnHandText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+             Style="{StaticResource SomeCreateTexBox}" />
+        <Button x:Name="CreateInventoryButton" 
+            Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" 
+            Style="{StaticResource SignBtn}" 
+            Content="Add inventory" 
+            Command="{Binding CreateInventoryButtonCommand}">
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource StringAndNullToBoolConverter}">
+                    <Binding ElementName="ComboBoxProductName" Path="SelectedItem"/>
+                    <Binding ElementName="ComboBoxWarehousesName" Path="SelectedItem"/>
+                    <Binding ElementName="QuantityOnHandTextBox" Path="Text"/>
+                </MultiBinding>
+            </Button.IsEnabled>
+        </Button>
+    </Grid>
+</Window>

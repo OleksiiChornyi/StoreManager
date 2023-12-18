@@ -7,6 +7,7 @@ using StoreManager.ViewModels.Admin.Interactions.Emulating;
 using StoreManager.ViewModels.Admin.Interactions.Updating;
 using StoreManager.ViewModels.Admin.ViewsInfo;
 using StoreManager.ViewModels.Core;
+using StoreManager.ViewModels.DB_Data;
 using StoreManager.ViewModels.Services;
 using StoreManager.ViewModels.StoreInteraction;
 using StoreManager.Views.Admin.Interactions;
@@ -63,20 +64,39 @@ namespace StoreManager.ViewModels.Admin
             ViewUsersCommand = new RelayCommand(ViewUsers);
             EmulateUserCommand = new RelayCommand(EmulateUser);
             #endregion
-            #region Suppliers cammands
-            CreateSuppliersCommand = new RelayCommand(CreateSupplier);
-            UpdateSuppliersCommand = new RelayCommand(UpdateSupplier);
-            ViewSuppliersrCommand = new RelayCommand(ViewSuppliersr);
-            DeleteSuppliersCommand = new RelayCommand(DeleteSuppliers);
-            #endregion
-            #region Update commands
-            CreateProductCommand = new RelayCommand(ShowCreateProduct);
-            CreateShipmentsCommand = new RelayCommand(ShowCreateShipments);
-            CreateWarehousesCommand = new RelayCommand(ShowCreateWarehouses);
-            CreateInventoryCommand = new RelayCommand(ShowCreateInventory);
+            #region Orders commands
             UpdateOrdersCommand = new RelayCommand(UpdateOrders);
             DeleteOrdersCommand = new RelayCommand(DeleteOrders);
             ViewOrdersCommand = new RelayCommand(ViewOrders);
+            #endregion
+            #region Suppliers cammands
+            CreateSuppliersCommand = new RelayCommand(CreateSupplier);
+            UpdateSuppliersCommand = new RelayCommand(UpdateSupplier);
+            ViewSuppliersrCommand = new RelayCommand(ViewSuppliers);
+            DeleteSuppliersCommand = new RelayCommand(DeleteSuppliers);
+            #endregion
+            #region Inventories cammands
+            CreateInventoryCommand = new RelayCommand(CreateInventory);
+            UpdateInventoryCommand = new RelayCommand(UpdateInventory);
+            DeleteInventoryCommand = new RelayCommand(DeleteInventory);
+            ViewInventoryCommand = new RelayCommand(ViewInventory);
+            #endregion
+            #region Warehouses cammands
+            CreateWarehouseCommand = new RelayCommand(CreateWarehouse);
+            UpdateWarehouseCommand = new RelayCommand(UpdateWarehouse);
+            DeleteWarehouseCommand = new RelayCommand(DeleteWarehouse);
+            ViewWarehouseCommand = new RelayCommand(ViewWarehouse);
+            #endregion
+            #region Audit Logs Command
+            ViewAuditLogsCommand = new RelayCommand(ViewAuditLogs);
+            #endregion
+            #region Select Data of DB
+            SelectTablesCommand = new RelayCommand(SelectTables);
+            SelectTProceduresCommand = new RelayCommand(SelectTProcedures);
+            SelectFunctionsCommand = new RelayCommand(SelectFunctions);
+            SelectTriggersCommand = new RelayCommand(SelectTriggers);
+            SelectSequencesCommand = new RelayCommand(SelectSequences);
+            SelectViewsCommand = new RelayCommand(SelectViews);
             #endregion
         }
         public void Initialize(object parameter)
@@ -196,7 +216,7 @@ namespace StoreManager.ViewModels.Admin
             Navigation.NavigateTo<ChooseEmulateUserViewModel>(admin as AdminStoreInteraction);
         }
         #endregion
-        #region User cammands
+        #region Orders cammands
         public ICommand UpdateOrdersCommand { get; }
         public ICommand DeleteOrdersCommand { get; }
         public ICommand ViewOrdersCommand { get; }
@@ -226,7 +246,7 @@ namespace StoreManager.ViewModels.Admin
         {
             new UpdateSupplierViewModel(admin);
         }
-        private void ViewSuppliersr(object parameter)
+        private void ViewSuppliers(object parameter)
         {
             new ViewSupplierViewModel(admin);
         }
@@ -235,32 +255,94 @@ namespace StoreManager.ViewModels.Admin
             new DeleteSuppliersViewModel(admin);
         }
         #endregion
-        public ICommand ButtonBackCommand { get; }
-        public ICommand CreateShipmentsCommand { get; }
-        public ICommand CreateWarehousesCommand { get; }
+        #region Inventories cammands
         public ICommand CreateInventoryCommand { get; }
-        public ICommand UpdateProductsCommand { get; }
+        public ICommand UpdateInventoryCommand { get; }
+        public ICommand DeleteInventoryCommand { get; }
+        public ICommand ViewInventoryCommand { get; }
+        private void CreateInventory(object parameter)
+        {
+            new CreateInventoryViewModel(admin);
+        }
+        private void UpdateInventory(object parameter)
+        {
+            new UpdateInventoryViewModel(admin);
+        }
+        private void DeleteInventory(object parameter)
+        {
+            new DeleteInventoryViewModel(admin);
+        }
+        private void ViewInventory(object parameter)
+        {
+            new ViewInventoryViewModel(admin);
+        }
+        #endregion
+        #region Warehouses cammands
+        public ICommand CreateWarehouseCommand { get; }
+        public ICommand UpdateWarehouseCommand { get; }
+        public ICommand DeleteWarehouseCommand { get; }
+        public ICommand ViewWarehouseCommand { get; }
+        private void CreateWarehouse(object parameter)
+        {
+            new CreateWarehousesViewModel(admin);
+        }
+        private void UpdateWarehouse(object parameter)
+        {
+            new UpdateWarehousesViewModel(admin);
+        }
+        private void DeleteWarehouse(object parameter)
+        {
+            new DeleteWarehouseViewModel(admin);
+        }
+        private void ViewWarehouse(object parameter)
+        {
+            new ViewWarehouseViewModel(admin);
+        }
+        #endregion
+        #region Audit Logs Commnd
+        public ICommand ViewAuditLogsCommand { get; }
+        private void ViewAuditLogs(object parameter)
+        {
+            new ViewAuditLogssViewModel(admin);
+        }
+        #endregion
+        #region Select Data of DB
+        public ICommand SelectTablesCommand { get; }
+        public ICommand SelectTProceduresCommand { get; }
+        public ICommand SelectFunctionsCommand { get; }
+        public ICommand SelectTriggersCommand { get; }
+        public ICommand SelectSequencesCommand { get; }
+        public ICommand SelectViewsCommand { get; }
+        private void SelectTables(object parameter)
+        {
+            new TablesDBViewModel(admin);
+        }
+        private void SelectTProcedures(object parameter)
+        {
+            new ProceduresDBViewModel(admin);
+        }
+        private void SelectFunctions(object parameter)
+        {
+            new FunctionsDBViewModel(admin);
+        }
+        private void SelectTriggers(object parameter)
+        {
+            new TriggersDBViewModel(admin);
+        }
+        private void SelectSequences(object parameter)
+        {
+            new SequencesDBViewModel(admin);
+        }
+        private void SelectViews(object parameter)
+        {
+            new ViewsDBViewModel(admin);
+        }
+        #endregion
+        public ICommand ButtonBackCommand { get; }
 
         private void GoBack(object parameter)
         {
             Navigation.GoBack(admin);
-        }
-        
-        private void ShowCreateShipments(object parameter)
-        {
-            new CreateShipmentsViewModel(admin);
-        }
-        private void ShowCreateWarehouses(object parameter)
-        {
-            new CreateWarehousesViewModel(admin);
-        }
-        private void ShowCreateInventory(object parameter)
-        {
-            new CreateInventoryViewModel(admin);
-        }
-        private void ShowUpdateProducts(object parameter)
-        {
-            //new MainStoreInterationViewModel(admin);
         }
     }
 }

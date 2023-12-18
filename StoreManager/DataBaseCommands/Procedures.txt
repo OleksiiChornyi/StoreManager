@@ -48,6 +48,19 @@ BEGIN
     VALUES (v_DescriptionID, p_FileName, p_FileType, p_FileExtension, p_FileData, p_Info);
 END;
 
+create or replace PROCEDURE AddInventory(
+    p_ProductID NUMBER,
+    p_QuantityOnHand NUMBER,
+    p_WarehouseID NUMBER
+) IS
+    v_InventoryID NUMBER;
+BEGIN
+    SELECT InventorySeq.NEXTVAL INTO v_InventoryID FROM DUAL;
+
+    INSERT INTO Inventory (InventoryID, ProductID, QuantityOnHand, WarehouseID, InventoryDate )
+    VALUES (v_InventoryID, p_ProductID, p_QuantityOnHand, p_WarehouseID, SYSTIMESTAMP);
+END;
+
 create or replace PROCEDURE AddOrder(
     p_OrderNumber NUMBER,
     p_UserID NUMBER
@@ -111,7 +124,6 @@ BEGIN
     COMMIT;
 END AddProduct;
 
-
 create or replace PROCEDURE AddShipment(
     p_ShipmentStatus VARCHAR2,
     p_OrderID NUMBER
@@ -125,6 +137,19 @@ BEGIN
 
     INSERT INTO Shipments (ShipmentID, ShipmentNumber, ShipmentDate, ShipmentStatus, OrderID)
     VALUES (v_ShipmentID, v_ShipmentNumber, SYSDATE, p_ShipmentStatus, p_OrderID);
+END;
+
+create or replace PROCEDURE AddSupplier(
+    p_CompanyName VARCHAR2,
+    p_ContactInfo VARCHAR2,
+    p_SupplierAddress VARCHAR2
+) IS
+    v_SupplierID NUMBER;
+BEGIN
+    SELECT SuppliersSeq.NEXTVAL INTO v_SupplierID FROM DUAL;
+
+    INSERT INTO Suppliers (SupplierID, CompanyName, ContactInfo, SupplierAddress)
+    VALUES (v_SupplierID, p_CompanyName, p_ContactInfo, p_SupplierAddress);
 END;
 
 create or replace PROCEDURE AddTransaction(
@@ -142,6 +167,20 @@ BEGIN
 
     INSERT INTO Transactions (TransactionID, UserID, OrderNumber, TransactionDate, TransactionType, Description)
     VALUES (v_TransactionID, p_UserID, p_OrderNumber, SYSTIMESTAMP, p_TransactionType, v_Description);
+END;
+
+create or replace PROCEDURE AddWarehouse(
+    p_WarehouseName VARCHAR2,
+    p_Location VARCHAR2,
+    p_Capacity NUMBER,
+    p_Availability NUMBER
+) IS
+    v_WarehouseID NUMBER;
+BEGIN
+    SELECT WarehousesSeq.NEXTVAL INTO v_WarehouseID FROM DUAL;
+
+    INSERT INTO Warehouses (WarehouseID, WarehouseName, Location, Capacity, Availability )
+    VALUES (v_WarehouseID, p_WarehouseName, p_Location, p_Capacity, p_Availability);
 END;
 
 create or replace PROCEDURE CreateBinaryContent(
@@ -217,6 +256,51 @@ BEGIN
     END IF;
 END DeleteDescription;
 
+create or replace PROCEDURE DeleteInventory (
+    p_InventoryID NUMBER,
+    p_IsDeleted OUT BOOLEAN
+)
+IS
+BEGIN
+    BEGIN
+        DELETE FROM Inventory
+        WHERE InventoryID = p_InventoryID;
+        COMMIT;
+        p_IsDeleted := TRUE;
+    EXCEPTION
+        WHEN OTHERS THEN
+            p_IsDeleted := FALSE;
+    END;
+END DeleteInventory;
+
+--Explicit cursos
+create or replace PROCEDURE DeleteInventoryAndWarehouseID(
+    p_WarehouseID NUMBER
+)
+IS
+    CURSOR inventory_cursor IS
+        SELECT InventoryID
+        FROM Inventory
+        WHERE WarehouseID = p_WarehouseID;
+
+    v_InventoryID NUMBER;
+BEGIN
+    FOR inventory_rec IN inventory_cursor
+    LOOP
+        v_InventoryID := inventory_rec.InventoryID;
+
+        DELETE FROM Inventory
+        WHERE InventoryID = v_InventoryID;
+
+    END LOOP;
+
+    DELETE FROM Warehouses
+    WHERE WarehouseID = p_WarehouseID;
+
+    COMMIT;
+END;
+
+--Implicit Cursor
 create or replace PROCEDURE DeleteOrderByOrderNumber (
     p_OrderNumber NUMBER
 ) IS
@@ -248,7 +332,6 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Unexpected error: ' || SQLERRM);
 END DeleteOrderByOrderNumber;
 
-
 create or replace PROCEDURE DeleteUser (
     p_UserID NUMBER,
     p_IsDeleted OUT BOOLEAN
@@ -267,7 +350,6 @@ BEGIN
     END;
 END DeleteUser;
 
-
 create or replace PROCEDURE InsertOrUpdateBinaryContent(
     p_ContentID NUMBER,
     p_FileName VARCHAR2,
@@ -276,14 +358,14 @@ create or replace PROCEDURE InsertOrUpdateBinaryContent(
     p_Content BLOB,
     p_Cursor OUT SYS_REFCURSOR
 )
-AS
+IS
     v_ContentID_exists NUMBER;
 BEGIN
-    SELECT ContentID INTO v_ContentID_exists
-    FROM BinaryContent
-    WHERE ContentID = p_ContentID;
+    BEGIN
+        SELECT ContentID INTO v_ContentID_exists
+        FROM BinaryContent
+        WHERE ContentID = p_ContentID;
 
-    IF v_ContentID_exists IS NOT NULL THEN
         UPDATE BinaryContent
         SET
             FileName = p_FileName,
@@ -291,10 +373,12 @@ BEGIN
             FileExtension = p_FileExtension,
             Content = p_Content
         WHERE ContentID = p_ContentID;
-    ELSE
-        INSERT INTO BinaryContent (ContentID, FileName, FileType, FileExtension, Content)
-        VALUES (p_ContentID, p_FileName, p_FileType, p_FileExtension, p_Content);
-    END IF;
+
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            INSERT INTO BinaryContent (ContentID, FileName, FileType, FileExtension, Content)
+            VALUES (p_ContentID, p_FileName, p_FileType, p_FileExtension, p_Content);
+    END;
 
     OPEN p_Cursor FOR
         SELECT *
@@ -333,7 +417,6 @@ BEGIN
         END;
     END IF;
 END;
-
 
 create or replace PROCEDURE SignUp(
     p_UserID OUT NUMBER,
@@ -395,6 +478,22 @@ BEGIN
     WHERE DescriptionID = p_DescriptionID;
 END;
 
+create or replace PROCEDURE UpdateInventory (
+    p_InventoryID NUMBER,
+    p_ProductID VARCHAR2,
+    p_QuantityOnHand NUMBER,
+    p_WarehouseID NUMBER
+)
+AS
+BEGIN
+    UPDATE Inventory
+    SET ProductID = p_ProductID,
+        QuantityOnHand = p_QuantityOnHand,
+        WarehouseID = p_WarehouseID
+    WHERE InventoryID = p_InventoryID;
+    COMMIT;
+END UpdateInventory;
+
 create or replace PROCEDURE UpdateProduct (
     p_ProductID NUMBER,
     p_ProductName VARCHAR2,
@@ -444,6 +543,7 @@ BEGIN
     COMMIT;
 END UpdateSupplier;
 
+
 create or replace PROCEDURE UpdateUserData(
     p_UserID NUMBER,
     p_UserName VARCHAR2,
@@ -486,3 +586,21 @@ BEGIN
 
     COMMIT;
 END UpdateUserRole;
+
+
+create or replace PROCEDURE UpdateWarehouse(
+    p_WarehouseID NUMBER,
+    p_WarehouseName VARCHAR2,
+    p_Location VARCHAR2,
+    p_Capacity NUMBER,
+    p_Availability NUMBER
+) AS
+BEGIN
+    UPDATE Warehouses
+    SET
+        WarehouseName = p_WarehouseName,
+        Location = p_Location,
+        Capacity = p_Capacity,
+        Availability = p_Availability
+    WHERE WarehouseID = p_WarehouseID;
+END;

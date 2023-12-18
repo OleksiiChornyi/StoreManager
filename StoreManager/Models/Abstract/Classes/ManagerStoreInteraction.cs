@@ -224,6 +224,65 @@ namespace StoreManager.Models.Abstract.Classes
             }
             return isOkDeleted;
         }
+        public bool DeleteInventory(int inventoryID)
+        {
+            bool isOkDeleted = false;
+            using (OracleConnection connection = new OracleConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    using (OracleCommand command = new OracleCommand("DeleteInventory", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.Add("p_InventoryID", OracleDbType.Int64).Value = inventoryID;
+                        OracleParameter isDeleted = new OracleParameter("p_IsDeleted", OracleDbType.Boolean);
+                        isDeleted.Direction = ParameterDirection.Output;
+                        command.Parameters.Add(isDeleted);
+
+                        command.ExecuteNonQuery();
+
+                        isOkDeleted = ((OracleBoolean)isDeleted.Value).IsTrue;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+
+                connection.Close();
+            }
+            return isOkDeleted;
+        }
+        public bool DeleteWarehouses(int warehouseID)
+        {
+            using (OracleConnection connection = new OracleConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    using (OracleCommand command = new OracleCommand("DeleteInventoryAndWarehouseID", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.Add("p_WarehouseID", OracleDbType.Int64).Value = warehouseID;
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                    return false;
+                }
+
+                connection.Close();
+            }
+            return true;
+        }
         public DataTable GetCategoryHierarchy()
         {
             DataTable resultTable = new DataTable();
@@ -472,7 +531,7 @@ namespace StoreManager.Models.Abstract.Classes
             }
         }
 
-        public void CreateWarehouses(string warehouseName, string Location, int Capacity, int Availability)
+        public void CreateWarehouses(Warehouse warehouse)
         {
             using (OracleConnection connection = new OracleConnection(connectionString))
             {
@@ -484,10 +543,10 @@ namespace StoreManager.Models.Abstract.Classes
                     {
                         command.CommandType = CommandType.StoredProcedure;
 
-                        command.Parameters.Add("p_WarehouseName", OracleDbType.Varchar2).Value = warehouseName;
-                        command.Parameters.Add("p_Location", OracleDbType.Varchar2).Value = Location;
-                        command.Parameters.Add("p_Capacity", OracleDbType.Int64).Value = Capacity;
-                        command.Parameters.Add("p_Availability", OracleDbType.Int64).Value = Availability;
+                        command.Parameters.Add("p_WarehouseName", OracleDbType.Varchar2).Value = warehouse.WarehoseName;
+                        command.Parameters.Add("p_Location", OracleDbType.Varchar2).Value = warehouse.Location;
+                        command.Parameters.Add("p_Capacity", OracleDbType.Int64).Value = warehouse.Capacity;
+                        command.Parameters.Add("p_Availability", OracleDbType.Int64).Value = warehouse.Availability;
 
                         command.ExecuteNonQuery();
                     }
@@ -500,8 +559,38 @@ namespace StoreManager.Models.Abstract.Classes
                 connection.Close();
             }
         }
+        public bool UpdateWareHouse(Warehouse warehouse)
+        {
+            using (OracleConnection connection = new OracleConnection(connectionString))
+            {
+                connection.Open();
 
-        public void CreateInventory(int productID, int QuantityOnHand, int WarehouseId)
+                try
+                {
+                    using (OracleCommand command = new OracleCommand("UpdateWarehouse", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Add("p_InventoryID", OracleDbType.Int64).Value = warehouse.WarehoseID;
+                        command.Parameters.Add("p_WarehouseName", OracleDbType.Varchar2).Value = warehouse.WarehoseName;
+                        command.Parameters.Add("p_Location", OracleDbType.Varchar2).Value = warehouse.Location;
+                        command.Parameters.Add("p_Capacity", OracleDbType.Int64).Value = warehouse.Capacity;
+                        command.Parameters.Add("p_Availability", OracleDbType.Int64).Value = warehouse.Availability;
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                    return false;
+                }
+
+                connection.Close();
+            }
+            return true;
+        }
+
+        public void CreateInventory(Inventory inventory)
         {
             using (OracleConnection connection = new OracleConnection(connectionString))
             {
@@ -513,9 +602,9 @@ namespace StoreManager.Models.Abstract.Classes
                     {
                         command.CommandType = CommandType.StoredProcedure;
 
-                        command.Parameters.Add("p_ProductID", OracleDbType.Int64).Value = productID;
-                        command.Parameters.Add("p_QuantityOnHand", OracleDbType.Int64).Value = QuantityOnHand;
-                        command.Parameters.Add("p_WarehouseID", OracleDbType.Int64).Value = WarehouseId;
+                        command.Parameters.Add("p_ProductID", OracleDbType.Int64).Value = inventory.ProductID;
+                        command.Parameters.Add("p_QuantityOnHand", OracleDbType.Int64).Value = inventory.QuantityOnHand;
+                        command.Parameters.Add("p_WarehouseID", OracleDbType.Int64).Value = inventory.WareHouseID;
 
                         command.ExecuteNonQuery();
                     }
@@ -528,5 +617,84 @@ namespace StoreManager.Models.Abstract.Classes
                 connection.Close();
             }
         }
+        public bool UpdateInventory(Inventory inventory)
+        {
+            using (OracleConnection connection = new OracleConnection(connectionString))
+            {
+                connection.Open();
+
+                try
+                {
+                    using (OracleCommand command = new OracleCommand("UpdateInventory", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.Add("p_InventoryID", OracleDbType.Int64).Value = inventory.InventoryID;
+                        command.Parameters.Add("p_ProductID", OracleDbType.Int64).Value = inventory.ProductID;
+                        command.Parameters.Add("p_QuantityOnHand", OracleDbType.Int64).Value = inventory.QuantityOnHand;
+                        command.Parameters.Add("p_WarehouseID", OracleDbType.Int64).Value = inventory.WareHouseID;
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                    return false;
+                }
+
+                connection.Close();
+            }
+            return true;
+        }
+        private string GetUsernameFromConnectionString()
+        {
+            OracleConnectionStringBuilder builder = new OracleConnectionStringBuilder(connectionString);
+
+            string username = builder.ContainsKey("UserID")
+                ? builder["UserID"] as string
+                : builder.ContainsKey("User ID")
+                    ? builder["User ID"] as string
+                    : null;
+
+
+            return username;
+        }
+        public DataTable GetDatabaseObjects(string objectTableName, string objectTypeColumnName, string objectType)
+        {
+            DataTable resultTable = new DataTable();
+            string owner = GetUsernameFromConnectionString();
+
+            using (OracleConnection connection = new OracleConnection(connectionString))
+            {
+                connection.Open();
+                using (OracleCommand command = connection.CreateCommand())
+                {
+                    if (objectType.Equals("TABLE", StringComparison.OrdinalIgnoreCase))
+                    {
+                        command.CommandText = $"SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER = :owner";
+                    }
+                    else if (objectType.Equals("PROCEDURE", StringComparison.OrdinalIgnoreCase) || objectType.Equals("FUNCTION", StringComparison.OrdinalIgnoreCase))
+                    {
+                        command.CommandText = $"SELECT {objectTypeColumnName} FROM ALL_PROCEDURES WHERE OBJECT_TYPE = :objectType AND OWNER = :owner";
+                        command.Parameters.Add("objectType", OracleDbType.Varchar2).Value = objectType;
+                    }
+                    else
+                    {
+                        command.CommandText = $"SELECT {objectTypeColumnName} FROM {objectTableName} WHERE OWNER = :owner";
+                    }
+
+                    command.Parameters.Add("owner", OracleDbType.Varchar2).Value = owner;
+
+                    using (OracleDataReader reader = command.ExecuteReader())
+                    {
+                        resultTable.Load(reader);
+                    }
+                }
+            }
+
+            return resultTable;
+        }
+
     }
 }

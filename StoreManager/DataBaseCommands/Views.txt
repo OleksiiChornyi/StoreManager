@@ -1,4 +1,13 @@
 
+  CREATE OR REPLACE VIEW AUDITLOGSVIEWVIEW AS 
+  SELECT
+    ACTIONTYPE,
+    ACTIONDATETIME,
+    ACTIONDETAILS
+FROM
+    AuditLogs;
+
+  
   CREATE OR REPLACE VIEW CATEGORIESVIEW AS
   SELECT CATEGORYID,CATEGORYNAME, CATEGORYDESCRIPTION,PARENTCATEGORYID
 FROM Categories;
@@ -46,6 +55,55 @@ GROUP BY
     D.UploadDate,
     D.ModificationDate,
     D.Info;
+
+
+    
+  CREATE OR REPLACE VIEW INVENTORYPRODUCTSVIEW AS 
+  SELECT
+    ProductID,
+    ProductName
+FROM
+    Products;
+
+    
+  CREATE OR REPLACE VIEW INVENTORYUPDATEVIEW AS 
+  SELECT
+    I.InventoryID,
+    I.ProductID,
+    I.QuantityOnHand,
+    I.WarehouseID,
+    I.InventoryDate,
+    P.ProductName,
+    W.WarehouseName
+FROM
+    Inventory I
+    JOIN Products P ON I.ProductID = P.ProductID
+    JOIN Warehouses W ON I.WarehouseID = W.WarehouseID;
+
+
+    
+  CREATE OR REPLACE VIEW INVENTORYVIEW AS 
+  SELECT
+    P.ProductName,
+    C.CategoryName,
+    W.WarehouseName,
+    I.QuantityOnHand,
+    I.WarehouseID,
+    I.InventoryDate
+FROM
+    Inventory I
+    LEFT JOIN Products P ON I.ProductID = P.ProductID
+    LEFT JOIN Warehouses W ON I.WarehouseID = W.WarehouseID
+    LEFT JOIN Categories C ON P.CategoryID = C.CategoryID;
+
+
+    
+  CREATE OR REPLACE VIEW INVENTORYWAREHOUSESVIEW AS 
+  SELECT
+    WarehouseID,
+    WarehouseName
+FROM
+    Warehouses;
 
     
   CREATE OR REPLACE VIEW ORDERDETAILSVIEW AS 
@@ -181,6 +239,13 @@ FROM Suppliers;
 FROM Users;
 
 
+  CREATE OR REPLACE VIEW UPDATEWAREHOUSESVIEW AS 
+  SELECT WAREHOUSEID,WAREHOUSENAME,LOCATION,CAPACITY,AVAILABILITY
+FROM Warehouses;
+
+
+
+
   CREATE OR REPLACE VIEW USERSVIEW AS 
   SELECT
     U.UserName,
@@ -207,4 +272,33 @@ FROM Suppliers;
   CREATE OR REPLACE VIEW VIEWSUPPLIERSVIEW AS 
   SELECT SUPPLIERID,COMPANYNAME,CONTACTINFO,SUPPLIERADDRESS
 FROM Suppliers;
+
+CREATE VIEW InventoryProductsView AS
+SELECT
+    ProductID,
+    ProductName
+FROM
+    Products;
+
+    CREATE VIEW InventoryWarehousesView AS
+SELECT
+    WarehouseID,
+    WarehouseName
+FROM
+    Warehouses;
+
+    
+  CREATE OR REPLACE  VIEW  WAREHOUSEINVENTORYVIEW AS 
+  SELECT
+    W.WarehouseName,
+    W.Location,
+    W.Capacity,
+    W.Availability,
+    COUNT(I.InventoryID) AS InventoryCount
+FROM
+    Warehouses W
+LEFT JOIN
+    Inventory I ON W.WarehouseID = I.WarehouseID
+GROUP BY
+    W.WarehouseID, W.WarehouseName, W.Location, W.Capacity, W.Availability;
 

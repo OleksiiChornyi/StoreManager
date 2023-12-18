@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows;
 using StoreManager.Models.Abstract.Classes;
 using StoreManager.Views.Admin.Interactions.Creating;
+using StoreManager.DB_classes;
 
 namespace StoreManager.ViewModels.Admin.Interactions.Creating
 {
@@ -22,7 +23,7 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
         {
             _admin = admin ?? throw new ArgumentNullException(nameof(admin));
 
-            CreateWarehouseButtonCommand = new RelayCommand(CreateWarehouse, CanCreateWarehouse);
+            CreateWarehouseButtonCommand = new RelayCommand(CreateWarehouse);
 
             createWarehousesView = new CreateWarehousesView()
             {
@@ -78,14 +79,9 @@ namespace StoreManager.ViewModels.Admin.Interactions.Creating
 
         private void CreateWarehouse(object parameter)
         {
-            _admin.CreateWarehouses(WarehousesNameText, WarehousesLocationText, int.Parse(WarehousesCapacityText), int.Parse(WarehousesAvailabilityText));
+            _admin.CreateWarehouses(new Warehouse() { WarehoseName = WarehousesNameText, Location = WarehousesLocationText, Capacity = int.Parse(WarehousesCapacityText), Availability = int.Parse(WarehousesAvailabilityText) });
             MessageBox.Show("Warehouse added");
             createWarehousesView.Close();
-        }
-
-        private bool CanCreateWarehouse(object parameter)
-        {
-            return !string.IsNullOrWhiteSpace(WarehousesNameText) && !string.IsNullOrWhiteSpace(WarehousesLocationText) && !string.IsNullOrWhiteSpace(WarehousesCapacityText) && !string.IsNullOrWhiteSpace(WarehousesAvailabilityText);
         }
         #endregion
         #region Helpers

@@ -12,14 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace StoreManager.Views.Admin.ViewsInfo
+namespace StoreManager.Views.DB_Data
 {
     /// <summary>
-    /// Interaction logic for AuditLogsView.xaml
+    /// Interaction logic for TriggerssDBView.xaml
     /// </summary>
-    public partial class AuditLogsView : Window
+    public partial class TriggerssDBView : Window
     {
-        public AuditLogsView()
+        public TriggerssDBView()
         {
             InitializeComponent();
         }
